@@ -49,7 +49,6 @@ A Streamlit-based dashboard for analyzing stock market trends of FAANG companies
 [Project Repository](https://github.com/madhan96p/FAANG)
 
 ---
-
 ### **Education**  
 🎓 **Bachelor of Business Administration**  
   *SRM Arts and Science College, 2024*
