@@ -18,10 +18,10 @@ I am a data enthusiast who transitioned from a business background to the world 
 ---
 
 ### **Certifications**  
-- **Python**: [Guvi](www.guvi.in/verify-certificate?id=uMNY1D78x70469625T) 🏆  
+- **Python**: [Guvi](https://www.guvi.in/verify-certificate?id=uMNY1D78x70469625T) 🏆  
   *Issued October 2024 | Credential ID: uMNY1D78x70469625T*  
 
-- **SQL**: [Guvi](www.guvi.in/verify-certificate?id=470o42v8N85aC7O11e) 📜  
+- **SQL**: [Guvi](https://www.guvi.in/verify-certificate?id=470o42v8N85aC7O11e) 📜  
   *Issued October 2024 | Credential ID: 470o42v8N85aC7O11e*
 
 ---
