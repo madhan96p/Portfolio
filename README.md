@@ -25,7 +25,6 @@ I am a data enthusiast who transitioned from a business background to the world 
   *Issued October 2024 | Credential ID: 470o42v8N85aC7O11e*
 
 ---
-
 ### **Projects**
 
 #### **RedBus Data Scraper & Bus Booking App** 🚌  
@@ -47,6 +46,18 @@ A Streamlit-based dashboard for analyzing stock market trends of FAANG companies
 - Developed an interactive UI with dynamic filters and recommendations.  
 
 [Project Repository](https://github.com/madhan96p/FAANG)
+
+---
+
+#### **Shopping App Backend** 🛍️  
+This project provides the backend for a simple shopping app. It handles user login, admin login, product catalog, shopping cart, and simulates payments.  
+**Skills**: Python  
+- User login functionality.  
+- Admin management for product catalog.  
+- Shopping cart management with add/remove items features.  
+- Simulates the payment process for mock transactions.  
+
+[Project Repository](https://github.com/madhan96p/shop-backend)
 
 ---
 ### **Education**  
