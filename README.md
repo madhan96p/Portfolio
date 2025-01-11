@@ -45,7 +45,8 @@ A Streamlit-based dashboard for analyzing stock market trends of FAANG companies
 - Enabled stock comparison based on financial metrics like PE ratio, EPS, and target price.  
 - Developed an interactive UI with dynamic filters and recommendations.  
 
-[Live Dashboard](https://stocksfaang.streamlit.app/)  
+[Sample Dashboard](https://stocksfaang.streamlit.app/)  
+
 [Project Repository](https://github.com/madhan96p/FAANG)
 
 ---
