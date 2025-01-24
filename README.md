@@ -53,7 +53,7 @@ A Streamlit-based dashboard for analyzing stock market trends of FAANG companies
 
 #### **Shopping App Backend** 🛍️  
 This project provides the backend for a simple shopping app. It handles user login, admin login, product catalog, shopping cart, and simulates payments.  
-**Skills**: Python  
+**Skills**: *Python*  
 - User login functionality.  
 - Admin management for product catalog.  
 - Shopping cart management with add/remove items features.  
