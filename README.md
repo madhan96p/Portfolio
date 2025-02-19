@@ -4,16 +4,31 @@
 ---
 
 ### **About Me**  
-I am a data enthusiast who transitioned from a business background to the world of data science. 🎓 I completed my BBA at SRM Arts and Science College in 2024 and pursued a Data Science certification from Guvi Institute. I am passionate about leveraging data to solve real-world problems and am eager to contribute to impactful projects.
+I am a **data enthusiast** who transitioned from a **business background** into **data science**. 🎓 I hold a **BBA degree** from **SRM Arts and Science College (2024)** and have completed certifications in **Python & SQL** from **Guvi Institute**. My passion lies in leveraging **data analytics, machine learning, and AI** to solve real-world problems and drive impactful decision-making.
+
+I specialize in **data analysis, visualization, machine learning, and AI-driven automation** and love collaborating on innovative projects. 🚀
 
 ---
 
 ### **Skills**  
-- **Programming**: Python 🐍, SQL  
-- **Machine Learning**: Scikit-learn, TensorFlow  
-- **Data Visualization**: Matplotlib 📈, Plotly, Streamlit  
-- **Databases**: MySQL 🗄️, SQLite  
-- **Soft Skills**: Self-motivated, Independent Problem Solver  
+#### **🔹 Programming & Databases**  
+- Python 🐍, SQL (MySQL, SQLite)  
+
+#### **🔹 Data Science & AI**  
+- Data Analysis: Pandas, NumPy  
+- Data Visualization: Matplotlib 📊, Seaborn, Plotly, Streamlit  
+- Machine Learning: Scikit-learn 🤖, TensorFlow  
+- AI & NLP: Hugging Face Transformers, OpenAI Whisper  
+- Web Scraping: BeautifulSoup, Selenium  
+- Deep Learning & LLMs: GPT, Stable Diffusion  
+
+#### **🔹 Tools & Platforms**  
+- Git & GitHub 🖥️, Google Colab, Jupyter Notebook  
+- AWS ☁️, Tableau, Power BI  
+- Version Control: Git, GitHub  
+
+#### **🔹 Soft Skills**  
+- **Problem-Solving**, **Time Management**, **Critical Thinking**  
 
 ---
 
@@ -22,54 +37,65 @@ I am a data enthusiast who transitioned from a business background to the world 
   *Issued October 2024 | Credential ID: uMNY1D78x70469625T*  
 
 - **SQL**: [Guvi](https://www.guvi.in/verify-certificate?id=470o42v8N85aC7O11e) 📜  
-  *Issued October 2024 | Credential ID: 470o42v8N85aC7O11e*
+  *Issued October 2024 | Credential ID: 470o42v8N85aC7O11e*  
 
 ---
+
 ### **Projects**
 
-#### **RedBus Data Scraper & Bus Booking App** 🚌  
-Automated scraping of bus route data, stored it in SQL, and created an interactive Streamlit app.  
-**Skills**: Python, SQL, Streamlit  
-- Scraped route details like departure times, fares, and seat availability.  
-- Developed a data pipeline to clean and store data in a SQL database.  
-- Built a user-friendly web app for data visualization and filtering.  
+#### **1️⃣ Customer Conversion Analysis for Online Shopping 🛒**  
+**Objective:** Predict customer conversion rates using **clickstream data**.  
+**Skills:** Python, Pandas, ML Models, EDA, Feature Engineering  
+- Built an **interactive Streamlit app** for real-time predictions & insights  
+- Implemented **churn reduction & product recommendation models**  
+- Developed **customer segmentation & revenue forecasting** models  
 
-[Project Repository](https://github.com/madhan96p/Red_bus_final)
-
----
-
-#### **FAANG Stock Dashboard** 💹  
-A Streamlit-based dashboard for analyzing stock market trends of FAANG companies.  
-**Skills**: Python, Pandas, Plotly, Streamlit  
-- Visualized historical and real-time stock data.  
-- Enabled stock comparison based on financial metrics like PE ratio, EPS, and target price.  
-- Developed an interactive UI with dynamic filters and recommendations.  
-
-[Sample Dashboard](https://stocksfaang.streamlit.app/)  
-
-[Project Repository](https://github.com/madhan96p/FAANG)
+[🔗 Project Repository](https://github.com/madhan96p/Customer_Conversion_Analysis)
 
 ---
 
-#### **Shopping App Backend** 🛍️  
-This project provides the backend for a simple shopping app. It handles user login, admin login, product catalog, shopping cart, and simulates payments.  
-**Skills**: *Python*  
-- User login functionality.  
-- Admin management for product catalog.  
-- Shopping cart management with add/remove items features.  
-- Simulates the payment process for mock transactions.  
+#### **2️⃣ RedBus Data Scraper & Bus Booking App 🚌**  
+**Objective:** Automate bus data retrieval & booking insights.  
+**Skills:** Python, SQL, Web Scraping, Streamlit  
+- Scraped route details like **departure times, fares, seat availability**  
+- Developed a **data pipeline** to store & process data in a **SQL database**  
+- Built a **user-friendly web app** for data visualization & filtering  
 
-[Project Repository](https://github.com/madhan96p/shop-backend)
-
----
-### **Education**  
-🎓 **Bachelor of Business Administration**  
-  *SRM Arts and Science College, 2024*
+[🔗 Project Repository](https://github.com/madhan96p/Red_bus_final)
 
 ---
 
-### **Contact**  
-📧 **Email**: pragadeesh.s96@gmail.com  
-🔗 **LinkedIn**: [linkedin.com/in/praga1482](https://linkedin.com/in/praga1482)  
-🐙 **GitHub**: [github.com/madhan96p](https://github.com/madhan96p)  
-🐦 **Twitter**: [@pragadeesh1482](https://x.com/pragadeesh1482)  
+#### **3️⃣ FAANG Stock Dashboard 💹**  
+**Objective:** Analyze stock market trends of FAANG companies.  
+**Skills:** Python, Pandas, Plotly, Streamlit  
+- Visualized **historical & real-time stock data**  
+- Enabled stock comparison based on **financial metrics** (PE ratio, EPS, target price)  
+- Developed an **interactive UI** with dynamic filters & recommendations  
+
+[🔗 Project Repository](https://github.com/madhan96p/FAANG_Stock_Dashboard)
+
+---
+
+#### **4️⃣ TransArt: A Multimodal AI Application 🎨🗣️**  
+**Objective:** Translate Tamil text to English & generate images from text.  
+**Skills:** Deep Learning, Hugging Face, OpenAI Whisper, Gradio  
+- **Tamil-to-English translation** using **Neural Machine Translation (NMT)**  
+- **Text-to-image generation** with **Stable Diffusion**  
+- Integrated **speech-to-text (STT)** module for Tamil speech processing  
+- Built an **interactive Gradio web app** deployed on **Hugging Face Spaces**  
+
+[🔗 Project Repository](https://github.com/madhan96p/TransArt_Multimodal_AI)
+
+---
+
+### **🚀 Let's Connect!**  
+I’m open to collaborations and exciting opportunities in data science! Let’s create impactful solutions together.  
+
+📩 **Email:** [pragadeesh.s96@gmail.com](mailto:pragadeesh.s96@gmail.com)  
+🔗 **LinkedIn:** [linkedin.com/in/praga1482](https://www.linkedin.com/in/praga1482/)  
+💻 **GitHub:** [github.com/madhan96p](https://github.com/madhan96p/)  
+
+---
+
+**⭐ If you find my work helpful, don’t forget to star my repositories! ⭐**
+
