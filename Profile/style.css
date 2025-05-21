@@ -1220,3 +1220,60 @@ header.scrolled {
   opacity: 1;
   transform: translateX(0);
 }
+
+.booking-success-message {
+  background-color: #e6ffed;
+  border: 1px solid #b7eb8f;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-top: 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.success-icon {
+  font-size: 2.5rem;
+  color: #28a745;
+  margin-bottom: 10px;
+}
+
+.success-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #155724;
+  margin: 8px 0;
+}
+
+.success-subtext {
+  font-size: 1rem;
+  color: #155724;
+  margin-bottom: 20px;
+}
+
+.success-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #28a745;
+  color: #fff;
+}
+
+.action-button:hover {
+  background-color: #218838;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
