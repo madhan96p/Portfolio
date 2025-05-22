@@ -237,5 +237,148 @@ function sendWhatsAppMessage(data) {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   }
-    
+const fab = document.getElementById('resume-fab');
+        const eyeContainer = fab.querySelector('.eye-container');
+        const eyeIris = eyeContainer.querySelector('.eye-iris');
+        const eyePupil = eyeContainer.querySelector('.eye-pupil');
+        const eyeHighlight = eyeContainer.querySelector('.eye-highlight');
+        
+        let isAwake = false;
+        let isAnimating = false;
+        let blinkInterval;
+        let sleepTimeout;
+        let lastMovementTime = 0;
+
+        const WAKE_DISTANCE = 180;
+        const SLEEP_DELAY = 2500;
+
+        // Initial behavior
+        setTimeout(() => {
+            fab.classList.remove('collapsed');
+        }, 1500);
+
+        setTimeout(() => {
+            fab.classList.add('collapsed');
+        }, 4000);
+
+        // Cursor tracking
+        document.addEventListener('mousemove', (e) => {
+            const rect = fab.getBoundingClientRect();
+            const fabCenterX = rect.left + rect.width / 2;
+            const fabCenterY = rect.top + rect.height / 2;
+            const deltaX = e.clientX - fabCenterX;
+            const deltaY = e.clientY - fabCenterY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            if (distance < WAKE_DISTANCE) {
+                lastMovementTime = Date.now();
+                wakeUp();
+                trackEye(deltaX, deltaY, distance);
+            }
+            
+            clearTimeout(sleepTimeout);
+            sleepTimeout = setTimeout(() => {
+                if (Date.now() - lastMovementTime > SLEEP_DELAY) {
+                    goToSleep();
+                }
+            }, SLEEP_DELAY);
+        });
+
+        function wakeUp() {
+            if (!isAwake) {
+                isAwake = true;
+                eyeContainer.classList.add('awake');
+                startBlinking();
+            }
+        }
+
+        function goToSleep() {
+            if (isAwake) {
+                isAwake = false;
+                eyeContainer.classList.remove('awake');
+                stopBlinking();
+                eyeIris.setAttribute('transform', 'translate(0, 0)');
+                eyePupil.setAttribute('transform', 'translate(0, 0)');
+                eyeHighlight.setAttribute('transform', 'translate(1.5, -1.5)');
+            }
+        }
+
+        function trackEye(deltaX, deltaY, distance) {
+            if (!isAwake) return;
+            const angle = Math.atan2(deltaY, deltaX);
+            const intensity = Math.min(distance / WAKE_DISTANCE, 1);
+            const maxMovement = 3;
+            const irisX = Math.cos(angle) * maxMovement * intensity;
+            const irisY = Math.sin(angle) * maxMovement * intensity * 0.6;
+            const pupilX = Math.cos(angle) * (maxMovement + 0.5) * intensity;
+            const pupilY = Math.sin(angle) * (maxMovement + 0.5) * intensity * 0.6;
+            const highlightX = Math.cos(angle) * (maxMovement - 0.8) * intensity + 1.5;
+            const highlightY = Math.sin(angle) * (maxMovement - 0.8) * intensity * 0.6 - 1.5;
+            eyeIris.setAttribute('transform', `translate(${irisX}, ${irisY})`);
+            eyePupil.setAttribute('transform', `translate(${pupilX}, ${pupilY})`);
+            eyeHighlight.setAttribute('transform', `translate(${highlightX}, ${highlightY})`);
+        }
+
+        function startBlinking() {
+            if (blinkInterval) clearInterval(blinkInterval);
+            blinkInterval = setInterval(() => {
+                if (isAwake && !eyeContainer.classList.contains('blinking')) {
+                    eyeContainer.classList.add('blinking');
+                    setTimeout(() => {
+                        eyeContainer.classList.remove('blinking');
+                    }, 400);
+                }
+            }, 2500 + Math.random() * 2000);
+        }
+
+        function stopBlinking() {
+            if (blinkInterval) {
+                clearInterval(blinkInterval);
+                blinkInterval = null;
+            }
+        }
+
+        // Hover behavior
+        fab.addEventListener('mouseenter', () => {
+            if (!isAnimating) {
+                isAnimating = true;
+                fab.classList.remove('collapsed');
+                setTimeout(() => {
+                    if (isAnimating) {
+                        fab.classList.add('collapsed');
+                        isAnimating = false;
+                    }
+                }, 3000);
+            }
+        });
+
+        // Click animation and action
+        fab.addEventListener('click', (e) => {
+            e.preventDefault();
+            stopBlinking();
+            fab.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            fab.style.transform = 'translateY(-50%) scale(0.8)';
+            fab.style.opacity = '0.7';
+            setTimeout(() => {
+                fab.style.transform = 'translateY(-50%) scale(1.2)';
+                fab.style.opacity = '0';
+            }, 200);
+            setTimeout(() => {
+                window.open('https://drive.google.com/file/d/1e0fpjQTw2hIi370XrKhCR-nqIzvrde0U/view', '_blank');
+                fab.style.transform = 'translateY(-50%) scale(1)';
+                fab.style.opacity = '1';
+                fab.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                if (isAwake) startBlinking();
+            }, 800);
+        });
+
+        // Handle page visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                goToSleep();
+            }
+        });
+
+        // Start sleeping
+        goToSleep();
 });
