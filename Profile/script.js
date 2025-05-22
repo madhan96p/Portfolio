@@ -252,7 +252,6 @@ const fab = document.getElementById('resume-fab');
         const WAKE_DISTANCE = 180;
         const SLEEP_DELAY = 2500;
 
-        // Initial behavior
         setTimeout(() => {
             fab.classList.remove('collapsed');
         }, 1500);
@@ -261,7 +260,6 @@ const fab = document.getElementById('resume-fab');
             fab.classList.add('collapsed');
         }, 4000);
 
-        // Cursor tracking
         document.addEventListener('mousemove', (e) => {
             const rect = fab.getBoundingClientRect();
             const fabCenterX = rect.left + rect.width / 2;
@@ -338,7 +336,6 @@ const fab = document.getElementById('resume-fab');
             }
         }
 
-        // Hover behavior
         fab.addEventListener('mouseenter', () => {
             if (!isAnimating) {
                 isAnimating = true;
@@ -352,7 +349,6 @@ const fab = document.getElementById('resume-fab');
             }
         });
 
-        // Click animation and action
         fab.addEventListener('click', (e) => {
             e.preventDefault();
             stopBlinking();
@@ -372,13 +368,11 @@ const fab = document.getElementById('resume-fab');
             }, 800);
         });
 
-        // Handle page visibility
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 goToSleep();
             }
         });
 
-        // Start sleeping
         goToSleep();
 });
