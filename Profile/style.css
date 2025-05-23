@@ -80,12 +80,17 @@ html {
   scroll-behavior: smooth;
 }
 
+html, body {
+    width: 100%;
+    overflow-x: hidden; /* Keep this on body, ensure html also has it */
+}
+
 body {
   font-family: var(--font-family-main);
   line-height: 1.5;
   color: var(--text-dark);
   background-color: var(--light-bg);
-  overflow-x: hidden;
+  /* overflow-x: hidden; */ /* Moved to html, body rule */
 }
 
 img {
@@ -622,6 +627,9 @@ header.scrolled {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  max-width: 960px; /* Max width: approx 3 cards (3*300) + 2 gaps (2*30) if minmax(300px,1fr) is used */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .project-image {
@@ -1047,11 +1055,14 @@ header.scrolled {
   }
   
   .project-card.featured {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Internal layout becomes single column */
+    grid-column: auto; /* Stop spanning when its internal layout stacks, making it behave like a regular card in the flow */
   }
   
   .project-card.featured .project-image {
     height: 200px;
+  }
+  .navbar span.highlight { /* Remove display:none here as it's handled by max-width:768px */
   }
 }
 
@@ -1178,9 +1189,30 @@ header.scrolled {
   }
   
   .project-card {
-    max-width: 300px;
+    /* max-width: 300px; */ /* Allow cards to use more width */
     margin: 0 auto;
   }
+
+  #resume-fab {
+    right: 16px; /* Reduce right offset for smaller screens */
+    /* Adjusted padding for the expanded state on small screens */
+    padding: 6px 10px; 
+  }
+  /* Styles for when it's collapsed (small icon only) */
+  #resume-fab.collapsed {
+    width: 28px; 
+    height: 28px;
+    padding: 0; /* Remove padding when collapsed */
+  }
+  .fab-text {
+    font-size: 13px; /* Further reduce font size */
+    margin-left: 8px; /* Reduce margin for less space needed */
+  }
+  .eye-container {
+    width: 28px; /* Adjust eye icon size accordingly */
+    height: 20px;
+  }
+
 }
 
 /* ========= JAVASCRIPT DEPENDENT CLASSES ========= */
@@ -1278,185 +1310,6 @@ header.scrolled {
   to { opacity: 1; transform: translateY(0); }
 }
         #resume-fab {
-            position: fixed;
-            top: 50%;
-            right: 24px;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 16px;
-            font-family: 'Arial', sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.025em;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-            color: white;
-            padding: 8px 12px;
-            background: linear-gradient(135deg, rgba(45, 55, 72, 0.8), rgba(26, 32, 44, 0.8));
-            border-radius: 12px;
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(45, 55, 72, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        #resume-fab.collapsed {
-            background: rgba(75, 85, 99, 0.3);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border: none;
-            padding: 0;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            justify-content: center;
-        }
-
-        .fab-text {
-            margin-left: 12px;
-            white-space: nowrap;
-            opacity: 1;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: translateX(0);
-            font-size: 15px;
-        }
-
-        #resume-fab.collapsed .fab-text {
-            opacity: 0;
-            transform: translateX(20px);
-            width: 0;
-            margin-left: 0;
-        }
-
-        #resume-fab:hover {
-            transform: translateY(-50%) scale(1.08);
-            box-shadow: 
-                0 15px 40px rgba(0, 0, 0, 0.4),
-                0 0 30px rgba(45, 55, 72, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            background: linear-gradient(135deg, rgba(74, 85, 104, 0.8), rgba(45, 55, 72, 0.8));
-        }
-
-        #resume-fab:active {
-            transform: translateY(-50%) scale(0.95);
-            transition: all 0.15s ease;
-        }
-
-        #resume-fab::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.15),
-                transparent
-            );
-            transition: left 0.6s ease;
-        }
-
-        #resume-fab:hover::before {
-            left: 100%;
-        }
-
-        .eye-container {
-            width: 30px;
-            height: 22px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .eye-svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 1px 2px rgba(247, 247, 247, 0.3));
-        }
-
-        .eye-closed-line {
-            stroke: #e2e8f0;
-            stroke-width: 1.8;
-            fill: none;
-            stroke-linecap: round;
-            opacity: 1;
-            transition: all 0.3s ease;
-        }
-
-        .eye-lashes {
-            stroke: #cbd5e0;
-            stroke-width: 1;
-            stroke-linecap: round;
-            opacity: 0.8;
-            transition: all 0.3s ease;
-        }
-
-        .eye-white {
-            fill: url(#scleraGradient);
-            stroke: #e2e8f0;
-            stroke-width: 0.8;
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-
-        .eye-iris {
-            fill: url(#irisGradient);
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-
-        .eye-pupil {
-            fill: #1a202c;
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-
-        .eye-highlight {
-            fill: rgba(255, 255, 255, 0.9);
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-
-        .eye-container.awake .eye-closed-line,
-        .eye-container.awake .eye-lashes {
-            opacity: 0;
-        }
-
-        .eye-container.awake .eye-white,
-        .eye-container.awake .eye-iris,
-        .eye-container.awake .eye-pupil,
-        .eye-container.awake .eye-highlight {
-            opacity: 1;
-        }
-
-        @keyframes humanBlink {
-            0% { transform: scaleY(1); opacity: 1; }
-            10% { transform: scaleY(0.8); }
-            15% { transform: scaleY(0.1); opacity: 0.3; }
-            25% { transform: scaleY(0.8); }
-            35% { transform: scaleY(1); opacity: 1; }
-            100% { transform: scaleY(1); opacity: 1; }
-        }
-
-        .eye-container.blinking .eye-white,
-        .eye-container.blinking .eye-iris,
-        .eye-container.blinking .eye-pupil,
-        .eye-container.blinking .eye-highlight {
-            animation: humanBlink 0.4s ease-in-out;
-        }
-
-        @keyframes sleepyBreathe {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(1px); }
-        }
-
-        .eye-container:not(.awake) .eye-closed-line {
-            animation: sleepyBreathe 4s ease-in-out infinite;
-        }
-#resume-fab {
             position: fixed;
             top: 50%;
             right: 24px;
