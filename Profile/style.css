@@ -80,12 +80,17 @@ html {
   scroll-behavior: smooth;
 }
 
+html, body {
+    width: 100%;
+    overflow-x: hidden; /* Keep this on body, ensure html also has it */
+}
+
 body {
   font-family: var(--font-family-main);
   line-height: 1.5;
   color: var(--text-dark);
   background-color: var(--light-bg);
-  overflow-x: hidden;
+  /* overflow-x: hidden; */ /* Moved to html, body rule */
 }
 
 img {
@@ -622,6 +627,9 @@ header.scrolled {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  max-width: 960px; /* Max width: approx 3 cards (3*300) + 2 gaps (2*30) if minmax(300px,1fr) is used */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .project-image {
@@ -1047,7 +1055,8 @@ header.scrolled {
   }
   
   .project-card.featured {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Internal layout becomes single column */
+    grid-column: auto; /* Stop spanning when its internal layout stacks, making it behave like a regular card in the flow */
   }
   
   .project-card.featured .project-image {

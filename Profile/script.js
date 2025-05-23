@@ -141,15 +141,16 @@ document.addEventListener('DOMContentLoaded', function() {
             
             projectCards.forEach(card => {
                 if (filter === 'all') {
-                    card.style.display = 'block';
+                    card.style.display = ''; // Revert to stylesheet display type
                 } else {
                     if (card.getAttribute('data-category').includes(filter)) {
-                        card.style.display = 'block';
+                        card.style.display = ''; // Revert to stylesheet display type
                     } else {
                         card.style.display = 'none';
                     }
                 }
             });
+            AOS.refresh(); // Refresh AOS after filtering
         });
     });
 const contactForm = document.getElementById('contactForm');
