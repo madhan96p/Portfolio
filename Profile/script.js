@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
         once: true,
         offset: 100
     });
-// TODO: Check and fix layout behavior on mobile screen sizes
 
     // Navigation menu toggle for mobile
     const menuOpen = document.getElementById('menuOpen');
