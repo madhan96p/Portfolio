@@ -202,7 +202,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(30, 30, 47, 0.95); /* Dark, slightly transparent bg */
+  background: rgba(255, 255, 255, 0.95); /* Dark, slightly transparent bg */
   backdrop-filter: blur(10px); /* Stronger blur for glassmorphism */
   box-shadow: var(--shadow-sm);
   z-index: var(--z-navbar);
@@ -571,7 +571,173 @@ header.scrolled .nav-links a.active {
 .info-text {
   color: var(--gray-700);
 }
+ /* Services Section */
+        .services-section {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a202c;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #007BFF;
+            margin: 0.5rem auto;
+            border-radius: 2px;
+        }
+
+        .section-intro {
+            max-width: 700px;
+            margin: 0 auto 3.5rem;
+            color: #4a5568;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Flip Card Styling */
+        .service-card {
+            perspective: 1000px;
+            height: 400px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        .service-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card:hover .service-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .service-card-front,
+        .service-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .service-card-front {
+            background: #fff;
+        }
+
+        .service-card-back {
+            background: #007BFF;
+            color: #fff;
+            transform: rotateY(180deg);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #007BFF;
+        }
+
+        .service-card-front h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+
+        .service-card-front p {
+            color: #4a5568;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .service-card-back ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .service-card-back li {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .service-card-back li::before {
+            content: '\f058';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-right: 0.5rem;
+            color: #fff;
+        }
+
+        .service-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.7rem 1.5rem;
+            background-color: #fff;
+            color: #007BFF;
+            border-radius: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .service-btn:hover {
+            background-color: #e2e8f0;
+            color: #0056b3;
+        }
+
+        .service-btn i {
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .section-intro {
+                font-size: 1rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 /* ========= SKILLS SECTION ========= */
 .skills {
   background-color: var(--gray-100);

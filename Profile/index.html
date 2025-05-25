@@ -17,18 +17,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
 
-    <link rel="icon" type="image/svg+xml" href="playstation-logo.svg">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg"> <!-- Suggestion: Update to your actual favicon and path -->
+    <!-- AOS CSS (Using cdnjs version 2.3.4) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous">
+
 
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <!-- Header -->
-    <header style="position: fixed; top: 0; width: 100%; z-index: 1000; background-color: white;">
+    <header>
     <nav class="navbar" aria-label="Main navigation">
         <div class="logo">PS</div>
         <span class="highlight"><strong>Pragadeesh Srinivasan</strong></span>
@@ -37,6 +39,7 @@
             <ul>
                 <li><a href="#home" class="active" aria-current="page">Home</a></li>
                 <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#education">Education</a></li>
@@ -76,7 +79,7 @@
         <div class="container">
             <div class="section-title" data-aos="fade-up">
                 <h2>About Me</h2>
-                <span class="underline"></span>
+                <!-- <span class="underline"></span> -->
             </div>
             <div class="about-content">
                 <div class="about-image" data-aos="fade-right">
@@ -156,12 +159,142 @@
         <span class="fab-text">View Resume</span>
     </div>
 
+    <!-- Services Section -->
+     <section id="services" class="services-section">
+        <h2 class="section-title">Elevate Your Vision: Tailored Solutions for Success</h2>
+        <p class="section-intro">I craft innovative, data-driven solutions that transform challenges into opportunities, empowering your business with precision and creativity.</p>
+
+        <div class="services-grid">
+            <!-- Service Card 1 -->
+            <div class="service-card">
+                <div class="service-card-inner">
+                    <div class="service-card-front" data-aos="fade-up" style="background-image: url('https://t4.ftcdn.net/jpg/04/78/00/19/360_F_478001969_uWqhldMSW1TAK7DSHzEgc3SL0s9ECMoE.jpg');">
+                        <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+                        <h3>Data-Driven Insights</h3>
+                        <p>Turn raw data into strategic assets with advanced analytics and compelling visualizations.</p>
+                    </div>
+
+                    <div class="service-card-back">
+                        <ul>
+                            <li>Precision Data Processing with Pandas & NumPy</li>
+                            <li>Dynamic Visualizations using Seaborn/Matplotlib</li>
+                            <li>Deep-Dive Exploratory Data Analysis</li>
+                            <li>Custom Reporting Solutions</li>
+                        </ul>
+                        <a href="#contact" class="service-btn">Unlock Your Data <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 2 -->
+            <div class="service-card">
+                <div class="service-card-inner">
+                    <div class="service-card-front" data-aos="fade-up" style="background-image: url('https://thumbs.dreamstime.com/b/futuristic-robot-artificial-intelligence-concept-technology-development-ai-machine-learning-global-robotic-bionic-science-178842021.jpg');">
+                        <div class="service-icon"><i class="fas fa-robot"></i></div>
+                        <h3>Intelligent Automation</h3>
+                        <p>Eliminate repetitive tasks and streamline workflows with smart automation solutions that save time and reduce errors.</p>
+                    </div>
+                    <div class="service-card-back">
+                        <ul>
+                            <li>Robotic Process Automation (RPA)</li>
+                            <li>Document Processing & OCR</li>
+                            <li>Email & Communication Automation</li>
+                            <li>Custom Workflow Optimization</li>
+                        </ul>
+                        <a href="#contact" class="service-btn">Automate Everything <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 3 -->
+            <div class="service-card">
+                <div class="service-card-inner">
+                    <div class="service-card-front" data-aos="fade-up" style="background-image: url('https://img.freepik.com/premium-vector/data-analysis-3d-isometric-web-design-vector-web-illustration_9209-9698.jpg?w=360');">
+                        <div class="service-icon"><i class="fas fa-globe"></i></div>
+                        <h3>Dynamic Web Applications</h3>
+                        <p>Bring your ideas to life with interactive, user-friendly web apps built for performance and scalability.</p>
+                    </div>
+                    <div class="service-card-back">
+                        <ul>
+                            <li>Streamlit-Powered Data Dashboards</li>
+                            <li>Seamless API Integrations</li>
+                            <li>Form Handling & User Interaction</li>
+                            <li>Deployment on Netlify/Hugging Face</li>
+                        </ul>
+                        <a href="#contact" class="service-btn">Launch Your App <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 4 -->
+            <div class="service-card">
+                <div class="service-card-inner">
+                    <div class="service-card-front" data-aos="fade-up" style="background-image: url('https://www.neuralt.com/hs-fs/hubfs/Untitled%20design%20(89).jpg?width=991&name=Untitled%20design%20(89).jpg');">
+                        <div class="service-icon"><i class="fas fa-brain"></i></div>
+                        <h3>Predictive AI Models</h3>
+                        <p>Leverage machine learning to predict trends, optimize decisions, and drive innovation.</p>
+                    </div>
+                    <div class="service-card-back">
+                        <ul>
+                            <li>Model Building with scikit-learn/XGBoost</li>
+                            <li>Classification & Regression Models</li>
+                            <li>Clustering & Anomaly Detection</li>
+                            <li>Hyperparameter Optimization</li>
+                        </ul>
+                        <a href="#contact" class="service-btn">Predict the Future <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 5 -->
+            <div class="service-card">
+                <div class="service-card-inner">
+                    <div class="service-card-front" data-aos="fade-up" style="background-image: url('https://i.pinimg.com/originals/82/a0/47/82a0474442bb6189afd19ba620222507.jpg');">
+                        <div class="service-icon"><i class="fas fa-chart-pie"></i></div>
+                        <h3>Business Intelligence Dashboards</h3>
+                        <p>Empower your team with intuitive dashboards and reports for data-driven decisions.</p>
+                    </div>
+                    <div class="service-card-back">
+                        <ul>
+                            <li>Excel & Power BI Dashboard Creation</li>
+                            <li>Google Sheets Automation</li>
+                            <li>Interactive KPI Visualizations</li>
+                            <li>Client-Ready Reporting Solutions</li>
+                        </ul>
+                        <a href="#contact" class="service-btn">Visualize Success <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 6 -->
+            <div class="service-card">
+                <div class="service-card-inner">
+                    <div class="service-card-front" data-aos="fade-up" style="background-image: url('https://img.freepik.com/premium-photo/male-hand-clicks-abstract-virtual-light-bulb-illustration-blurred-office-background-future-technology-concept-multiexposure_258654-2481.jpg');">
+                        <div class="service-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3>Bespoke Solutions</h3>
+                        <p>Got a unique challenge? I’ll craft a custom solution tailored to your vision.</p>
+                    </div>
+                    <div class="service-card-back">
+                        <ul>
+                            <li>One-Off Custom Projects</li>
+                            <li>Long-Term Freelance Collaboration</li>
+                            <li>Cross-Domain Solution Design</li>
+                            <li>Innovative Problem Solving</li>
+                        </ul>
+                        <a href="#contact" class="service-btn">Build Your Vision <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
     <!-- Skills Section -->
     <section id="skills" class="skills">
         <div class="container">
             <div class="section-title" data-aos="fade-up">
                 <h2>My Skills</h2>
-                <span class="underline"></span>
+                <!-- <span class="underline"></span> -->
             </div>
             <div class="skills-wrapper">
                 <div class="skills-categories" data-aos="fade-up">
@@ -435,7 +568,7 @@
         <div class="container">
             <div class="section-title" data-aos="fade-up">
                 <h2>My Projects</h2>
-                <span class="underline"></span>
+                <!-- <span class="underline"></span> -->
             </div>
             <div class="project-filters" data-aos="fade-up">
                 <button class="filter-btn active" data-filter="all" aria-label="Show all projects">All</button>
@@ -641,7 +774,7 @@
                 </div>
             </div>
             <div class="projects-more" data-aos="fade-up">
-                <a href="https://github.com/madhan96p" class="btn btn-secondary" target="_blank">View More Projects on GitHub <i class="fab fa-github"></i></a>
+                <a href="https://github.com/madhan96p" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">View More Projects on GitHub <i class="fab fa-github"></i></a>
             </div>
         </div>
     </section>
@@ -651,7 +784,7 @@
         <div class="container">
             <div class="section-title" data-aos="fade-up">
                 <h2>Education & Certifications</h2>
-                <span class="underline"></span>
+                <!-- <span class="underline"></span> -->
             </div>
             <div class="timeline" aria-label="Education and certifications timeline">
                 <div class="timeline-wrapper">
@@ -730,7 +863,7 @@
         <div class="container">
             <div class="section-title" data-aos="fade-up">
                 <h2>Contact Me</h2>
-                <span class="underline"></span>
+                <!-- <span class="underline"></span> -->
             </div>
             <div class="contact-wrapper">
                 <div class="contact-info" data-aos="fade-right">
@@ -766,8 +899,8 @@
                         </div>
                     </div>
                     <div class="social-links" aria-label="Social media links">
-                        <a href="https://www.linkedin.com/in/praga1482/" target="_blank" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://github.com/madhan96p" target="_blank" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/praga1482/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/madhan96p" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
                         <a href="mailto:pragadeesh.s96@gmail.com" class="social-link" aria-label="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
@@ -801,7 +934,7 @@
    <footer class="footer">
   <div class="container">
     <div class="footer-content">
-      <p>&copy; 2025 Pragadeesh Srinivasan</p>
+      <p>&copy; 2025 Pragadeesh Srinivasan</p> <!-- Suggestion: Update to current year -->
       <p>Data Analyst | Aspiring Data Scientist</p>
     </div>
   </div>
@@ -809,7 +942,9 @@
 
 
     <!-- Scripts -->
+    <!-- AOS JS (Using cdnjs version 2.3.4) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw==" crossorigin="anonymous"></script>
     <script src="script.js"></script>
+    <!-- Suggestion: Initialize AOS in script.js, e.g., document.addEventListener('DOMContentLoaded', () => { AOS.init(); }); -->
 </body>
 </html>
