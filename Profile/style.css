@@ -210,8 +210,11 @@ header {
 }
 
 header.scrolled {
+  /* Apply a light, glassmorphic background when scrolled */
+  background: rgba(248, 249, 250, 0.9); /* var(--gray-100) with transparency */
+  backdrop-filter: blur(10px); /* Maintain blur effect */
   box-shadow: var(--shadow-md);
-  background-color: rgba(255, 255, 255, 0.95);
+  animation: none; /* Optional: Stop the pulseGlow animation on scroll */
 }
 
 .navbar {
@@ -255,14 +258,27 @@ header.scrolled {
 
 .nav-links a {
   position: relative;
-  color: var(--text-light); /* Default to light text for initial dark header */
+  color: var(--shadow-sm); /* Default to light text for initial dark header */
   font-weight: 500;
   padding: var(--space-2) 0;
 }
 
+
 .nav-links a:hover,
 .nav-links a.active {
-  color: var(--accent-light); /* Light accent for hover/active on dark header */
+  color: var(--primary-color);
+  /* Use a brighter color for hover/active on the initial dark header */
+  color: var(--accent-light);
+  text-shadow: 0 0 8px rgba(67, 97, 238, 0.5); /* Glow on hover/active */
+}
+
+/* Styles for nav links when header is scrolled (light background) */
+header.scrolled .nav-links a {
+  color: var(--gray-800); /* Darker text for readability on light background */
+}
+header.scrolled .nav-links a:hover,
+header.scrolled .nav-links a.active {
+  color: var(--primary-color); /* Standard primary color for hover/active */
 }
 
 header.scrolled .nav-links a {
