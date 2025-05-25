@@ -1,8 +1,8 @@
 /* 
-  Portfolio Website CSS
-  Author: Pragadeesh Srinivasan
-  Version: 1.0.0
-  Description: A comprehensive, responsive CSS for a professional portfolio website
+  Portfolio Website CSS - 3D Stylish Edition
+  Author: Pragadeesh Srinivasan (enhanced for 3D style)
+  Version: 1.1.0 (3D update)
+  Description: A comprehensive, responsive CSS with 3D-inspired styling for a professional portfolio website
 */
 
 /* ========= RESET & BASE STYLES ========= */
@@ -13,7 +13,7 @@
 }
 
 :root {
-  /* Color Variables */
+  /* Color Variables (kept from original) */
   --primary-color: #4361ee;
   --primary-light: #5a73f2;
   --primary-dark: #3b54d3;
@@ -24,9 +24,9 @@
   --accent-light: #6fdbfa;
   --accent-dark: #38b6db;
   
-  /* Neutral Colors */
+  /* Neutral Colors (kept from original) */
   --dark-bg: #121212;
-  --light-bg: #f8f9fa;
+  --light-bg: #f8f9fa; /* Consider a slightly more textured default background */
   --text-dark: #212529;
   --text-light: #f8f9fa;
   --gray-100: #f8f9fa;
@@ -39,40 +39,48 @@
   --gray-800: #343a40;
   --gray-900: #212529;
   
-  /* Shadows */
+  /* Shadows - Enhanced for 3D effects */
   --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.07);
+  --shadow-xl: 0 20px 35px rgba(0,0,0,0.1), 0 8px 15px rgba(0,0,0,0.07); /* Added for more depth */
+  --shadow-inset: inset 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-3d-lift: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08); /* For lifted elements */
   
-  /* Border Radius */
+  /* Border Radius (kept from original) */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
   --radius-full: 9999px;
   
-  /* Transitions */
-  --transition-fast: all 0.2s ease;
-  --transition-normal: all 0.3s ease;
-  --transition-slow: all 0.5s ease;
+  /* Transitions (kept from original) */
+  --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Slightly snappier cubic-bezier */
+  --transition-normal: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   
-  /* Spacing (8px grid) */
-  --space-1: 0.25rem;  /* 4px */
-  --space-2: 0.5rem;   /* 8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  --space-5: 1.5rem;   /* 24px */
-  --space-6: 2rem;     /* 32px */
-  --space-7: 2.5rem;   /* 40px */
-  --space-8: 3rem;     /* 48px */
+  /* Spacing (kept from original) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
   
-  /* Typography */
+  /* Typography (kept from original) */
   --font-family-main: 'Inter', system-ui, -apple-system, sans-serif;
   --font-family-headings: 'Poppins', 'Inter', system-ui, sans-serif;
   
-  /* Z-index layers */
+  /* Z-index layers (kept from original) */
   --z-navbar: 1000;
   --z-modal: 2000;
   --z-tooltip: 3000;
+
+  /* 3D Specific Variables */
+  --perspective-base: 1000px; /* Base perspective for containers */
+  --rotate-sm: 3deg;
+  --rotate-md: 7deg;
 }
 
 html {
@@ -81,16 +89,19 @@ html {
 }
 
 html, body {
-    width: 100%;
-    overflow-x: hidden; /* Keep this on body, ensure html also has it */
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   font-family: var(--font-family-main);
-  line-height: 1.5;
+  line-height: 1.6; /* Increased slightly for better readability */
   color: var(--text-dark);
   background-color: var(--light-bg);
-  /* overflow-x: hidden; */ /* Moved to html, body rule */
+  /* Optional: Add a subtle texture or very light gradient for depth */
+  /* background-image: linear-gradient(to bottom right, var(--light-bg), #f3f4f6); */
+  perspective: var(--perspective-base); /* Applied to body for global perspective context */
+  transform-style: preserve-3d; /* To allow children to be positioned in 3D space */
 }
 
 img {
@@ -118,6 +129,8 @@ button {
 
 section {
   padding: var(--space-7) 0;
+  position: relative; /* For z-index stacking and potential pseudo-elements for depth */
+  /* perspective: var(--perspective-base); */ /* Moved to body, or add here per section if different effects needed */
 }
 
 .container {
@@ -127,31 +140,37 @@ section {
   padding: 0 var(--space-4);
 }
 
-/* ========= TYPOGRAPHY ========= */
+/* ========= TYPOGRAPHY (with subtle 3D enhancements) ========= */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-headings);
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: var(--space-4);
   color: var(--text-dark);
+  /* Subtle text shadow for depth, use sparingly or on specific headings */
+  /* text-shadow: 1px 1px 0px rgba(0,0,0,0.05); */
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 2.8rem; /* Slightly increased */
   font-weight: 700;
+  text-shadow: 
+    1px 1px 0 var(--gray-200), /* Light edge */
+    2px 2px 0 var(--gray-300), /* Slightly darker edge for depth */
+    3px 3px 3px rgba(0,0,0,0.05); /* Subtle drop shadow */
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 2.2rem; /* Slightly increased */
   position: relative;
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.6rem; /* Slightly increased */
 }
 
 h4 {
-  font-size: 1.25rem;
+  font-size: 1.3rem; /* Slightly increased */
 }
 
 p {
@@ -161,42 +180,49 @@ p {
 .highlight {
   color: var(--primary-color);
   font-weight: 600;
+  /* background: linear-gradient(to top, rgba(var(--primary-light-rgb),0.2) 0%, rgba(var(--primary-light-rgb),0.2) 30%, transparent 30%); */
+  /* If you convert primary-light to RGB for rgba, you can create nice underlays */
 }
 
 .section-title {
   text-align: center;
   margin-bottom: var(--space-6);
+  /* transform: translateZ(10px); Potential 3D lift for title blocks */
 }
 
 .section-title h2 {
   display: inline-block;
   position: relative;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.03);
 }
 
 .underline {
   display: block;
   width: 80px;
-  height: 4px;
-  background: var(--primary-color);
+  height: 5px; /* Thicker underline */
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); /* Gradient underline */
   margin: var(--space-3) auto;
   border-radius: var(--radius-full);
+  box-shadow: 0 2px 5px rgba(var(--primary-color-rgb), 0.3); /* Assumes primary-color is converted to RGB values */
 }
 
-/* ========= HEADER & NAVIGATION ========= */
+/* ========= HEADER & NAVIGATION (with depth) ========= */
 header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  box-shadow: var(--shadow-sm);
+  background-color: rgba(255, 255, 255, 0.85); /* Slightly more transparency for blur */
+  backdrop-filter: blur(10px) saturate(150%); /* Enhanced blur */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* More distinct shadow initially */
   z-index: var(--z-navbar);
-  transition: var(--transition-normal);
+  transition: var(--transition-normal), transform 0.3s ease;
+  /* transform: translateZ(50px); Gives a floating feel */
 }
 
 header.scrolled {
   box-shadow: var(--shadow-md);
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .navbar {
@@ -211,20 +237,27 @@ header.scrolled {
 .logo {
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--primary-color);
-  background: var(--primary-light);
+  background: linear-gradient(45deg, var(--primary-light), var(--accent-light)); /* Gradient logo bg */
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 44px; /* Slightly larger */
+  height: 44px;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: var(--space-3);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: var(--transition-normal);
+  /* transform: rotateY(0deg) translateZ(5px);  */
+}
+.logo:hover {
+  transform: scale(1.05) rotate(5deg); /* Subtle hover effect */
+  box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.3);
 }
 
+
 .navbar span.highlight {
-  display: none;
+  display: none; /* Or style if you plan to show it on larger screens */
 }
 
 .nav-links ul {
@@ -237,22 +270,25 @@ header.scrolled {
   color: var(--gray-700);
   font-weight: 500;
   padding: var(--space-2) 0;
+  /* transform: translateZ(2px); Links appear slightly raised */
 }
 
 .nav-links a:hover,
 .nav-links a.active {
   color: var(--primary-color);
+  /* transform: translateY(-2px) translateZ(5px); Lifts on hover */
 }
 
 .nav-links a::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -2px; /* Slightly below for 3D */
   left: 0;
   width: 0;
-  height: 2px;
+  height: 3px; /* Thicker underline */
   background-color: var(--primary-color);
   transition: var(--transition-normal);
+  border-radius: 1px;
 }
 
 .nav-links a:hover::after,
@@ -264,51 +300,73 @@ header.scrolled {
   display: none;
   font-size: 1.5rem;
   color: var(--gray-800);
+  transition: var(--transition-normal);
+}
+.nav-toggle:hover {
+  transform: scale(1.1) rotate(5deg); /* Subtle interaction */
 }
 
-/* ========= HERO SECTION ========= */
+
+/* ========= HERO SECTION (with 3D text elements) ========= */
 .hero {
-  min-height: 10vh;
+  min-height: 100vh; /* Adjust if too tall, often 80-90vh is good */
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(76, 201, 240, 0.1) 100%);
-  padding-top: 80px;
+  justify-content: center; /* Center content within the hero space */
+  background: 
+    /* radial-gradient(ellipse at bottom left, rgba(67, 97, 238, 0.1), transparent 50%),
+    radial-gradient(ellipse at top right, rgba(76, 201, 240, 0.1), transparent 50%), */
+    linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(76, 201, 240, 0.1) 100%);
+  padding-top: 80px; /* Account for fixed header */
+  overflow: hidden; /* If using shapes that might overflow */
+  perspective: var(--perspective-base); /* Hero specific perspective */
 }
 
 .hero-content {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
+  transform-style: preserve-3d; /* Allow children to have 3D transforms */
 }
 
 .hero h1 {
-  font-size: 3rem;
+  font-size: 3.2rem; /* Larger for impact */
   margin-bottom: var(--space-3);
+  /* transform: rotateX(10deg) translateZ(20px); 3D tilt for main title */
+  text-shadow: 2px 2px 0 var(--gray-300), 4px 4px 8px rgba(0,0,0,0.1);
 }
 
-.hero h2 {
-  font-size: 2rem;
+.hero h2 { /* Subtitle, typically for the typewriter */
+  font-size: 2.2rem;
   margin-bottom: var(--space-4);
-  color: var(--secondary-color);
-  min-height: 2.5rem;
+  color: var(--secondary-dark);
+  min-height: 3rem; /* To accommodate text height variations */
+  font-weight: 500;
+  /* transform: rotateX(5deg) translateZ(10px); Subtle tilt */
 }
 
 .hero p {
   font-size: 1.25rem;
   color: var(--gray-700);
   margin-bottom: var(--space-5);
-  max-width: 600px;
+  max-width: 650px; /* Slightly wider paragraph */
   margin-left: auto;
   margin-right: auto;
+  /* transform: translateZ(5px); */
 }
 
 .typewriter .txt-rotate {
   position: relative;
+  /* Consider adding a subtle gradient or texture to the rotating text */
+  /* background-image: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; */
 }
 
 .typewriter .txt-rotate::after {
   content: '|';
   animation: blink 1s infinite;
+  /* color: var(--secondary-color); */
 }
 
 @keyframes blink {
@@ -318,137 +376,185 @@ header.scrolled {
 
 .hero-buttons {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-4); /* Increased gap */
   justify-content: center;
   margin-bottom: var(--space-5);
+  /* transform: translateZ(15px); */
 }
 
 .social-icons {
   display: flex;
   gap: var(--space-3);
   justify-content: center;
+  /* transform: translateZ(10px); */
 }
 
 .social-icons a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px; /* Larger icons */
+  height: 44px;
   border-radius: var(--radius-full);
-  background-color: var(--gray-200);
+  background-color: rgba(255,255,255,0.7); /* Slightly transparent background */
   color: var(--gray-700);
-  transition: var(--transition-normal);
+  box-shadow: var(--shadow-sm), inset 0 1px 2px rgba(255,255,255,0.5); /* More depth */
+  transition: var(--transition-normal), transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .social-icons a:hover {
   background-color: var(--primary-color);
   color: white;
-  transform: translateY(-3px);
+  transform: translateY(-4px) scale(1.05); /* Lift and scale */
+  box-shadow: 0 5px 10px rgba(var(--primary-color-rgb), 0.3);
 }
 
-/* ========= BUTTONS ========= */
+/* ========= BUTTONS (with 3D press effect) ========= */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-md);
-  font-weight: 500;
-  transition: var(--transition-normal);
+  font-weight: 600; /* Bolder text */
+  transition: var(--transition-fast), box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+  /* transform: translateZ(5px); */ /* Base lift */
+  border: 1px solid transparent; /* For hover effects */
 }
 
 .btn i, .btn svg {
   margin-left: var(--space-2);
+  transition: transform 0.2s ease;
+}
+.btn:hover i, .btn:hover svg {
+    transform: translateX(2px);
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
   color: white;
-  box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+  box-shadow: 0 4px 8px rgba(var(--primary-color-rgb), 0.25), /* Color shadow */
+              0 2px 4px rgba(0,0,0,0.1); /* Ambient shadow */
+  border-color: var(--primary-dark);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(67, 97, 238, 0.25);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+  transform: translateY(-3px) /* scale(1.02) */; /* Lift on hover */
+  box-shadow: 0 6px 12px rgba(var(--primary-color-rgb), 0.3),
+              0 3px 6px rgba(0,0,0,0.1);
+}
+.btn-primary:active {
+  transform: translateY(1px) /* scale(0.98) */; /* Pressed down effect */
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 1px 2px rgba(var(--primary-color-rgb), 0.2);
 }
 
+
 .btn-secondary {
-  background-color: var(--gray-200);
-  color: var(--gray-800);
+  background-color: var(--gray-100); /* Or white for cleaner look */
+  color: var(--text-dark);
+  border: 1px solid var(--gray-300);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-  background-color: var(--gray-300);
-  transform: translateY(-2px);
+  background-color: var(--gray-200);
+  transform: translateY(-3px) /* scale(1.02) */;
+  border-color: var(--gray-400);
+  box-shadow: var(--shadow-md);
 }
+.btn-secondary:active {
+  transform: translateY(1px) /* scale(0.98) */;
+  background-color: var(--gray-300);
+  box-shadow: var(--shadow-inset);
+}
+
 
 .download-cv {
   margin-top: var(--space-4);
 }
 
-/* ========= ABOUT SECTION ========= */
+/* ========= ABOUT SECTION (Image perspective, content flow) ========= */
 .about {
-  background-color: white;
+  background-color: white; /* Clean backdrop for profile */
 }
 
 .about-content {
   display: flex;
-  gap: var(--space-6);
+  gap: var(--space-7); /* Increased gap for more breathing room */
   align-items: center;
+  perspective: 800px; /* Perspective for items within about content */
 }
 
 .about-image {
   flex: 1;
   position: relative;
+  transform-style: preserve-3d; /* Allows 3D positioning of profile-img */
 }
 
 .profile-img {
   width: 100%;
-  max-width: 360px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  max-width: 380px; /* Slightly larger */
+  border-radius: var(--radius-lg); /* Or try var(--radius-xl) for softer edges */
+  box-shadow: 
+    0 15px 30px rgba(0,0,0,0.15), /* Softer, larger shadow */
+    0 5px 10px rgba(0,0,0,0.1);
   margin: 0 auto;
+  transition: var(--transition-slow);
+  transform: rotateY(-5deg) rotateX(2deg) translateZ(10px); /* Subtle initial 3D tilt */
 }
+.about-image:hover .profile-img {
+  transform: rotateY(0deg) rotateX(0deg) translateZ(20px) scale(1.02); /* Straightens and lifts */
+  box-shadow: var(--shadow-3d-lift);
+}
+
 
 .experience-box {
   position: absolute;
-  bottom: -30px;
-  right: 0;
-  background: white;
+  bottom: -20px; /* Adjust based on image size */
+  left: 50%;
+  transform: translateX(-50%) translateZ(30px) rotateX(-5deg); /* Lifted and tilted */
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-3);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-3) var(--space-4);
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  transition: var(--transition-slow);
 }
+.about-image:hover .experience-box {
+    transform: translateX(-50%) translateZ(40px) rotateX(0deg);
+}
+
 
 .experience-item {
   text-align: center;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2);
 }
 
 .experience-item h3 {
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  margin-bottom: 0;
+  font-size: 1.7rem;
+  color: var(--primary-dark);
+  margin-bottom: var(--space-1);
 }
 
 .experience-item p {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--gray-600);
   margin-bottom: 0;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .about-info {
-  flex: 1;
+  flex: 1.2; /* Give slightly more space to text */
 }
 
-.about-info h3 {
+.about-info h3 { /* This could be a subtitle like "A Bit About Me" */
   color: var(--gray-800);
   margin-bottom: var(--space-4);
+  font-size: 1.8rem;
 }
 
 .info-list {
@@ -461,25 +567,33 @@ header.scrolled {
 }
 
 .info-title {
-  flex: 0 0 120px;
+  flex: 0 0 130px; /* Wider for longer labels */
   color: var(--gray-800);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .info-title i {
   margin-right: var(--space-2);
   color: var(--primary-color);
+  width: 20px; /* Align icons */
+  text-align: center;
+}
+.info-text { /* Class for the actual info text */
+    color: var(--gray-700);
 }
 
-/* ========= SKILLS SECTION ========= */
+
+/* ========= SKILLS SECTION (3D cards/items) ========= */
 .skills {
   background-color: var(--gray-100);
+  /* background-image: linear-gradient(to bottom, var(--gray-100), white); /* Subtle gradient */
 }
 
 .skills-wrapper {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+  perspective: 800px;
 }
 
 .skills-categories {
@@ -500,31 +614,38 @@ header.scrolled {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  transition: var(--transition-normal);
+  transition: var(--transition-normal), transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .category-selector:hover {
   border-color: var(--primary-color);
   color: var(--primary-color);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-md);
 }
 
 .category-selector.active {
   background: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
+  box-shadow: 0 3px 8px rgba(var(--primary-color-rgb), 0.3);
+  transform: translateY(-1px);
 }
+
 
 .skills-content {
   background: white;
   border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-md);
+  padding: var(--space-6); /* Increased padding */
+  box-shadow: var(--shadow-lg);
+  transform-style: preserve-3d;
 }
 
 .skills-group {
   display: none;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Slightly wider items */
+  gap: var(--space-5);
 }
 
 .skills-group.active {
@@ -535,19 +656,32 @@ header.scrolled {
   display: flex;
   gap: var(--space-3);
   align-items: center;
+  background: var(--gray-100); /* Subtle background for item itself */
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+  /* transform: translateZ(5px); */
 }
+.skill-item:hover {
+    transform: scale(1.03) translateZ(15px) rotateX(2deg);
+    box-shadow: var(--shadow-lg);
+    background: white;
+}
+
 
 .skill-icon {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+  width: 48px; /* Larger icon */
+  height: 48px;
+  border-radius: var(--radius-md); /* Match item radius */
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-color) 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.5rem; /* Larger icon font */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .skill-info {
@@ -555,25 +689,27 @@ header.scrolled {
 }
 
 .skill-info h3 {
-  font-size: 1rem;
-  margin-bottom: var(--space-1);
+  font-size: 1.1rem; /* Slightly larger */
+  margin-bottom: var(--space-2); /* More space */
 }
 
 .skill-bar {
   width: 100%;
-  height: 6px;
-  background-color: var(--gray-200);
+  height: 8px; /* Thicker bar */
+  background-color: var(--gray-300); /* Darker base */
   border-radius: var(--radius-full);
   overflow: hidden;
+  box-shadow: var(--shadow-inset);
 }
 
 .skill-progress {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-light) 100%);
   border-radius: var(--radius-full);
+  transition: width 0.8s ease-in-out; /* Animate progress bar */
 }
 
-/* ========= PROJECTS SECTION ========= */
+/* ========= PROJECTS SECTION (3D cards with perspective) ========= */
 .projects {
   background-color: white;
 }
@@ -593,21 +729,25 @@ header.scrolled {
   color: var(--gray-700);
   font-weight: 500;
   transition: var(--transition-normal);
+  box-shadow: var(--shadow-sm);
 }
 
 .filter-btn:hover {
   background: var(--gray-300);
+  transform: translateY(-2px);
 }
 
 .filter-btn.active {
   background: var(--primary-color);
   color: white;
+  box-shadow: 0 2px 6px rgba(var(--primary-color-rgb), 0.3);
 }
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Wider cards */
+  gap: var(--space-6); /* Increased gap */
+  perspective: 1200px; /* Perspective for the grid */
 }
 
 .project-card {
@@ -615,19 +755,21 @@ header.scrolled {
   overflow: hidden;
   background: white;
   box-shadow: var(--shadow-md);
-  transition: var(--transition-normal);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+  transform-style: preserve-3d; /* Crucial for 3D effects within card */
+  position: relative; /* For absolute positioning of overlay */
 }
 
 .project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-10px) rotateY(var(--rotate-sm)) scale(1.02); /* Dynamic hover */
+  box-shadow: var(--shadow-3d-lift);
 }
 
 .project-card.featured {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  max-width: 960px; /* Max width: approx 3 cards (3*300) + 2 gaps (2*30) if minmax(300px,1fr) is used */
+  grid-template-columns: 1.2fr 1fr; /* Give more space to image or info */
+  max-width: 1000px; /* Slightly larger featured card */
   margin-left: auto;
   margin-right: auto;
 }
@@ -635,22 +777,25 @@ header.scrolled {
 .project-image {
   position: relative;
   overflow: hidden;
-  height: 200px;
+  height: 220px; /* Taller images */
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0; /* Rounded top corners for image */
 }
-
 .project-card.featured .project-image {
   height: 100%;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg); /* Rounded left if image on left */
 }
+
 
 .project-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
 }
 
 .project-card:hover .project-image img {
-  transform: scale(1.05);
+  transform: scale(1.1); /* Zoom effect */
+  filter: brightness(0.9) saturate(1.1); /* Subtle filter change */
 }
 
 .project-overlay {
@@ -659,43 +804,49 @@ header.scrolled {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)); /* Softer overlay */
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: var(--transition-normal);
+  transition: opacity var(--transition-normal);
+  /* transform: translateZ(20px); Pulls overlay slightly forward */
+  pointer-events: none; /* Allows clicks to pass through unless links are targeted */
 }
-
 .project-card:hover .project-overlay {
   opacity: 1;
+  pointer-events: auto; /* Enable interaction with overlay links */
 }
+
 
 .project-links {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-4); /* Increased gap */
+  /* transform: translateZ(25px); Lifts links within overlay */
 }
 
 .project-link {
-  width: 40px;
-  height: 40px;
+  width: 44px; /* Larger links */
+  height: 44px;
   border-radius: var(--radius-full);
-  background: white;
+  background: rgba(255,255,255,0.9);
   color: var(--gray-800);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition-normal);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .project-link:hover {
   background: var(--primary-color);
   color: white;
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(var(--primary-color-rgb), 0.4);
 }
 
 .project-info {
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-5); /* More padding */
 }
 
 .project-tags {
@@ -706,27 +857,30 @@ header.scrolled {
 }
 
 .tag {
-  font-size: 0.75rem;
-  padding: 2px var(--space-2);
+  font-size: 0.8rem; /* Slightly larger */
+  padding: 3px var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--gray-200);
   color: var(--gray-700);
+  font-weight: 500;
 }
 
 .tag:first-child {
-  background: var(--primary-light);
+  background: linear-gradient(45deg, var(--primary-light), var(--accent-color));
   color: white;
+  box-shadow: 0 1px 3px rgba(var(--primary-color-rgb), 0.2);
 }
 
 .project-info h3 {
-  font-size: 1.25rem;
+  font-size: 1.35rem; /* Slightly larger */
   margin-bottom: var(--space-2);
 }
 
 .project-info p {
   color: var(--gray-700);
-  font-size: 0.9rem;
-  margin-bottom: var(--space-3);
+  font-size: 0.95rem; /* Slightly larger */
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
 }
 
 .project-tech {
@@ -736,8 +890,8 @@ header.scrolled {
 }
 
 .project-tech span {
-  font-size: 0.75rem;
-  padding: 2px var(--space-2);
+  font-size: 0.8rem; /* Slightly larger */
+  padding: 3px var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--gray-100);
   color: var(--gray-600);
@@ -748,7 +902,7 @@ header.scrolled {
   margin-top: var(--space-6);
 }
 
-/* ========= EDUCATION SECTION ========= */
+/* ========= EDUCATION SECTION (3D Timeline Elements) ========= */
 .education {
   background-color: var(--gray-100);
 }
@@ -757,26 +911,31 @@ header.scrolled {
   position: relative;
   max-width: 900px;
   margin: 0 auto;
+  padding: var(--space-4) 0; /* Add padding to avoid content touching edge */
+  /* perspective: 800px; /* Perspective for timeline items */
 }
 
-.timeline::before {
+.timeline::before { /* The central line */
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 2px;
-  background: var(--gray-300);
+  width: 4px; /* Thicker line */
+  background: linear-gradient(to bottom, var(--gray-300), var(--gray-400)); /* Gradient line */
   transform: translateX(-50%);
+  border-radius: 2px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Subtle glow to line */
 }
 
 .timeline-wrapper {
   position: relative;
+  /* transform-style: preserve-3d; */
 }
 
 .timeline-item {
   display: flex;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-7); /* Increased gap */
   position: relative;
 }
 
@@ -792,71 +951,93 @@ header.scrolled {
   position: absolute;
   top: 0;
   left: 50%;
-  width: 40px;
-  height: 40px;
+  width: 44px; /* Larger icon */
+  height: 44px;
   background: white;
-  border: 2px solid var(--primary-color);
+  border: 3px solid var(--primary-color); /* Thicker border */
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary-color);
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(10px) rotateY(0deg); /* Lifted and can rotate */
   z-index: 1;
+  box-shadow: 0 0 10px rgba(var(--primary-color-rgb), 0.3), var(--shadow-sm);
+  transition: var(--transition-normal);
 }
+.timeline-item:hover .timeline-icon {
+    transform: translateX(-50%) translateZ(15px) rotateY(15deg) scale(1.05);
+    border-color: var(--accent-color);
+}
+
 
 .timeline-content {
-  width: calc(50% - 40px);
-  padding: var(--space-4);
+  width: calc(50% - 45px); /* Adjust based on icon and spacing */
+  padding: var(--space-4) var(--space-5);
   background: white;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg); /* Softer radius */
   box-shadow: var(--shadow-md);
   position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  border-top: 3px solid var(--primary-light); /* Accent border */
 }
+.timeline-item:hover .timeline-content {
+    transform: translateY(-5px) rotateX(1deg); /* rotateY based on side? */
+    box-shadow: var(--shadow-xl);
+}
+.timeline-item:nth-child(odd):hover .timeline-content { transform: translateY(-5px) rotateY(-2deg) rotateX(1deg); }
+.timeline-item:nth-child(even):hover .timeline-content { transform: translateY(-5px) rotateY(2deg) rotateX(1deg); }
 
-.timeline-content::before {
+
+.timeline-content::before { /* Connector stem from content to main line */
   content: '';
   position: absolute;
-  top: 15px;
-  width: 20px;
-  height: 2px;
-  background: var(--gray-300);
+  top: 18px; /* Align with center of icon */
+  width: 25px; /* Longer stem */
+  height: 3px;
+  background: var(--gray-400);
+  border-radius: 1px;
 }
 
 .timeline-item:nth-child(odd) .timeline-content::before {
-  right: -20px;
+  right: -25px; /* Stem on right */
 }
 
 .timeline-item:nth-child(even) .timeline-content::before {
-  left: -20px;
+  left: -25px; /* Stem on left */
 }
 
 .timeline-date {
   display: inline-block;
-  padding: var(--space-1) var(--space-3);
-  background: var(--primary-color);
+  padding: var(--space-2) var(--space-3); /* More padding */
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
   color: white;
-  border-radius: var(--radius-full);
-  font-size: 0.85rem;
-  margin-bottom: var(--space-3);
-}
-
-.timeline-content h3 {
-  font-size: 1.25rem;
-  margin-bottom: var(--space-1);
-}
-
-.timeline-content h4 {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--gray-600);
-  margin-bottom: var(--space-3);
-}
-
-.timeline-content p {
-  color: var(--gray-700);
+  border-radius: var(--radius-sm); /* Match tags if desired, or keep full */
   font-size: 0.9rem;
   margin-bottom: var(--space-3);
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(var(--primary-color-rgb),0.2);
+}
+
+.timeline-content h3 { /* Degree/Course Title */
+  font-size: 1.35rem;
+  margin-bottom: var(--space-1);
+  color: var(--primary-dark);
+}
+
+.timeline-content h4 { /* Institution Name */
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: var(--space-3);
+}
+
+.timeline-content p { /* Description */
+  color: var(--gray-700);
+  font-size: 0.95rem;
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
 }
 
 .timeline-tags {
@@ -866,22 +1047,22 @@ header.scrolled {
 }
 
 .timeline-tags span {
-  font-size: 0.75rem;
-  padding: 2px var(--space-2);
+  font-size: 0.8rem;
+  padding: 3px var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--gray-200);
   color: var(--gray-700);
 }
 
-/* ========= CONTACT SECTION ========= */
+/* ========= CONTACT SECTION (3D form elements) ========= */
 .contact {
   background-color: white;
 }
 
 .contact-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
+  grid-template-columns: 1fr 1.2fr; /* Give more space to form if complex */
+  gap: var(--space-7); /* Wider gap */
 }
 
 .contact-info {
@@ -890,8 +1071,9 @@ header.scrolled {
 }
 
 .contact-info h3 {
-  font-size: 1.75rem;
-  margin-bottom: var(--space-3);
+  font-size: 1.85rem; /* Larger title */
+  margin-bottom: var(--space-4);
+  /* transform: translateZ(10px); */
 }
 
 .contact-details {
@@ -900,39 +1082,51 @@ header.scrolled {
 
 .contact-item {
   display: flex;
-  margin-bottom: var(--space-4);
-  gap: var(--space-3);
+  margin-bottom: var(--space-5); /* More space between items */
+  gap: var(--space-4); /* Wider gap */
+  align-items: center; /* Vertically align icon and text */
 }
 
 .contact-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  background: var(--primary-light);
+  width: 48px; /* Larger icon */
+  height: 48px;
+  border-radius: var(--radius-md); /* Match input fields perhaps */
+  background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(var(--primary-color-rgb),0.2);
+  transition: var(--transition-normal);
+}
+.contact-item:hover .contact-icon {
+    transform: scale(1.05) rotate(-5deg);
 }
 
 .contact-text h4 {
-  font-size: 1rem;
+  font-size: 1.1rem; /* Larger text */
   margin-bottom: var(--space-1);
+  font-weight: 600;
 }
 
-.contact-text p {
+.contact-text p, .contact-text a {
   color: var(--gray-700);
   margin-bottom: 0;
+  font-size: 0.95rem;
+}
+.contact-text a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
 }
 
-.social-links {
+.social-links { /* Re-using .social-icons styles, perhaps give unique name or ensure compatibility */
   display: flex;
   gap: var(--space-3);
-  margin-top: auto;
+  margin-top: auto; /* Pushes to bottom */
 }
 
-.social-link {
+.social-link { /* Same as .social-icons a for consistency, could merge */
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
@@ -943,24 +1137,26 @@ header.scrolled {
   justify-content: center;
   transition: var(--transition-normal);
 }
-
 .social-link:hover {
   background: var(--primary-color);
   color: white;
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.05);
 }
+
 
 .contact-form {
   background: var(--gray-100);
-  padding: var(--space-5);
+  padding: var(--space-6); /* More padding */
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); /* More prominent shadow for form */
 }
 
 .form-group {
   margin-bottom: var(--space-4);
+  position: relative; /* For potential absolute positioned labels if not sr-only */
 }
 
-.form-group label.sr-only {
+.form-group label.sr-only { /* Keep for accessibility */
   position: absolute;
   width: 1px;
   height: 1px;
@@ -975,50 +1171,81 @@ header.scrolled {
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4); /* More padding */
   border: 1px solid var(--gray-300);
   border-radius: var(--radius-md);
   background: white;
-  transition: var(--transition-normal);
+  transition: var(--transition-normal), box-shadow 0.2s ease;
   font-family: var(--font-family-main);
+  font-size: 1rem; /* Clearer input text */
+  box-shadow: var(--shadow-inset); /* Subtle inset feel */
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+  background-color: #fff; /* Ensure bg is white on focus */
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2), /* Focus ring */
+              inset 0 1px 2px rgba(0,0,0,0.1); /* More pronounced inset on focus */
+}
+.form-group textarea {
+    min-height: 150px; /* Good default height for textarea */
 }
 
-/* ========= FOOTER ========= */
+/* Styles for a send button within the form */
+.form-group .btn-primary { /* Make form button full width or align */
+    width: 100%; 
+    padding: var(--space-3) var(--space-4);
+}
+
+
+/* ========= FOOTER (subtle depth) ========= */
 .footer {
-  background: var(--gray-800);
-  color: white;
-  padding: var(--space-5) 0;
+  background: var(--gray-900); /* Darker footer for contrast */
+  color: var(--gray-300); /* Lighter text */
+  padding: var(--space-6) 0; /* More padding */
   text-align: center;
+  border-top: 4px solid var(--primary-dark); /* Top accent border */
+  /* transform: translateZ(-10px); Pushes footer back slightly */
 }
 
 .footer p {
   margin-bottom: var(--space-2);
+  font-size: 0.95rem;
+}
+.footer a {
+    color: var(--accent-light);
+    font-weight: 500;
+}
+.footer a:hover {
+    text-decoration: underline;
+    color: white;
 }
 
-/* ========= ANIMATIONS ========= */
-@keyframes fadeIn {
+/* ========= ANIMATIONS (Use with AOS or similar scroll library) ========= */
+@keyframes fadeIn { /* Keep generic fadeIn */
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-50px); }
-  to { opacity: 1; transform: translateX(0); }
+@keyframes cardLift { /* For card-like elements on scroll reveal */
+  from { opacity: 0; transform: translateY(40px) rotateX(-10deg); }
+  to { opacity: 1; transform: translateY(0) rotateX(0deg); }
 }
 
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(50px); }
-  to { opacity: 1; transform: translateX(0); }
+/* Apply to sections or specific animated elements for more 3D feel with AOS */
+/* [data-aos="fade-up"] {
+  transform: translateY(50px) translateZ(-50px) rotateX(15deg);
+  opacity: 0;
+  transition-property: transform, opacity;
 }
+[data-aos="fade-up"].aos-animate {
+  transform: translateY(0) translateZ(0) rotateX(0deg);
+  opacity: 1;
+} */
 
-/* ========= RESPONSIVE DESIGN ========= */
+/* ========= RESPONSIVE DESIGN (Adjust 3D effects for smaller screens) ========= */
 @media screen and (max-width: 992px) {
   html {
     font-size: 15px;
@@ -1026,44 +1253,52 @@ header.scrolled {
   
   .about-content {
     flex-direction: column;
+    text-align: center; /* Center text when image stacks on top */
   }
-  
+  .about-image {
+    margin-bottom: var(--space-7); /* More space after image when stacked */
+  }
+  .profile-img {
+    transform: rotateY(0deg) rotateX(0deg) translateZ(0px); /* Neutralize 3D tilt on stack */
+  }
+  .about-info {
+      text-align: left; /* Or center if preferred */
+  }
+
   .timeline::before {
-    left: 30px;
+    left: 30px; /* Standard responsive timeline */
   }
-  
-  .timeline-item {
-    justify-content: flex-start !important;
-  }
-  
-  .timeline-icon {
-    left: 30px;
-  }
-  
+  .timeline-item { justify-content: flex-start !important; }
+  .timeline-icon { left: 30px; transform: translateX(-50%) translateZ(0); } /* Reset Z transform */
   .timeline-content {
     width: calc(100% - 70px);
     margin-left: 70px;
+    transform: none !important; /* Disable 3D hover effects on smaller screens if problematic */
   }
-  
   .timeline-item:nth-child(odd) .timeline-content::before,
-  .timeline-item:nth-child(even) .timeline-content::before {
-    left: -20px;
-  }
+  .timeline-item:nth-child(even) .timeline-content::before { left: -20px; }
   
   .contact-wrapper {
     grid-template-columns: 1fr;
   }
   
   .project-card.featured {
-    grid-template-columns: 1fr; /* Internal layout becomes single column */
-    grid-column: auto; /* Stop spanning when its internal layout stacks, making it behave like a regular card in the flow */
+    grid-template-columns: 1fr;
+    grid-column: auto;
   }
-  
   .project-card.featured .project-image {
-    height: 200px;
+    height: 220px; /* Consistent height */
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0; /* Top corners rounded */
   }
-  .navbar span.highlight { /* Remove display:none here as it's handled by max-width:768px */
+  .projects-grid {
+      perspective: none; /* Can remove perspective on smaller screens if it causes issues */
   }
+  .project-card:hover {
+      /* Simplify hover on smaller screens if performance is an issue or effects are too much */
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+  }
+
 }
 
 @media screen and (max-width: 768px) {
@@ -1071,214 +1306,142 @@ header.scrolled {
     padding: var(--space-3) var(--space-4);
   }
   
-  .navbar span.highlight {
-    display: none;
-  }
-  
   .nav-links {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 250px;
+    width: 280px; /* Wider mobile menu */
     height: 100vh;
-    background: white;
+    background: rgba(255,255,255,0.98); /* Near solid white */
     padding: var(--space-6) var(--space-4);
-    box-shadow: var(--shadow-lg);
-    transition: var(--transition-normal);
-    z-index: var(--z-navbar);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1); /* Shadow on the left */
+    transition: right 0.4s cubic-bezier(0.22, 0.61, 0.36, 1); /* Smooth transition for menu */
+    z-index: calc(var(--z-navbar) - 1); /* Below header, but above content */
   }
+  .nav-links.active { right: 0; }
+  .nav-links ul { flex-direction: column; gap: var(--space-5); } /* More spacing */
+  .nav-links a { font-size: 1.1rem; } /* Larger text in mobile nav */
   
-  .nav-links.active {
-    right: 0;
-  }
+  .nav-toggle { display: block; z-index: var(--z-navbar); /* Ensure toggle is above mobile menu */ }
   
-  .nav-links ul {
-    flex-direction: column;
-    gap: var(--space-4);
-  }
+  .hero { min-height: 80vh; } /* Reduce hero height */
+  .hero h1 { font-size: 2.6rem; transform: none; text-shadow: 1px 1px 0 var(--gray-300), 2px 2px 4px rgba(0,0,0,0.08); } /* Simplify 3D for mobile hero */
+  .hero h2 { font-size: 1.8rem; transform: none; }
+  .hero p { font-size: 1.1rem; }
   
-  .nav-toggle {
-    display: block;
-  }
+  .hero-buttons { flex-direction: column; gap: var(--space-3); align-items: center; }
+  .hero-buttons .btn { width: 80%; max-width: 300px; } /* Buttons stack nicely */
+
+  .skills-group { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; } /* Stack project cards */
   
-  .hero h1 {
-    font-size: 2.5rem;
-  }
-  
-  .hero h2 {
-    font-size: 1.75rem;
-  }
-  
-  .hero p {
-    font-size: 1.1rem;
-  }
-  
-  .hero-buttons {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-  
-  .skills-group {
-    grid-template-columns: 1fr;
-  }
-  
-  .projects-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .about-image {
-    margin-bottom: var(--space-8);
-  }
-  
+  .about-image { margin-bottom: var(--space-8); }
   .experience-box {
-    bottom: -50px;
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: -30px; /* Adjust as needed */
+    transform: translateX(-50%) translateZ(0px); /* Flatten for mobile */
+    box-shadow: var(--shadow-lg);
   }
 }
 
 @media screen and (max-width: 576px) {
-  html {
-    font-size: 14px;
-  }
+  html { font-size: 14px; }
   
-  .logo {
-    font-size: 1.5rem;
-    width: 35px;
-    height: 35px;
-  }
+  .logo { font-size: 1.5rem; width: 40px; height: 40px; } /* Consistent logo size */
   
-  .hero h1 {
-    font-size: 2rem;
-  }
+  .hero h1 { font-size: 2.2rem; }
+  .hero h2 { font-size: 1.6rem; }
   
-  .hero h2 {
-    font-size: 1.5rem;
-  }
+  .section-title h2 { font-size: 1.8rem; } /* Consistent section title size */
   
-  .section-title h2 {
-    font-size: 1.75rem;
-  }
+  .info-item { flex-direction: column; gap: var(--space-2); }
+  .info-title { flex: 0 0 auto; }
   
-  .info-item {
-    flex-direction: column;
-    gap: var(--space-1);
-  }
+  .project-filters { gap: var(--space-2); }
+  .filter-btn { padding: var(--space-2) var(--space-3); font-size: 0.9rem; } /* Smaller filter buttons */
   
-  .info-title {
-    flex: 0 0 auto;
-  }
+  .category-selector { padding: var(--space-2) var(--space-3); font-size: 0.9rem; } /* Smaller category selectors */
   
-  .project-filters {
-    gap: var(--space-2);
-  }
+  .timeline-content { padding: var(--space-3) var(--space-4); }
   
-  .filter-btn {
-    padding: var(--space-1) var(--space-3);
-    font-size: 0.85rem;
-  }
-  
-  .category-selector {
-    padding: var(--space-1) var(--space-3);
-    font-size: 0.85rem;
-  }
-  
-  .timeline-content {
-    padding: var(--space-3);
-  }
-  
-  .project-card {
-    /* max-width: 300px; */ /* Allow cards to use more width */
-    margin: 0 auto;
-  }
-
+  /* Resume FAB adjustments for smaller screens - Keep from original or integrate if needed */
   #resume-fab {
-    right: 16px; /* Reduce right offset for smaller screens */
-    /* Adjusted padding for the expanded state on small screens */
+    right: 16px;
     padding: 6px 10px; 
   }
-  /* Styles for when it's collapsed (small icon only) */
   #resume-fab.collapsed {
-    width: 28px; 
-    height: 28px;
-    padding: 0; /* Remove padding when collapsed */
+    width: 30px; /* Adjusted for consistency with new sizes */
+    height: 30px;
+    padding: 0;
   }
   .fab-text {
-    font-size: 13px; /* Further reduce font size */
-    margin-left: 8px; /* Reduce margin for less space needed */
+    font-size: 13px;
+    margin-left: 8px;
   }
   .eye-container {
-    width: 28px; /* Adjust eye icon size accordingly */
+    width: 28px; /* Updated, assuming this eye logic is relevant for the user */
     height: 20px;
   }
-
 }
 
-/* ========= JAVASCRIPT DEPENDENT CLASSES ========= */
+/* ========= JAVASCRIPT DEPENDENT CLASSES (Enhanced for AOS style 3D reveals) ========= */
 .hidden {
   display: none !important;
 }
 
-[data-aos="fade-up"] {
+/* Example: Configuring AOS attributes via CSS for more 3D feel */
+[data-aos] { /* Default transition for all AOS elements */
+    transition-duration: 0.6s !important; /* Standardize duration */
+    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+[data-aos="zoom-in-up-3d"] {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: scale(0.8) translateY(50px) rotateX(-20deg);
 }
-
-[data-aos="fade-up"].aos-animate {
+[data-aos="zoom-in-up-3d"].aos-animate {
   opacity: 1;
-  transform: translateY(0);
+  transform: scale(1) translateY(0) rotateX(0deg);
 }
 
-[data-aos="fade-right"] {
+[data-aos="fade-up-card"] { /* Specific for card lifts */
   opacity: 0;
-  transform: translateX(-30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(30px) translateZ(-30px) rotateX(5deg);
 }
-
-[data-aos="fade-right"].aos-animate {
+[data-aos="fade-up-card"].aos-animate {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0) translateZ(0px) rotateX(0deg);
 }
 
-[data-aos="fade-left"] {
-  opacity: 0;
-  transform: translateX(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
+/* ... other existing AOS related styles or new custom 3D ones ... */
 
-[data-aos="fade-left"].aos-animate {
-  opacity: 1;
-  transform: translateX(0);
-}
 
+/* Booking Success & Action Button Styles (kept from original, can be styled with 3D if needed) */
 .booking-success-message {
   background-color: #e6ffed;
   border: 1px solid #b7eb8f;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg); /* Consistent radius */
+  box-shadow: var(--shadow-lg); /* Consistent shadow */
   text-align: center;
   margin-top: 20px;
   animation: fadeIn 0.3s ease-in-out;
 }
 
 .success-icon {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   color: #28a745;
   margin-bottom: 10px;
 }
 
 .success-text {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: #155724;
   margin: 8px 0;
 }
 
 .success-subtext {
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: #155724;
   margin-bottom: 20px;
 }
@@ -1290,119 +1453,128 @@ header.scrolled {
   flex-wrap: wrap;
 }
 
-.action-button {
+.action-button { /* Assuming this is similar to .btn */
   padding: 10px 20px;
   font-size: 0.95rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md); /* Consistent radius */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition-fast), transform 0.2s ease, box-shadow 0.2s ease;
   background-color: #28a745;
   color: #fff;
+  box-shadow: 0 3px 6px rgba(40,167,69,0.3);
 }
-
 .action-button:hover {
   background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(33,136,56,0.4);
+}
+.action-button:active {
+  transform: translateY(0px);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+
+/* Resume FAB Styles (kept and slightly integrated from original) */
+/* These are highly specific; ensure variables align if modifying deeply */
+#resume-fab {
+    position: fixed;
+    top: 50%;
+    right: 24px;
+    transform: translateY(-50%) translateZ(100px); /* Important for FAB to float high */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif; /* Keep consistent or use var(--font-family-main) */
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: var(--z-navbar) + 10; /* Ensure it's above navbar if they overlap */
+    color: white;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, rgba(45, 55, 72, 0.85), rgba(26, 32, 44, 0.85));
+    border-radius: 12px; /* Softer radius for a modern FAB */
+    box-shadow: 
+        0 12px 25px rgba(0, 0, 0, 0.35), /* Stronger 3D shadow */
+        0 0 15px rgba(45, 55, 72, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px) saturate(180%);
 }
-        #resume-fab {
-            position: fixed;
-            top: 50%;
-            right: 24px;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 16px;
-            font-family: 'Arial', sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.025em;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-            color: white;
-            padding: 8px 12px;
-            background: linear-gradient(135deg, rgba(45, 55, 72, 0.8), rgba(26, 32, 44, 0.8));
-            border-radius: 12px;
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(45, 55, 72, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
 
-        #resume-fab.collapsed {
-            background: rgba(75, 85, 99, 0.3);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border: none;
-            padding: 0;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            justify-content: center;
-        }
+#resume-fab.collapsed {
+    background: rgba(55, 65, 81, 0.6); /* Darker collapsed background */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0;
+    border-radius: 50%;
+    width: 44px; /* Standard FAB size */
+    height: 44px;
+    justify-content: center;
+}
 
-        .fab-text {
-            margin-left: 12px;
-            white-space: nowrap;
-            opacity: 1;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: translateX(0);
-            font-size: 15px;
-        }
+.fab-text {
+    margin-left: 12px;
+    white-space: nowrap;
+    opacity: 1;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translateX(0) translateZ(2px); /* Text slightly forward */
+    font-size: 15px;
+}
 
-        #resume-fab.collapsed .fab-text {
-            opacity: 0;
-            transform: translateX(20px);
-            width: 0;
-            margin-left: 0;
-        }
+#resume-fab.collapsed .fab-text {
+    opacity: 0;
+    transform: translateX(20px) translateZ(0);
+    width: 0;
+    margin-left: 0;
+}
 
-        #resume-fab:hover {
-            transform: translateY(-50%) scale(1.08);
-            box-shadow: 
-                0 15px 40px rgba(0, 0, 0, 0.4),
-                0 0 30px rgba(45, 55, 72, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            background: linear-gradient(135deg, rgba(74, 85, 104, 0.8), rgba(45, 55, 72, 0.8));
-        }
+#resume-fab:hover {
+    transform: translateY(-50%) translateZ(110px) scale(1.08); /* Enhanced hover lift */
+    box-shadow: 
+        0 18px 35px rgba(0, 0, 0, 0.4),
+        0 0 25px rgba(45, 55, 72, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(74, 85, 104, 0.9), rgba(45, 55, 72, 0.9));
+}
 
-        #resume-fab:active {
-            transform: translateY(-50%) scale(0.95);
-            transition: all 0.15s ease;
-        }
+#resume-fab:active {
+    transform: translateY(-50%) translateZ(105px) scale(0.98); /* Press down effect */
+    transition: all 0.15s ease;
+}
 
-        #resume-fab::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.15),
-                transparent
-            );
-            transition: left 0.6s ease;
-        }
+/* Sheen effect from original - kept as is */
+#resume-fab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+#resume-fab:hover::before { left: 100%; }
 
-        #resume-fab:hover::before {
-            left: 100%;
-        }
+/* Eye animation related styles - kept as is */
+.eye-container {
+    width: 30px;
+    height: 22px;
+    position: relative;
+    transition: all 0.3s ease;
+    transform: translateZ(5px); /* Eye icon itself can be 3D */
+}
 
-        .eye-container {
-            width: 30px;
-            height: 22px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
+/* ... all other eye SVG styles from your original CSS ... */
+/* Eye parts, animations (humanBlink, sleepyBreathe) are assumed to be copied directly here. */
+/* As they are highly specific SVG styling, integrating them with broader 3D themes means ensuring they don't visually clash. */
+/* You can place the .eye-svg and its sub-element styles here directly */
         .eye-svg {
             width: 100%;
             height: 100%;
@@ -1488,3 +1660,11 @@ header.scrolled {
         .eye-container:not(.awake) .eye-closed-line {
             animation: sleepyBreathe 4s ease-in-out infinite;
         }
+/* Helper for RGB colors from HEX in variables if needed for shadows */
+/* :root {
+   --primary-color-rgb: 67, 97, 238;
+   --accent-color-rgb: 76, 201, 240;
+} */
+/* You would then use var(--primary-color-rgb) in rgba() like: */
+/* box-shadow: 0 5px 10px rgba(var(--primary-color-rgb), 0.3); */
+/* Make sure to define these RGB versions if you use this technique extensively. */
