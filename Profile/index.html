@@ -34,13 +34,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="playstation-logo.svg">
     <!-- Suggestion: Update to your actual favicon and path -->
     <!-- AOS CSS (Using cdnjs version 2.3.4) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
         integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w=="
         crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+    <link id="theme-link" rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
         integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
         crossorigin="anonymous">
@@ -54,25 +54,52 @@
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <!-- Header -->
-    <header>
+    <header style="position: fixed;">
         <nav class="navbar" aria-label="Main navigation">
-            <div class="logo">PS</div>
-            <span class="highlight"><strong>Pragadeesh Srinivasan</strong></span>
-            <div class="nav-links" id="navLinks">
-                <button class="nav-toggle" id="menuClose" aria-label="Close menu"><i class="fas fa-times"></i></button>
-                <ul>
-                    <li><a href="#home" class="active" aria-current="page"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="#about"><i class="fas fa-user"></i> About</a></li>
-                    <li><a href="#services"><i class="fas fa-briefcase"></i> Services</a></li>
-                    <li><a href="#skills"><i class="fas fa-tools"></i> Skills</a></li>
-                    <li><a href="#projects"><i class="fas fa-code"></i> Projects</a></li>
-                    <li><a href="#education"><i class="fas fa-graduation-cap"></i> Education</a></li>
-                    <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                </ul>
+            <!-- Left Group: Logo and Brand Name -->
+            <div class="navbar-brand-group" style="display: flex; align-items: center;">
+                <div class="logo" href="index.html"><img src="playstation-logo.svg" alt="Logo"></div>
+                <span class="highlight" style="margin-left: 10px;"> <!-- Adjusted margin, see CSS note below -->
+                    <strong>Pragadeesh Srinivasan</strong>
+                </span>
             </div>
-            <button class="nav-toggle" id="menuOpen" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+
+            <!-- Right Group: Navigation Links and Controls -->
+            <div class="navbar-controls-group" style="display: flex; align-items: center;">
+                <div class="nav-links" id="navLinks">
+                    <button class="nav-toggle" id="menuClose" aria-label="Close menu"><i
+                            class="fas fa-times"></i></button>
+                    <ul>
+                        <li><a href="#home" class="active" aria-current="page"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#about"><i class="fas fa-user"></i> About</a></li>
+                        <li><a href="#services"><i class="fas fa-briefcase"></i> Services</a></li>
+                        <li><a href="#skills"><i class="fas fa-tools"></i> Skills</a></li>
+                        <li><a href="#projects"><i class="fas fa-code"></i> Projects</a></li>
+                        <li><a href="#education"><i class="fas fa-graduation-cap"></i> Education</a></li>
+                        <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                    </ul>
+                </div>
+                <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" style="
+                    font-size: 24px;
+                    background: none;
+                    border: none;
+                    /* position: fixed; */
+                    cursor: pointer;
+                    color: #ffcc00; /* Consider making this color theme-adaptive */
+                    z-index: 1001; /* Ensures visibility above other navbar items */
+                    transition: opacity 0.3s ease;
+                    margin-left: 15px; /* Spacing from nav-links */
+                    ">
+                    <i id="theme-icon" class="fas fa-sun"></i>
+                </button>
+                <button class="nav-toggle" id="menuOpen" aria-label="Open menu" style="margin-left: 15px;">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </nav>
     </header>
+
+
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
@@ -921,7 +948,7 @@
                         creative problem solver, and
                         a passionate digital innovator dedicated to making an impact.</p>
                 </center>
-                <div class="certifications-section" id="certSection" style="display: none;">
+                <div class="certifications-section is-hidden" id="certSection">
                     <div class="cert-intro-message">
                         <p>
                             From web development and automation to data analysis and design — I turn ideas into

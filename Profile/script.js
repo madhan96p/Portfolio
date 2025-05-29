@@ -363,4 +363,31 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     goToSleep();
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeLink = document.getElementById('theme-link');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            themeLink.href = 'styles.css'; // dark mode CSS
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+            themeToggle.style.color = '#ddd'; // optional icon color for dark
+        } else {
+            themeLink.href = 'style.css'; // light mode CSS
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+            themeToggle.style.color = '#ffcc00'; // sun yellow for light mode
+        }
+        localStorage.setItem('theme', theme);
+    }
+
+    // Load saved theme or default to light
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = themeLink.href.includes('style.css') ? 'light' : 'dark';
+        setTheme(currentTheme === 'light' ? 'dark' : 'light');
+    });
+
 });

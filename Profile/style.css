@@ -244,8 +244,8 @@ header.scrolled {
 .logo {
   font-size: 1.8rem;
   font-weight: 700;
-  background: linear-gradient(45deg, var(--primary-light), var(--accent-light));
-  color: white;
+  /* background: linear-gradient(45deg, var(--primary-light), var(--accent-light)); */
+  /* color: white; */
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
@@ -258,7 +258,7 @@ header.scrolled {
 }
 
 .logo:hover {
-  transform: scale(1.05) rotate(5deg);
+  transform: scale(1.05) rotate(90deg);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
