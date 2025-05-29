@@ -213,25 +213,35 @@
         </div>
         <span class="fab-text">View Resume</span>
     </div>
+    <!-- View Services Button -->
+
+
     <!-- Services Section -->
     <section id="services" class="services-section">
-        <h2 class="section-title">Elevate Your Vision: Tailored Solutions for Success</h2>
-        <p class="section-intro">I craft innovative, data-driven solutions that transform challenges into opportunities,
-            empowering your business with precision and creativity.</p>
-        <div class="services-grid">
-            <!-- Service Card 1 -->
-            <div class="service-card">
-                <div class="service-card-inner">
-                    <div class="service-card-front" data-aos="fade-up"
-                        style="background-image: url('https://t4.ftcdn.net/jpg/04/78/00/19/360_F_478001969_uWqhldMSW1TAK7DSHzEgc3SL0s9ECMoE.jpg');">
-                        <div class="service-icon"><i class="fas fa-chart-line"></i></div>
-                        <h3>Data-Driven Insights</h3>
-                        <p>Turn raw data into strategic assets with advanced analytics and compelling visualizations.
-                        </p>
-                    </div>
-                    <div class="service-card-back">
-                        <ul>
-                            <li>Precision Data Processing with Pandas & NumPy</li>
+        <div style="text-align: center; margin: 2rem 0;">
+            <button id="toggleServicesBtn" class="btn btn-primary">
+                View My Services
+            </button>
+        </div>
+        <!-- Wrapper for the actual service content that will be toggled -->
+        <div id="services-content-wrapper">
+            <h2 class="section-title">Elevate Your Vision: Tailored Solutions for Success</h2>
+            <p class="section-intro">I craft innovative, data-driven solutions that transform challenges into opportunities,
+                empowering your business with precision and creativity.</p>
+            <div class="services-grid">
+                <!-- Service Card 1 -->
+                <div class="service-card">
+                    <div class="service-card-inner">
+                        <div class="service-card-front" data-aos="fade-up"
+                            style="background-image: url('https://t4.ftcdn.net/jpg/04/78/00/19/360_F_478001969_uWqhldMSW1TAK7DSHzEgc3SL0s9ECMoE.jpg');">
+                            <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+                            <h3>Data-Driven Insights</h3>
+                            <p>Turn raw data into strategic assets with advanced analytics and compelling visualizations.
+                            </p>
+                        </div>
+                        <div class="service-card-back">
+                            <ul>
+                                <li>Precision Data Processing with Pandas & NumPy</li>
                             <li>Dynamic Visualizations using Seaborn/Matplotlib</li>
                             <li>Deep-Dive Exploratory Data Analysis</li>
                             <li>Custom Reporting Solutions</li>
@@ -344,7 +354,8 @@
                 </div>
             </div>
         </div>
-    </section>
+            </div> <!-- Close services-content-wrapper -->
+ </section>
     <!-- Skills Section -->
     <section id="skills" class="skills">
         <div class="container">

@@ -389,5 +389,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const currentTheme = themeLink.href.includes('style.css') ? 'light' : 'dark';
         setTheme(currentTheme === 'light' ? 'dark' : 'light');
     });
+// Inside your script.js or relevant <script> tag
+
+// document.addEventListener('DOMContentLoaded', () => {
+    const toggleServicesBtn = document.getElementById('toggleServicesBtn');
+    const servicesContent = document.getElementById('services-content-wrapper'); // Target the new wrapper
+
+    if (toggleServicesBtn && servicesContent) {
+        // Ensure content starts hidden (CSS already does this, but good practice)
+        servicesContent.classList.remove('visible');
+
+        toggleServicesBtn.addEventListener('click', () => {
+            servicesContent.classList.toggle('visible'); // Toggle the .visible class
+
+            // Optional: Change button text based on visibility
+            if (servicesContent.classList.contains('visible')) {
+                toggleServicesBtn.textContent = 'Hide Services'; // Or use an icon
+            } else {
+                toggleServicesBtn.textContent = 'View My Services';
+            }
+        });
+    }
+// });
 
 });
