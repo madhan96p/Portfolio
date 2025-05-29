@@ -1,16 +1,5 @@
 // Main JavaScript for Pragadeesh Srinivasan's Portfolio
 // Certrificate toggle functionality
-function toggleCerts() {
-    const section = document.getElementById('certSection');
-    section.style.display = section.style.display === 'none' ? 'block' : 'none';
-}
-function filterCerts(category) {
-    const cards = document.querySelectorAll('.cert-card');
-    cards.forEach(card => {
-        const match = card.classList.contains(category);
-        card.style.display = (category === 'all' || match) ? 'block' : 'none';
-    });
-}
 function filterCerts(category) {
     const certs = document.querySelectorAll('.cert-card');
     const buttons = document.querySelectorAll('.cert-filter-buttons button');
@@ -25,18 +14,26 @@ function filterCerts(category) {
     // Remove 'active' from all buttons
     buttons.forEach(btn => btn.classList.remove('active'));
     // Add 'active' to the clicked button
-    event.currentTarget.classList.add('active');
+    // Ensure event.currentTarget is valid or find button by category
+    const activeButton = document.querySelector(`.cert-filter-buttons button[data-category='${category}']`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    } else {
+        // Fallback or error handling if button not found,
+        // though ideally the selector should work if HTML is structured with data-category
+        console.warn(`Filter button for category '${category}' not found.`);
+    }
 }
 function toggleCerts() {
     const certSection = document.getElementById('certSection');
     const certIntro = document.getElementById('certIntro');
     // Toggle visibility of certification section
-    if (certSection.style.display === 'none') {
-        certSection.style.display = 'block';
-        certIntro.classList.add('hidden'); // hide intro text
+    if (certSection.style.display === 'none') { // Check for current hidden state
+        certSection.style.display = 'block'; // Or remove hidden class
+        if (certIntro) certIntro.classList.add('hidden'); // hide intro text
     } else {
-        certSection.style.display = 'none';
-        certIntro.classList.remove('hidden'); // show intro text back
+        certSection.style.display = 'none'; // Or add hidden class
+        if (certIntro) certIntro.classList.remove('hidden'); // show intro text back
     }
 }
 // Wait for the DOM to be fully loaded
@@ -369,6 +366,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeIcon = document.getElementById('theme-icon');
 
     function setTheme(theme) {
+        document.body.classList.add('theme-transitioning'); // Add class to disable transitions
+
         if (theme === 'dark') {
             themeLink.href = 'styles.css'; // dark mode CSS
             themeIcon.classList.replace('fa-sun', 'fa-moon');
@@ -379,16 +378,34 @@ document.addEventListener('DOMContentLoaded', function () {
             themeToggle.style.color = '#ffcc00'; // sun yellow for light mode
         }
         localStorage.setItem('theme', theme);
+
+        // Remove the class after a short delay to allow the new stylesheet to apply
+        // and avoid abrupt transitions if any are still pending.
+        setTimeout(() => {
+            document.body.classList.remove('theme-transitioning');
+        }, 100); // 100ms should be enough, adjust if needed
     }
 
     // Load saved theme or default to light
+    // Load saved theme or default to light - Call setTheme without transition blocking on initial load
     const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
+    if (savedTheme === 'dark') {
+        themeLink.href = 'styles.css';
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+        if (themeToggle) themeToggle.style.color = '#ddd';
+    } else {
+        themeLink.href = 'style.css';
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+        if (themeToggle) themeToggle.style.color = '#ffcc00';
+    }
+    localStorage.setItem('theme', savedTheme); // Ensure it's set
 
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = themeLink.href.includes('style.css') ? 'light' : 'dark';
-        setTheme(currentTheme === 'light' ? 'dark' : 'light');
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentThemeIsLight = themeLink.href.includes('style.css') || !themeLink.href.includes('styles.css');
+            setTheme(currentThemeIsLight ? 'dark' : 'light');
+        });
+    }
 // Inside your script.js or relevant <script> tag
 
 // document.addEventListener('DOMContentLoaded', () => {

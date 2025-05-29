@@ -399,6 +399,20 @@ header.scrolled .nav-links a.active {
   }
 }
 
+/* ========= SERVICES CONTENT WRAPPER STYLES ========= */
+#services-content-wrapper {
+    display: none; /* Start hidden */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+#services-content-wrapper.visible {
+    display: block; /* Or the appropriate display type, e.g., grid, flex if needed by its children */
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .hero-buttons {
   display: flex;
   gap: var(--space-4);
