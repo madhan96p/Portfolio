@@ -90,7 +90,7 @@ body {
     line-height: var(--line-height-base);
     overflow-x: hidden;
     /* Prevent horizontal scroll */
-    perspective: 1500px;
+    perspective: 100%;
     /* Add perspective for 3D effects */
     background-image:
         radial-gradient(circle at 10% 10%, rgba(var(--highlight-color-rgb), 0.1) 0%, transparent 30%),
@@ -99,7 +99,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 0 20px;
 }
