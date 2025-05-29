@@ -216,19 +216,34 @@
     <!-- View Services Button -->
 
 
-    <!-- Services Section -->
-    <section id="services" class="services-section">
-        <div style="text-align: center; margin: 2rem 0;">
-            <button id="toggleServicesBtn" class="btn btn-primary">
-                View My Services
+    <!-- Service Section Toggle -->
+    <div class="section-highlight">
+        <p id="servicesIntro">
+            <i class="fas fa-rocket" style="color: #007bff;"></i>
+            <strong> Transform Data Into Business Wins:</strong> I turn messy data into meaningful insights and scalable
+            tools —
+            using automation, analytics, and a deep understanding of digital systems to solve real-world problems.
+            Let’s unlock growth, innovation, and impact together.
+        </p>
+
+
+        <div style="text-align: center; margin: 1rem 0;">
+            <button id="toggleServicesBtn" class="btn btn-primary"
+                onclick="toggleSection('services-content-wrapper', 'servicesIntro')">
+                <i class="fas fa-eye"></i> View My Services
             </button>
         </div>
-        <!-- Wrapper for the actual service content that will be toggled -->
-        <div id="services-content-wrapper">
-            <h2 class="section-title">Elevate Your Vision: Tailored Solutions for Success</h2>
-            <p class="section-intro">I craft innovative, data-driven solutions that transform challenges into
-                opportunities,
-                empowering your business with precision and creativity.</p>
+
+        <!-- Hidden by default -->
+        <div id="services-content-wrapper" class="is-hidden">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase" style="color: #28a745;"></i> Elevate Your Business with Smart Solutions
+            </h2>
+            <p class="section-intro">
+                I don’t just build — I strategize, automate, and visualize. From dashboards and data pipelines to custom
+                web tools,
+                I create elegant, high-impact systems that solve your biggest challenges and scale with your success.
+            </p>
             <div class="services-grid">
                 <!-- Service Card 1 -->
                 <div class="service-card">
@@ -365,7 +380,8 @@
                 </div>
             </div>
         </div> <!-- Close services-content-wrapper -->
-    </section>
+        </section>
+    </div>
     <!-- Skills Section -->
     <section id="skills" class="skills">
         <div class="container">
@@ -963,13 +979,14 @@
                 </div>
             </div>
             <div class="certifications-wrapper" data-aos="fade-up">
-                <button class="cert-toggle-btn" onclick="toggleCerts()">🎓 View Certifications</button>
+                <button class="cert-toggle-btn" onclick="toggleSection('certSection', 'certIntro')">🎓 View
+                    Certifications</button>
                 <center>
-                    <p class="hide" id="certIntro">🌟 My certifications are just the beginning — I’m a fast learner, a
+                    <p id="certIntro">🌟 My certifications are just the beginning — I’m a fast learner, a
                         creative problem solver, and
                         a passionate digital innovator dedicated to making an impact.</p>
                 </center>
-                <div class="certifications-section is-hidden" id="certSection">
+                <div id="certSection" class="certifications-section is-hidden">
                     <div class="cert-intro-message">
                         <p>
                             From web development and automation to data analysis and design — I turn ideas into

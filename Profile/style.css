@@ -398,6 +398,22 @@ header.scrolled .nav-links a.active {
     opacity: 0;
   }
 }
+/* Section Highlight */
+.section-highlight {
+    text-align: center;
+    margin: 2rem auto 1rem;
+    max-width: 100%;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #2b2d42;
+    background: linear-gradient(90deg, #f4f4f9, #f0f8ff);
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+.section-highlight p:hover {
+    color: grey;
+}
 
 /* ========= SERVICES CONTENT WRAPPER STYLES ========= */
 #services-content-wrapper {
@@ -1902,6 +1918,13 @@ ul li a i {
   50% {
     transform: translateY(1px);
   }
+}
+.is-hidden {
+    display: none;
+}
+
+.hidden {
+    display: none;
 }
 
 /* ========= JAVASCRIPT DEPENDENT CLASSES ========= */

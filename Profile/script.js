@@ -24,18 +24,20 @@ function filterCerts(category) {
         console.warn(`Filter button for category '${category}' not found.`);
     }
 }
-function toggleCerts() {
-    const certSection = document.getElementById('certSection');
-    const certIntro = document.getElementById('certIntro');
-    // Toggle visibility of certification section
-    if (certSection.style.display === 'none') { // Check for current hidden state
-        certSection.style.display = 'block'; // Or remove hidden class
-        if (certIntro) certIntro.classList.add('hidden'); // hide intro text
+function toggleSection(sectionId, introId) {
+    const section = document.getElementById(sectionId);
+    const intro = document.getElementById(introId);
+
+    if (section.classList.contains('is-hidden')) {
+        section.classList.remove('is-hidden');
+        if (intro) intro.classList.add('hidden');
     } else {
-        certSection.style.display = 'none'; // Or add hidden class
-        if (certIntro) certIntro.classList.remove('hidden'); // show intro text back
+        section.classList.add('is-hidden');
+        if (intro) intro.classList.remove('hidden');
     }
 }
+
+
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize AOS (Animate On Scroll)
