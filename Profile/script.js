@@ -1,16 +1,5 @@
 // Main JavaScript for Pragadeesh Srinivasan's Portfolio
 // Certrificate toggle functionality
-function toggleCerts() {
-    const section = document.getElementById('certSection');
-    section.style.display = section.style.display === 'none' ? 'block' : 'none';
-}
-function filterCerts(category) {
-    const cards = document.querySelectorAll('.cert-card');
-    cards.forEach(card => {
-        const match = card.classList.contains(category);
-        card.style.display = (category === 'all' || match) ? 'block' : 'none';
-    });
-}
 function filterCerts(category) {
     const certs = document.querySelectorAll('.cert-card');
     const buttons = document.querySelectorAll('.cert-filter-buttons button');
@@ -25,18 +14,26 @@ function filterCerts(category) {
     // Remove 'active' from all buttons
     buttons.forEach(btn => btn.classList.remove('active'));
     // Add 'active' to the clicked button
-    event.currentTarget.classList.add('active');
+    // Ensure event.currentTarget is valid or find button by category
+    const activeButton = document.querySelector(`.cert-filter-buttons button[data-category='${category}']`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    } else {
+        // Fallback or error handling if button not found,
+        // though ideally the selector should work if HTML is structured with data-category
+        console.warn(`Filter button for category '${category}' not found.`);
+    }
 }
 function toggleCerts() {
     const certSection = document.getElementById('certSection');
     const certIntro = document.getElementById('certIntro');
     // Toggle visibility of certification section
-    if (certSection.style.display === 'none') {
-        certSection.style.display = 'block';
-        certIntro.classList.add('hidden'); // hide intro text
+    if (certSection.style.display === 'none') { // Check for current hidden state
+        certSection.style.display = 'block'; // Or remove hidden class
+        if (certIntro) certIntro.classList.add('hidden'); // hide intro text
     } else {
-        certSection.style.display = 'none';
-        certIntro.classList.remove('hidden'); // show intro text back
+        certSection.style.display = 'none'; // Or add hidden class
+        if (certIntro) certIntro.classList.remove('hidden'); // show intro text back
     }
 }
 // Wait for the DOM to be fully loaded
