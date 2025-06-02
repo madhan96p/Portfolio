@@ -70,12 +70,28 @@
                     <button class="nav-toggle" id="menuClose" aria-label="Close menu"><i
                             class="fas fa-times"></i></button>
                     <ul>
-                        <li><a href="#home" class="active" aria-current="page"><i class="fas fa-home"></i> Home</a></li>
+                        <!-- Common links -->
+                        <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="#about"><i class="fas fa-user"></i> About</a></li>
                         <li><a href="#services"><i class="fas fa-briefcase"></i> Services</a></li>
                         <li><a href="#skills"><i class="fas fa-tools"></i> Skills</a></li>
                         <li><a href="#projects"><i class="fas fa-code"></i> Projects</a></li>
-                        <li><a href="#education"><i class="fas fa-graduation-cap"></i> Education</a></li>
+                        <!-- 👇 Desktop Dropdown Version -->
+                        <li class="nav-item dropdown desktop-only">
+                            <a href="#education" class="dropdown-toggle">
+                                <i class="fas fa-graduation-cap"></i> Education
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#education"><i class="fas fa-user-graduate"></i> Education</a></li>
+                                <li><a href="#cert-Sec"><i class="fas fa-certificate"></i> Certifications</a></li>
+                            </ul>
+                        </li>
+                        <!-- 👇 Mobile Flat Version -->
+                        <li class="mobile-only"><a href="#education"><i class="fas fa-user-graduate"></i>
+                                Education</a></li>
+                        <li class="mobile-only"><a href="#cert-Sec"><i class="fas fa-certificate"></i>
+                                Certifications</a></li>
+                        <!-- Common -->
                         <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                     </ul>
                 </div>
@@ -969,7 +985,7 @@
                             <h4>Guvi</h4>
                             <p>Certified in Python programming, with skills in data analysis, machine learning, and
                                 application development.</p>
-                            <div class="timeline-tags">
+                            <div class="timeline-tags" id="cert-Sec">
                                 <span>Python Programming</span>
                                 <span>App Development</span>
                                 <span>Data Structures</span>
@@ -979,7 +995,8 @@
                 </div>
             </div>
             <div class="certifications-wrapper" data-aos="fade-up">
-                <button class="cert-toggle-btn" onclick="toggleSection('certSection', 'certIntro')"><i class="fas fa-graduation-cap"></i> View
+                <button class="cert-toggle-btn" onclick="toggleSection('certSection', 'certIntro')"><i
+                        class="fas fa-graduation-cap"></i> View
                     Certifications</button>
                 <center>
                     <p id="certIntro">🌟 My certifications are just the beginning — I’m a fast learner, a
@@ -1022,6 +1039,13 @@
                                 target="_blank" class="cert-btn">View Degree</a>
                         </div>
                         <!-- GUVI -->
+                        <!-- GUVI -->
+                        <div class="cert-card cert guvi">
+                            <h4><i class="fas fa-chalkboard-teacher"></i> Prompt Engineering for Teachers</h4>
+                            <p>Guvi · Jun 2025</p>
+                            <a href="https://www.guvi.in/verify-certificate?id=iY8T1m8S70ru71487G" target="_blank"
+                                class="cert-btn">Verify</a>
+                        </div>
                         <div class="cert-card cert guvi">
                             <h4>Master Data Science Program</h4>
                             <p>Guvi · Jan 2025</p>

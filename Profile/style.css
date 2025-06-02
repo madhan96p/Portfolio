@@ -90,6 +90,17 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Base visibility for navigation items (Desktop First) */
+.desktop-only {
+  display: list-item;
+  /* Default for <li>, so it's visible */
+}
+
+.mobile-only {
+  display: none;
+  /* Hidden on desktop by default */
+}
+
 html,
 body {
   width: 100%;
@@ -273,8 +284,8 @@ header.scrolled {
 
 .nav-links a {
   position: relative;
-  color: var(--shadow-sm);
-  /* Default to light text for initial dark header */
+  color: var(--gray-700);
+  /* Use a defined text color, e.g., for light header */
   font-weight: 500;
   padding: var(--space-2) 0;
 }
@@ -340,6 +351,52 @@ header.scrolled .nav-links a.active {
   transform: scale(1.1) rotate(5deg);
 }
 
+/* Container for the dropdown */
+.nav-item {
+  position: relative;
+}
+
+/* Hide submenu initially */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  visibility: hidden;
+  top: 100%;
+  left: 0;
+  background: white;
+  padding: 10px 0;
+  border-radius: var(--radius-md);
+  /* Corrected typo: removed trailing underscore */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1010;
+  /* Ensure dropdown is above other navbar content if necessary */
+  min-width: 180px;
+}
+
+/* Show submenu on hover */
+.nav-item:hover .dropdown-menu {
+  display: block;
+  visibility: visible;
+}
+
+/* Style links inside dropdown */
+.dropdown-menu li {
+  list-style: none;
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 8px 20px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #f0f0f0;
+}
+
 /* ========= HERO SECTION ========= */
 .hero {
   min-height: 100vh;
@@ -398,35 +455,39 @@ header.scrolled .nav-links a.active {
     opacity: 0;
   }
 }
+
 /* Section Highlight */
 .section-highlight {
-    text-align: center;
-    margin: 2rem auto 1rem;
-    max-width: 100%;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #2b2d42;
-    background: linear-gradient(90deg, #f4f4f9, #f0f8ff);
-    padding: 1rem 1.5rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  margin: 2rem auto 1rem;
+  max-width: 100%;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #2b2d42;
+  background: linear-gradient(90deg, #f4f4f9, #f0f8ff);
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
+
 .section-highlight p:hover {
-    color: grey;
+  color: grey;
 }
 
 /* ========= SERVICES CONTENT WRAPPER STYLES ========= */
 #services-content-wrapper {
-    display: none; /* Start hidden */
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  display: none;
+  /* Start hidden */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 #services-content-wrapper.visible {
-    display: block; /* Or the appropriate display type, e.g., grid, flex if needed by its children */
-    opacity: 1;
-    transform: translateY(0);
+  display: block;
+  /* Or the appropriate display type, e.g., grid, flex if needed by its children */
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hero-buttons {
@@ -927,25 +988,25 @@ header.scrolled .nav-links a.active {
 
 /* Tooltip hover effect */
 .skill-item::after {
-    content: attr(data-percent);
-    position: absolute;
-    top: 10px;
-    right: 10%;
-    background-color: #333;
-    color: #fff;
-    padding: 3px 6px;
-    font-size: 12px;
-    border-radius: 4px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    white-space: nowrap;
-    pointer-events: none;
+  content: attr(data-percent);
+  position: absolute;
+  top: 10px;
+  right: 10%;
+  background-color: #333;
+  color: #fff;
+  padding: 3px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 .skill-item:hover::after {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ========= PROJECTS SECTION ========= */
@@ -1942,12 +2003,13 @@ ul li a i {
     transform: translateY(1px);
   }
 }
+
 .is-hidden {
-    display: none;
+  display: none;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 /* ========= JAVASCRIPT DEPENDENT CLASSES ========= */
@@ -2124,6 +2186,17 @@ ul li a i {
 @media screen and (max-width: 768px) {
   .navbar {
     padding: var(--space-3) var(--space-4);
+  }
+
+  /* Navigation item visibility for mobile (<= 768px) */
+  .desktop-only {
+    display: none !important;
+    /* Hide desktop-specific items */
+  }
+
+  .mobile-only {
+    display: list-item !important;
+    /* Show mobile-specific items. Use list-item for <li> */
   }
 
   .nav-links {

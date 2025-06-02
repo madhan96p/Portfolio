@@ -83,6 +83,17 @@
     scroll-behavior: smooth;
 }
 
+/* Base visibility for navigation items (Desktop First) */
+.desktop-only {
+    display: list-item;
+    /* Default for <li>, so it's visible */
+}
+
+.mobile-only {
+    display: none;
+    /* Hidden on desktop by default */
+}
+
 body {
     font-family: var(--font-primary);
     background-color: var(--bg-color);
@@ -269,6 +280,52 @@ header.sticky {
     color: #fff;
     font-size: 1.8rem;
     cursor: pointer;
+}
+
+/* Container for the dropdown */
+.nav-item {
+    position: relative;
+}
+
+/* Hide submenu initially */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    visibility: hidden;
+    top: 100%;
+    left: 0;
+    background: var(--secondary-surface);
+    padding: 10px 0;
+    border-radius: var(--radius-md);
+    /* Corrected typo: removed trailing underscore */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1010;
+    /* Ensure dropdown is above other navbar content if necessary */
+    min-width: 180px;
+}
+
+/* Show submenu on hover */
+.nav-item:hover .dropdown-menu {
+    display: block;
+    visibility: visible;
+}
+
+/* Style links inside dropdown */
+.dropdown-menu li {
+    list-style: none;
+}
+
+.dropdown-menu li a {
+    display: block;
+    padding: 8px 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.dropdown-menu li a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* --- 3. Hero Section --- */
@@ -596,10 +653,12 @@ header.sticky {
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: var(--space-7); /* 2rem */
+    gap: var(--space-7);
+    /* 2rem */
     max-width: 1200px;
     margin: 0 auto;
 }
+
 /*
 #services {
     display: none;
@@ -614,13 +673,16 @@ header.sticky {
 */
 /* Styles for the container of the actual service content (title, intro, grid) */
 #services-content-wrapper {
-    display: none; /* Hidden by default */
+    display: none;
+    /* Hidden by default */
     opacity: 0;
-    transform: translateY(20px); /* Optional: for a subtle slide-in effect */
+    transform: translateY(20px);
+    /* Optional: for a subtle slide-in effect */
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
-#services-content-wrapper.visible { /* Class to be toggled by JavaScript */
+#services-content-wrapper.visible {
+    /* Class to be toggled by JavaScript */
     display: block;
     opacity: 1;
     transform: translateY(0);
@@ -631,11 +693,14 @@ header.sticky {
     perspective: 1000px;
     height: 400px;
     background: transparent;
-    border: 1px solid rgba(var(--highlight-color-rgb), 0.1); /* Subtle border for premium feel */
+    border: 1px solid rgba(var(--highlight-color-rgb), 0.1);
+    /* Subtle border for premium feel */
     box-shadow: none;
     transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-    border-radius: var(--radius-lg); /* Add radius to the container for consistency */
+    border-radius: var(--radius-lg);
+    /* Add radius to the container for consistency */
 }
+
 .is-hidden {
     display: none;
 }
@@ -2237,6 +2302,17 @@ ul li a i {
 @media screen and (max-width: 768px) {
     .navbar {
         padding: var(--space-3) var(--space-4);
+    }
+
+    /* Navigation item visibility for mobile (<= 768px) */
+    .desktop-only {
+        display: none !important;
+        /* Hide desktop-specific items */
+    }
+
+    .mobile-only {
+        display: list-item !important;
+        /* Show mobile-specific items. Use list-item for <li> */
     }
 
     .nav-links {
