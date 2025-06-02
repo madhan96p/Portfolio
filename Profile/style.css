@@ -483,7 +483,7 @@ header.scrolled .nav-links a.active {
 
 .btn:hover i,
 .btn:hover svg {
-  transform: translateX(2px);
+  transform: translateX(-2px);
 }
 
 .btn-primary {
@@ -923,6 +923,29 @@ header.scrolled .nav-links a.active {
   background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-light) 100%);
   border-radius: var(--radius-full);
   transition: width 0.8s ease-in-out;
+}
+
+/* Tooltip hover effect */
+.skill-item::after {
+    content: attr(data-percent);
+    position: absolute;
+    top: 10px;
+    right: 10%;
+    background-color: #333;
+    color: #fff;
+    padding: 3px 6px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.skill-item:hover::after {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* ========= PROJECTS SECTION ========= */
