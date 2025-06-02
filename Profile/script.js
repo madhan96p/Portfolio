@@ -388,9 +388,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const currentTheme = themeLink.href.includes('style.css') ? 'light' : 'dark';
         setTheme(currentTheme === 'light' ? 'dark' : 'light');
     });
-// Inside your script.js or relevant <script> tag
+    // Inside your script.js or relevant <script> tag
 
-// document.addEventListener('DOMContentLoaded', () => {
+    // document.addEventListener('DOMContentLoaded', () => {
     const toggleServicesBtn = document.getElementById('toggleServicesBtn');
     const servicesContent = document.getElementById('services-content-wrapper'); // Target the new wrapper
 
@@ -409,6 +409,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-// });
+    // });
 
 });
