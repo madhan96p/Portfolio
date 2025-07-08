@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fab.style.opacity = '0';
         }, 200);
         setTimeout(() => {
-            window.open('https://drive.google.com/file/d/1e0fpjQTw2hIi370XrKhCR-nqIzvrde0U/view', '_blank');
+            window.open('https://drive.google.com/file/d/1KQHBfX7tTakzHwfmIr8fLGX-Fs0hmybp/view', '_blank');
             fab.style.transform = 'translateY(-50%) scale(1)';
             fab.style.opacity = '1';
             fab.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
