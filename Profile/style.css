@@ -463,7 +463,7 @@ header.scrolled .nav-links a.active {
   max-width: 100%;
   font-size: 1.2rem;
   font-weight: 500;
-  color: #2b2d42;
+  color: rgb(84, 83, 83);
   background: linear-gradient(90deg, #f4f4f9, #f0f8ff);
   padding: 1rem 1.5rem;
   border-radius: 1rem;
@@ -471,7 +471,7 @@ header.scrolled .nav-links a.active {
 }
 
 .section-highlight p:hover {
-  color: grey;
+  color: #2b2d42;
 }
 
 /* ========= SERVICES CONTENT WRAPPER STYLES ========= */
@@ -667,6 +667,33 @@ header.scrolled .nav-links a.active {
   color: var(--gray-800);
   margin-bottom: var(--space-4);
   font-size: 1.8rem;
+}
+.about-info p {
+  color: var(--gray-700);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: var(--space-5);
+}
+.about-info p:hover,
+.about-info p:hover strong {
+  color: black;
+  /* text-decoration: underline; */ /* Optional */
+}
+
+.about-info p strong {
+  color: gray;
+  font-weight: 600;
+}
+
+.p,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.em,
+.strong {
+  color: black;
 }
 
 .info-list {
