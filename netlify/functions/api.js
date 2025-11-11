@@ -23,6 +23,7 @@ async function getAuthenticatedDoc() {
  */
 async function getConfig(doc) {
     const configSheet = doc.sheetsByTitle['Config'];
+    if (!configSheet) throw new Error("Sheet 'Config' not found.");
     const configRows = await configSheet.getRows();
     const config = {};
     if (configRows.length > 0) {
@@ -31,45 +32,56 @@ async function getConfig(doc) {
         headers.forEach(header => {
             config[header] = firstRow[header];
         });
+    } else {
+        // Default empty config if sheet is empty
+        return { Total_Salary: "0", Current_Opening_Balance: "0" };
     }
     return config;
 }
 
 /**
- * Helper function to get all transactions and sum them by category.
- * This is the new "brain" for your dashboard.
+ * Helper function to get transactions and calculate totals.
  */
-async function getTransactionTotals(doc) {
+async function getTransactions(doc) {
     const transactionsSheet = doc.sheetsByTitle['Transactions'];
+    if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
+    
     const rows = await transactionsSheet.getRows();
-
-    const totals = {
-        family: 0,
-        shares: 0,
-        savings: 0,
-        expenses: 0
-    };
+    const actuals = { family: 0, shares: 0, savings: 0, expenses: 0 };
+    const history = [];
 
     rows.forEach(row => {
-        const amount = parseFloat(row.Amount || 0);
+        // Calculate totals based on 'Amount_DR'
+        const amount = parseFloat(row.Amount_DR || 0);
         switch (row.Category) {
             case 'Family Transfer':
-                totals.family += amount;
+                actuals.family += amount;
                 break;
             case 'Share Investment':
-                totals.shares += amount;
+                actuals.shares += amount;
                 break;
             case 'Savings Transfer':
-                totals.savings += amount;
+                actuals.savings += amount;
                 break;
             case 'Personal Expense':
-                totals.expenses += amount;
+                actuals.expenses += amount;
                 break;
         }
+        
+        // Add to history (new DR/CR logic)
+        history.push({
+            date: row.Date,
+            category: row.Category,
+            amount_dr: row.Amount_DR || '0',
+            amount_cr: row.Amount_CR || '0',
+            notes: row.Notes
+        });
     });
-    return totals;
-}
 
+    // Return most recent 15 transactions
+    const recentHistory = history.slice(-15).reverse();
+    return { actuals, history: recentHistory };
+}
 
 // --- Main API Handler ---
 
@@ -93,12 +105,11 @@ exports.handler = async function (event, context) {
 
         switch (action) {
             
-            // --- ACTION 1: Get All Tracker Data (The new "Dashboard") ---
+            // --- ACTION 1: Get All Tracker Data (Upgraded) ---
             case 'getTrackerData': {
                 const config = await getConfig(doc);
-                const actuals = await getTransactionTotals(doc);
+                const { actuals, history } = await getTransactions(doc);
 
-                // Get master numbers
                 const salary = parseFloat(config.Total_Salary || 0);
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
@@ -106,66 +117,81 @@ exports.handler = async function (event, context) {
                 const goalFamily = salary * 0.60;
                 const pool = (salary * 0.40) + openingBalance;
                 
-                const goalShares = pool * 0.25;  // 1/4 of the pool
-                const goalSavings = pool * 0.25; // 1/4 of the pool
-                const goalExpenses = pool * 0.50; // 2/4 of the pool
+                const goalShares = pool * 0.25;
+                const goalSavings = pool * 0.25;
+                const goalExpenses = pool * 0.50;
 
                 const goals = { goalFamily, goalShares, goalSavings, goalExpenses };
                 
-                responseData = { success: true, data: { goals, actuals } };
+                responseData = { success: true, data: { config, goals, actuals, history } };
                 break;
             }
 
-            // --- ACTION 2: Log a New Transaction (Simpler) ---
+            // --- ACTION 2: Log a New Transaction (Upgraded for DR/CR) ---
             case 'logTransaction': {
-                const { amount, category, notes } = data;
+                const { amount, type, category, notes } = data;
                 
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
-                await transactionsSheet.addRow({
+                const newRow = {
                     Date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-                    Amount: amount,
                     Category: category,
+                    Amount_DR: type === 'debit' ? amount : '0',
+                    Amount_CR: type === 'credit' ? amount : '0',
                     Notes: notes,
                     Time_stamp: new Date().toISOString()
-                });
-                // We no longer need to update Config sheet here.
-                // The app will just reload data.
+                };
+                
+                await transactionsSheet.addRow(newRow);
                 responseData = { success: true };
                 break;
             }
 
-            // --- ACTION 3: Run the Month-End Re-balancing ---
-            case 'runMonthEnd': {
-                // 1. Get current config and totals
-                const config = await getConfig(doc);
-                const actuals = await getTransactionTotals(doc);
+            // --- ACTION 3: Update Salary Goal (NEW) ---
+            case 'updateSalaryGoal': {
+                const { newSalary } = data;
+                const configSheet = doc.sheetsByTitle['Config'];
+                const configRows = await configSheet.getRows();
+                
+                if (configRows.length > 0) {
+                    const firstRow = configRows[0];
+                    firstRow.Total_Salary = newSalary;
+                    firstRow.Time_stamp = new Date().toISOString();
+                    await firstRow.save();
+                } else {
+                    // If no rows, create one
+                    await configSheet.addRow({ Total_Salary: newSalary, Time_stamp: new Date().toISOString() });
+                }
+                
+                responseData = { success: true };
+                break;
+            }
 
-                // 2. Calculate the "Expense Pot" goal
+            // --- ACTION 4: Run the Month-End Re-balancing (Upgraded) ---
+            case 'runMonthEnd': {
+                const config = await getConfig(doc);
+                const { actuals } = await getTransactions(doc);
+
                 const salary = parseFloat(config.Total_Salary || 0);
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
                 const pool = (salary * 0.40) + openingBalance;
                 const goalExpenses = pool * 0.50;
 
-                // 3. Calculate the new opening balance (leftover expense money)
                 const newOpeningBalance = goalExpenses - actuals.expenses;
 
-                // 4. Update the Config sheet for the new month
+                // Update the Config sheet
                 const configSheet = doc.sheetsByTitle['Config'];
                 const configRows = await configSheet.getRows();
                 if (configRows.length > 0) {
                     const firstRow = configRows[0];
                     firstRow.Current_Opening_Balance = newOpeningBalance.toFixed(2);
                     firstRow.Time_stamp = new Date().toISOString();
-                    // We reset these old fields just in case, but don't use them
-                    firstRow.Total_Available_Spend = "0";
-                    firstRow.Total_Spent_This_Month = "0";
                     await firstRow.save();
                 }
 
-                // 5. Clear the Transactions sheet for the new month
+                // Clear the Transactions sheet
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 await transactionsSheet.clear();
-                await transactionsSheet.setHeaderRow(['Date', 'Amount', 'Category', 'Notes', 'Time_stamp']);
+                await transactionsSheet.setHeaderRow(['Date', 'Category', 'Amount_DR', 'Amount_CR', 'Notes', 'Time_stamp']);
                 
                 responseData = { success: true, newOpeningBalance: newOpeningBalance.toFixed(2) };
                 break;
