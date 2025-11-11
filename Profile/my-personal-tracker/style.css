@@ -1,0 +1,193 @@
+/* Basic Setup */
+:root {
+    --primary-color: #4a90e2;
+    --success-color: #4caf50;
+    --danger-color: #f44336;
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --text-light: #777;
+    --border-color: #e0e0e0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Main Container */
+.tracker-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Loader */
+.loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.loader-overlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Dashboard Section */
+.dashboard {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+.dashboard h2 {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+.balance-card {
+    background: linear-gradient(135deg, var(--primary-color), #3a75c4);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+.balance-card p {
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+.balance-card h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.stat-card {
+    background: var(--bg-color);
+    padding: 16px;
+    border-radius: 8px;
+}
+.stat-card p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+.stat-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+.stat-card:last-child h3 {
+    color: var(--danger-color);
+}
+
+/* Form Section */
+.expense-form-container {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+.expense-form-container h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+}
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--card-bg);
+}
+
+/* Buttons */
+button {
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    width: 100%;
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+#log-expense-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+#log-expense-btn:hover {
+    background-color: #3a75c4;
+}
+#end-month-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+#end-month-btn:hover {
+    background-color: #c9302c;
+}
+
+/* Admin Section */
+.admin-section {
+    padding: 24px;
+    background: var(--bg-color);
+}
+.admin-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    color: var(--text-light);
+}
