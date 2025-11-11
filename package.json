@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/madhan96p/Portfolio#readme",
   "dependencies": {
-    "google-spreadsheet": "^5.0.2"
+    "google-spreadsheet": "^3.3.0"
   }
 }
