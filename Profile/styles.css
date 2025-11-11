@@ -16,7 +16,7 @@
     /* Vibrant blue for highlights */
     --accent-color: #00f2fe;
     /* Cyan/Neon accent */
-
+																		
     /* RGB versions for rgba() */
     --bg-color-rgb: 10, 10, 26;
     --primary-surface-rgb: 26, 26, 46;
@@ -2484,5 +2484,163 @@ ul li a i {
     .eye-container {
         width: 26px;
         height: 18px;
+    }
+}
+/* ========= CLIENT SUCCESS STORY SECTION ========= */
+
+/* Main container for the two-phase layout */
+.success-story-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+/* Styling for the individual phase cards (Demo & Live) */
+.phase-card {
+    background-color: rgba(255, 255, 255, 0.05); /* Slightly lighter than the background for contrast */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    width: 100%;
+    flex: 1;
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-md);
+}
+
+.phase-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--accent-color);
+}
+
+/* Header section within each card */
+.phase-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* The styled numbers '1' and '2' */
+.phase-number {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    border-radius: var(--radius-full);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.phase-header h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Paragraph text within the phase cards */
+.phase-description {
+    color: var(--gray-400);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* List of project links */
+.project-links-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.project-links-list li {
+    margin-bottom: 0.5rem;
+}
+
+.project-links-list a {
+    color: var(--gray-300);
+    transition: var(--transition-fast);
+}
+
+.project-links-list a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.project-links-list i {
+    margin-left: 0.5rem;
+    font-size: 0.8em;
+}
+
+/* Container for the technology/method tags */
+.phase-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.phase-tags span {
+    background-color: var(--primary-dark);
+    color: var(--accent-light);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+}
+
+/* The arrow separator between the two cards */
+.phase-arrow {
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+
+/* Call-to-action section below the success story */
+.cta-section {
+    text-align: center;
+    padding: 2.5rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    margin-top: 3rem;
+}
+
+.cta-section h3 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.cta-section p {
+    color: var(--gray-400);
+    margin: 0.5rem 0 1.5rem 0;
+}
+
+/* Divider line */
+.section-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--primary-dark), transparent);
+    margin: 4rem 0;
+}
+
+
+/* ========= RESPONSIVE DESIGN FOR SUCCESS STORY ========= */
+@media screen and (max-width: 768px) {
+    .success-story-container {
+        flex-direction: column; /* Stack cards vertically on mobile */
+    }
+
+    .phase-arrow {
+        transform: rotate(90deg); /* Point arrow downwards */
+        margin: -1rem 0; /* Adjust spacing for vertical layout */
+    }
+
+    .phase-header h3 {
+        font-size: 1.3rem;
     }
 }

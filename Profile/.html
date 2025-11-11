@@ -1,0 +1,343 @@
+<style>
+    /* ========= B2B PROJECTS SECTION REFRESH ========= */
+
+.projects-b2b {
+    background-color: var(--light-bg);
+}
+
+.projects-b2b .section-title h2 {
+    color: var(--text-dark);
+}
+
+.projects-b2b .section-intro {
+    color: var(--gray-600);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+}
+
+/* --- Case Study --- */
+.case-study-wrapper {
+    background-color: #ffffff;
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 4rem;
+    border: 1px solid var(--gray-200);
+}
+
+.case-study-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.case-study-narrative h3 {
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.case-study-narrative p {
+    color: var(--gray-700);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}
+
+.case-study-narrative ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.case-study-narrative ul li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--gray-700);
+}
+
+.case-study-narrative ul i {
+    color: var(--primary-color);
+    margin-top: 4px;
+}
+
+.case-study-phases {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.phase-card-b2b {
+    background-color: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    transition: var(--transition-fast);
+}
+
+.phase-card-b2b:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
+.phase-card-b2b.live {
+    border-left: 4px solid var(--primary-color);
+    background-color: #f0f4ff; /* Lighter blue bg */
+}
+
+.phase-label {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background-color: var(--gray-300);
+    color: var(--gray-700);
+    margin-bottom: 1rem;
+}
+
+.phase-card-b2b.live .phase-label {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.phase-card-b2b h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.phase-card-b2b p {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    margin-bottom: 1rem;
+}
+
+.btn-link {
+    font-weight: 600;
+    color: var(--primary-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-link i {
+    transition: transform 0.2s ease;
+}
+
+.btn-link:hover i {
+    transform: translateX(3px);
+}
+
+/* --- Portfolio List --- */
+.portfolio-list-wrapper {
+    margin-top: 4rem;
+}
+
+.portfolio-list {
+    display: grid;
+    gap: 2rem;
+}
+
+.project-item {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+    background: #ffffff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    transition: var(--transition-fast);
+    border: 1px solid var(--gray-200);
+}
+
+.project-item:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg);
+    z-index: 10;
+    position: relative;
+}
+
+.project-item-img {
+    width: 100%;
+    height: 180px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.project-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.project-category {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.project-item-details h4 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.project-item-details p {
+    font-size: 0.95rem;
+    color: var(--gray-700);
+    margin-bottom: 1.5rem;
+}
+
+.project-item-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.project-item-links a {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.project-item-links a:hover {
+    color: var(--primary-dark);
+}
+
+/* --- Responsive Adjustments for B2B Projects --- */
+@media screen and (max-width: 992px) {
+    .case-study-content {
+        grid-template-columns: 1fr;
+    }
+    .project-item {
+        grid-template-columns: 200px 1fr;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .case-study-wrapper {
+        padding: 2rem 1.5rem;
+    }
+    .project-item {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .project-item-img {
+        height: 200px;
+    }
+}
+</style>
+
+<section id="projects" class="projects-b2b">
+    <div class="container">
+        <div class="case-study-wrapper" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Client Case Study: The Shrish Group</h2>
+                <p class="section-intro">Transforming a business vision into a high-performance digital ecosystem.</p>
+            </div>
+
+            <div class="case-study-content">
+                <div class="case-study-narrative">
+                    <h3>The Challenge</h3>
+                    <p>Shrish Group, a multi-faceted company, required a unified and professional online presence to replace their disparate, slow-loading web assets. The goal was to boost credibility, improve user experience, and create a scalable platform for future growth.</p>
+                    
+                    <h3>The Solution</h3>
+                    <p>I engineered a full-scale digital transformation, beginning with a rapid prototype to prove the concept. This evolved into a live, multi-site platform with:</p>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> A mobile-first, responsive design for a seamless user journey.</li>
+                        <li><i class="fas fa-check-circle"></i> Strategic use of subdomains for brand consistency (e.g., travels.shrishgroup.com).</li>
+                        <li><i class="fas fa-check-circle"></i> Performance optimization and SEO implementation to drive organic traffic.</li>
+                    </ul>
+                </div>
+
+                <div class="case-study-phases">
+                    <div class="phase-card-b2b">
+                        <span class="phase-label">Phase 1: Prototype</span>
+                        <h4>Rapid Proof-of-Concept</h4>
+                        <p>A functional demo deployed on Netlify to showcase the vision and secure client buy-in.</p>
+                        <a href="https://old-shrish-group.netlify.app" target="_blank" class="btn-link">View Prototype <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="phase-card-b2b live">
+                        <span class="phase-label">Phase 2: Live Platform</span>
+                        <h4>Official Digital Hub</h4>
+                        <p>The official, production-ready website on the client's domain, serving their live audience.</p>
+                        <a href="http://www.shrishgroup.com" target="_blank" class="btn-link">Visit Live Site <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="portfolio-list-wrapper" data-aos="fade-up" data-aos-delay="200">
+             <div class="section-title">
+                <h2>More Work</h2>
+            </div>
+            
+            <div class="project-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="freelance">Freelance</button>
+                <button class="filter-btn" data-filter="data-science">Data Science</button>
+                <button class="filter-btn" data-filter="ai-app">AI Apps</button>
+            </div>
+
+            <div class="portfolio-list">
+                <div class="project-item" data-category="freelance">
+                    <div class="project-item-img">
+                        <img src="sh1.webp" alt="ShRish Travels Project">
+                    </div>
+                    <div class="project-item-details">
+                        <span class="project-category">Freelance Web Development</span>
+                        <h4>ShRish Travels Booking Platform</h4>
+                        <p>Developed a client-facing website with API integration for real-time bookings, Google Analytics for traffic insights, and robust SEO to increase online visibility and drive customer acquisition.</p>
+                        <div class="project-tech">
+                            <span>HTML</span><span>CSS</span><span>JavaScript</span><span>Netlify</span><span>API</span>
+                        </div>
+                        <div class="project-item-links">
+                            <a href="https://shrishtravels.netlify.app/" target="_blank">Live Demo <i class="fas fa-external-link-alt"></i></a>
+                            <a href="https://github.com/madhan96p/shrish-travels" target="_blank">GitHub <i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-item" data-category="ai-app data-science">
+                    <div class="project-item-img">
+                        <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="TransArt Project">
+                    </div>
+                    <div class="project-item-details">
+                        <span class="project-category">AI & Data Science</span>
+                        <h4>TransArt: Tamil Audio to Art Generator</h4>
+                        <p>Built an AI application that transcribes Tamil audio, translates it, and generates artistic images using Stable Diffusion. Deployed on Hugging Face and powered by the Groq API for high-speed inference.</p>
+                        <div class="project-tech">
+                            <span>Python</span><span>Gradio</span><span>Groq API</span><span>Stable Diffusion</span><span>Hugging Face</span>
+                        </div>
+                        <div class="project-item-links">
+                            <a href="https://huggingface.co/spaces/14MaddY82/TransArt-App" target="_blank">Live App <i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                </div>
+                 <div class="project-item" data-category="data-science">
+                    <div class="project-item-img">
+                        <img src="https://img.freepik.com/premium-photo/interactive-digital-dashboard-with-realtime-data-analytics-visualizations-sleek-userfriendl_68339-1181.jpg" alt="Analytics Dashboard">
+                    </div>
+                    <div class="project-item-details">
+                        <span class="project-category">Data Visualization</span>
+                        <h4>Interactive Sales Dashboard</h4>
+                        <p>Designed and built a dynamic analytics dashboard using Streamlit and Plotly, enabling stakeholders to explore sales data, identify trends, and make informed decisions through interactive filters and visualizations.</p>
+                        <div class="project-tech">
+                            <span>Python</span><span>Streamlit</span><span>Plotly</span><span>Pandas</span><span>SQL</span>
+                        </div>
+                        <div class="project-item-links">
+                            <a href="https://github.com/madhan96p" target="_blank">View on GitHub <i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="projects-more">
+                <a href="https://github.com/madhan96p" class="btn btn-secondary" target="_blank">More on GitHub <i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </div>
+</section>

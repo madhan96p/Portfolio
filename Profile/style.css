@@ -2392,3 +2392,255 @@ ul li a i {
     height: 18px;
   }
 }
+/* ========= B2B PROJECTS SECTION REFRESH ========= */
+
+.projects-b2b {
+    background-color: var(--light-bg);
+}
+
+.projects-b2b .section-title h2 {
+    color: var(--text-dark);
+}
+
+.projects-b2b .section-intro {
+    color: var(--gray-600);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+}
+
+/* --- Case Study --- */
+.case-study-wrapper {
+    background-color: #ffffff;
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 4rem;
+    border: 1px solid var(--gray-200);
+}
+
+.case-study-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.case-study-narrative h3 {
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.case-study-narrative p {
+    color: var(--gray-700);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}
+
+.case-study-narrative ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.case-study-narrative ul li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--gray-700);
+}
+
+.case-study-narrative ul i {
+    color: var(--primary-color);
+    margin-top: 4px;
+}
+
+.case-study-phases {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.phase-card-b2b {
+    background-color: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    transition: var(--transition-fast);
+}
+
+.phase-card-b2b:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
+.phase-card-b2b.live {
+    border-left: 4px solid var(--primary-color);
+    background-color: #f0f4ff; /* Lighter blue bg */
+}
+
+.phase-label {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background-color: var(--gray-300);
+    color: var(--gray-700);
+    margin-bottom: 1rem;
+}
+
+.phase-card-b2b.live .phase-label {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.phase-card-b2b h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.phase-card-b2b p {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    margin-bottom: 1rem;
+}
+
+.btn-link {
+    font-weight: 600;
+    color: var(--primary-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-link i {
+    transition: transform 0.2s ease;
+}
+
+.btn-link:hover i {
+    transform: translateX(3px);
+}
+
+/* --- Portfolio List --- */
+.portfolio-list-wrapper {
+    margin-top: 4rem;
+}
+
+.portfolio-list {
+    display: grid;
+    gap: 2rem;
+}
+
+.project-item {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+    background: #ffffff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    transition: var(--transition-fast);
+    border: 1px solid var(--gray-200);
+}
+
+.project-item:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg);
+    z-index: 10;
+    position: relative;
+}
+
+.project-item-img {
+    width: 100%;
+    height: 180px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.project-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.project-category {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.project-item-details h4 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.project-item-details p {
+    font-size: 0.95rem;
+    color: var(--gray-700);
+    margin-bottom: 1.5rem;
+}
+
+.project-item-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.project-item-links a {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.project-item-links a:hover {
+    color: var(--primary-dark);
+}
+
+/* --- Responsive Adjustments for B2B Projects --- */
+@media screen and (max-width: 992px) {
+    .case-study-content {
+        grid-template-columns: 1fr;
+    }
+    .project-item {
+        grid-template-columns: 200px 1fr;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .case-study-wrapper {
+        padding: 2rem 1.5rem;
+    }
+    .project-item {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .project-item-img {
+        height: 200px;
+    }
+}
+
+
+/* Call-to-action section below the success story */
+.cta-section {
+    text-align: center;
+    padding: 2.5rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    margin-top: 3rem;
+}
+
+.cta-section h3 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.cta-section p {
+    color: black;
+    margin: 0.5rem 0 1.5rem 0;
+}
