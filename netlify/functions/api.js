@@ -20,20 +20,15 @@ async function getAuthenticatedDoc() {
 
 /**
  * Helper function to read all values from the 'Config' tab.
- * Returns an object with key-value pairs.
  */
 async function getConfig(doc) {
     const configSheet = doc.sheetsByTitle['Config'];
     const configRows = await configSheet.getRows();
     const config = {};
-    
-    // We get the first row, which holds all our config values
     if (configRows.length > 0) {
         const firstRow = configRows[0];
-        // Get all headers (e.g., "Total_Salary", "Current_Opening_Balance")
         const headers = configSheet.headerValues; 
         headers.forEach(header => {
-            // Read the value for each header from the first row
             config[header] = firstRow[header];
         });
     }
@@ -41,31 +36,44 @@ async function getConfig(doc) {
 }
 
 /**
- * Helper function to update values in the 'Config' tab.
+ * Helper function to get all transactions and sum them by category.
+ * This is the new "brain" for your dashboard.
  */
-async function updateConfig(doc, updates) {
-    const configSheet = doc.sheetsByTitle['Config'];
-    const configRows = await configSheet.getRows();
-    
-    if (configRows.length > 0) {
-        const firstRow = configRows[0];
-        for (const key in updates) {
-            if (firstRow.hasOwnProperty(key)) {
-                firstRow[key] = updates[key];
-            }
+async function getTransactionTotals(doc) {
+    const transactionsSheet = doc.sheetsByTitle['Transactions'];
+    const rows = await transactionsSheet.getRows();
+
+    const totals = {
+        family: 0,
+        shares: 0,
+        savings: 0,
+        expenses: 0
+    };
+
+    rows.forEach(row => {
+        const amount = parseFloat(row.Amount || 0);
+        switch (row.Category) {
+            case 'Family Transfer':
+                totals.family += amount;
+                break;
+            case 'Share Investment':
+                totals.shares += amount;
+                break;
+            case 'Savings Transfer':
+                totals.savings += amount;
+                break;
+            case 'Personal Expense':
+                totals.expenses += amount;
+                break;
         }
-        await firstRow.save();
-    } else {
-        // If no rows exist, create one with the updates
-        await configSheet.addRow(updates);
-    }
+    });
+    return totals;
 }
 
 
 // --- Main API Handler ---
 
 exports.handler = async function (event, context) {
-    // Only allow POST requests for this function
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
     }
@@ -85,79 +93,81 @@ exports.handler = async function (event, context) {
 
         switch (action) {
             
-            // --- ACTION 1: Get All Tracker Data ---
+            // --- ACTION 1: Get All Tracker Data (The new "Dashboard") ---
             case 'getTrackerData': {
-                const configData = await getConfig(doc);
-                responseData = { success: true, data: configData };
+                const config = await getConfig(doc);
+                const actuals = await getTransactionTotals(doc);
+
+                // Get master numbers
+                const salary = parseFloat(config.Total_Salary || 0);
+                const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
+
+                // Calculate Goals based on your "Pool" logic
+                const goalFamily = salary * 0.60;
+                const pool = (salary * 0.40) + openingBalance;
+                
+                const goalShares = pool * 0.25;  // 1/4 of the pool
+                const goalSavings = pool * 0.25; // 1/4 of the pool
+                const goalExpenses = pool * 0.50; // 2/4 of the pool
+
+                const goals = { goalFamily, goalShares, goalSavings, goalExpenses };
+                
+                responseData = { success: true, data: { goals, actuals } };
                 break;
             }
 
-            // --- ACTION 2: Log a New Expense ---
-            case 'logExpense': {
+            // --- ACTION 2: Log a New Transaction (Simpler) ---
+            case 'logTransaction': {
                 const { amount, category, notes } = data;
                 
-                // 1. Add to 'Expenses' sheet
-                const expensesSheet = doc.sheetsByTitle['Expenses'];
-                await expensesSheet.addRow({
+                const transactionsSheet = doc.sheetsByTitle['Transactions'];
+                await transactionsSheet.addRow({
                     Date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
                     Amount: amount,
                     Category: category,
                     Notes: notes,
                     Time_stamp: new Date().toISOString()
                 });
-
-                // 2. Update 'Config' sheet
-                const config = await getConfig(doc);
-                const currentSpent = parseFloat(config.Total_Spent_This_Month || 0);
-                const newTotalSpent = currentSpent + parseFloat(amount);
-                
-                await updateConfig(doc, { 
-                    Total_Spent_This_Month: newTotalSpent.toFixed(2),
-                    Time_stamp: new Date().toISOString()
-                });
-
-                responseData = { success: true, newTotalSpent: newTotalSpent.toFixed(2) };
+                // We no longer need to update Config sheet here.
+                // The app will just reload data.
+                responseData = { success: true };
                 break;
             }
 
             // --- ACTION 3: Run the Month-End Re-balancing ---
             case 'runMonthEnd': {
-                // 1. Get current values
+                // 1. Get current config and totals
                 const config = await getConfig(doc);
-                const totalSalary = parseFloat(config.Total_Salary || 0);
-                const availableSpend = parseFloat(config.Total_Available_Spend || 0);
-                const spent = parseFloat(config.Total_Spent_This_Month || 0);
+                const actuals = await getTransactionTotals(doc);
 
-                // 2. Calculate leftover money
-                const newOpeningBalance = availableSpend - spent;
+                // 2. Calculate the "Expense Pot" goal
+                const salary = parseFloat(config.Total_Salary || 0);
+                const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
+                const pool = (salary * 0.40) + openingBalance;
+                const goalExpenses = pool * 0.50;
 
-                // 3. Calculate the new "40% Pool"
-                const salaryBalance = totalSalary * 0.40;
-                const pool = salaryBalance + newOpeningBalance;
+                // 3. Calculate the new opening balance (leftover expense money)
+                const newOpeningBalance = goalExpenses - actuals.expenses;
 
-                // 4. Calculate new allocations based on the pool
-                // 30/40 (75%) of pool is for personal budget
-                // 20/30 (2/3) of that is for expenses
-                const newAvailableSpend = (pool * 0.75) * (2 / 3); 
+                // 4. Update the Config sheet for the new month
+                const configSheet = doc.sheetsByTitle['Config'];
+                const configRows = await configSheet.getRows();
+                if (configRows.length > 0) {
+                    const firstRow = configRows[0];
+                    firstRow.Current_Opening_Balance = newOpeningBalance.toFixed(2);
+                    firstRow.Time_stamp = new Date().toISOString();
+                    // We reset these old fields just in case, but don't use them
+                    firstRow.Total_Available_Spend = "0";
+                    firstRow.Total_Spent_This_Month = "0";
+                    await firstRow.save();
+                }
+
+                // 5. Clear the Transactions sheet for the new month
+                const transactionsSheet = doc.sheetsByTitle['Transactions'];
+                await transactionsSheet.clear();
+                await transactionsSheet.setHeaderRow(['Date', 'Amount', 'Category', 'Notes', 'Time_stamp']);
                 
-                // 5. Update the Config sheet for the new month
-                await updateConfig(doc, {
-                    Current_Opening_Balance: newOpeningBalance.toFixed(2),
-                    Total_Available_Spend: newAvailableSpend.toFixed(2),
-                    Total_Spent_This_Month: 0, // Reset for new month
-                    Time_stamp: new Date().toISOString()
-                });
-                
-                // 6. Return the new config
-                responseData = { 
-                    success: true, 
-                    data: {
-                        ...config,
-                        Current_Opening_Balance: newOpeningBalance.toFixed(2),
-                        Total_Available_Spend: newAvailableSpend.toFixed(2),
-                        Total_Spent_This_Month: 0
-                    }
-                };
+                responseData = { success: true, newOpeningBalance: newOpeningBalance.toFixed(2) };
                 break;
             }
 
