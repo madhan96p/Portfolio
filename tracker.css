@@ -295,19 +295,21 @@ button:disabled {
 .admin-section { padding: 24px; background: var(--bg-color); }
 .admin-section h3 { font-size: 1.2rem; margin-bottom: 16px; color: var(--text-light); }
 
-/* --- BUG FIX: Removed the extra '}' that was here --- */
+
 /* --- Settings Page Styles --- */
+/* (This was the duplicated part) */
 
 /* --- 1. Card Layouts --- */
 .profile-card,
-.salary-card,
-.admin-section {
+.salary-card {
     background: var(--card-bg, #ffffff);
     border-radius: 12px;
     padding: 20px 24px;
     margin-bottom: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+/* Note: .admin-section is already styled above */
+
 
 /* --- 2. Profile Card Header --- */
 .profile-header {
@@ -332,6 +334,7 @@ button:disabled {
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
+    width: auto; /* Override default 100% width */
 }
 
 #edit-profile-btn:hover {
@@ -367,26 +370,8 @@ button:disabled {
 }
 
 /* --- 4. Admin Section (Danger Zone) --- */
-.admin-section h3 {
-    margin-top: 0;
-}
+/* Style #end-month-btn is already defined above */
 
-#end-month-btn {
-    background: var(--danger-color, #dc3545);
-    color: #fff;
-    border: none;
-    width: 100%;
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-#end-month-btn:hover {
-    background: var(--danger-hover-color, #c82333);
-}
 
 /* --- 5. Profile Edit Modal --- */
 
@@ -445,31 +430,7 @@ button:disabled {
 }
 
 /* --- 6. Form Styles (for Modal & log.html) --- */
-/* These styles will also apply to log.html */
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: var(--text-color, #333);
-}
-
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group input[type="date"],
-.form-group select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color, #ddd);
-    border-radius: 6px;
-    font-size: 0.95rem;
-    background: var(--card-bg, #fff); /* Make inputs match card bg */
-    box-sizing: border-box; /* Important for 100% width */
-}
+/* .form-group styles are already defined above */
 
 /* Modal-specific action buttons */
 .modal-actions {
@@ -487,6 +448,7 @@ button:disabled {
     border: none;
     font-size: 0.95rem;
     transition: all 0.2s ease;
+    width: auto; /* Override default 100% width */
 }
 
 /* Cancel Button */
