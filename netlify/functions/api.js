@@ -83,11 +83,16 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
                 case 'Household Spending': // New
                     totals.household += debit;
                     break;
+                // --- ADD THIS CASE ---
+                case 'Other Debit':
+                    totals.personal += debit;
+                    break;
 
                 // --- Credits ---
                 case 'Salary':
                     totals.salary += credit;
                     break;
+                case 'Family Support': // <-- ADD THIS LINE
                 case 'Gift / From Friend':
                 case 'Other Income':
                     totals.otherIncome += credit;
@@ -380,93 +385,93 @@ exports.handler = async function (event, context) {
             }
 
             // --- ACTION 9: Get History Analysis (UPGRADED) ---
-        case 'getHistoryAnalysis': {
-            const { filter } = data; // '1D', '1W', '1M', 'All'
+            case 'getHistoryAnalysis': {
+                const { filter } = data; // '1D', '1W', '1M', 'All'
 
-            const transactionsSheet = doc.sheetsByTitle['Transactions'];
-            if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
+                const transactionsSheet = doc.sheetsByTitle['Transactions'];
+                if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
 
-            const rows = await transactionsSheet.getRows();
+                const rows = await transactionsSheet.getRows();
 
-            // Determine the start date for the filter
-            const now = new Date();
-            let startDate = new Date('1970-01-01'); // Default for 'All'
+                // Determine the start date for the filter
+                const now = new Date();
+                let startDate = new Date('1970-01-01'); // Default for 'All'
 
-            if (filter === '1D') {
-                startDate.setDate(now.getDate() - 1);
-            } else if (filter === '1W') {
-                startDate.setDate(now.getDate() - 7);
-            } else if (filter === '1M') {
-                // This uses the current "Cycle Start Date" logic
-                const config = await getConfig(doc);
-                if (config && config.Cycle_Start_Date) {
-                    startDate = new Date(config.Cycle_Start_Date);
-                } else {
-                    startDate.setDate(now.getDate() - 30); // Fallback
-                }
-            }
-
-            const transactions = [];
-            const debitSummary = {};
-            let totalDebits = 0;
-            const creditSummary = {};
-            let totalCredits = 0;
-
-            for (const row of rows) {
-                const txDate = new Date(row.Date);
-
-                if (txDate >= startDate) {
-                    const debit = parseFloat(row.Amount_DR || 0);
-                    const credit = parseFloat(row.Amount_CR || 0);
-                    const category = row.Category;
-
-                    // 1. Add to the full transaction list
-                    transactions.push({
-                        date: row.Date,
-                        category: category,
-                        debit: row.Amount_DR,
-                        credit: row.Amount_CR,
-                        notes: row.Notes,
-                        paymentMode: row.Payment_Mode
-                    });
-
-                    // 2. Add to debit summary
-                    if (debit > 0) {
-                        totalDebits += debit;
-                        debitSummary[category] = (debitSummary[category] || 0) + debit;
-                    }
-
-                    // 3. Add to credit summary
-                    if (credit > 0) {
-                        totalCredits += credit;
-                        // Clean up credit categories for a cleaner chart
-                        const creditCat = (category === 'Gift / From Friend' || category === 'Family Support') 
-                            ? 'Gifts & Support' 
-                            : category;
-                        creditSummary[creditCat] = (creditSummary[creditCat] || 0) + credit;
+                if (filter === '1D') {
+                    startDate.setDate(now.getDate() - 1);
+                } else if (filter === '1W') {
+                    startDate.setDate(now.getDate() - 7);
+                } else if (filter === '1M') {
+                    // This uses the current "Cycle Start Date" logic
+                    const config = await getConfig(doc);
+                    if (config && config.Cycle_Start_Date) {
+                        startDate = new Date(config.Cycle_Start_Date);
+                    } else {
+                        startDate.setDate(now.getDate() - 30); // Fallback
                     }
                 }
+
+                const transactions = [];
+                const debitSummary = {};
+                let totalDebits = 0;
+                const creditSummary = {};
+                let totalCredits = 0;
+
+                for (const row of rows) {
+                    const txDate = new Date(row.Date);
+
+                    if (txDate >= startDate) {
+                        const debit = parseFloat(row.Amount_DR || 0);
+                        const credit = parseFloat(row.Amount_CR || 0);
+                        const category = row.Category;
+
+                        // 1. Add to the full transaction list
+                        transactions.push({
+                            date: row.Date,
+                            category: category,
+                            debit: row.Amount_DR,
+                            credit: row.Amount_CR,
+                            notes: row.Notes,
+                            paymentMode: row.Payment_Mode
+                        });
+
+                        // 2. Add to debit summary
+                        if (debit > 0) {
+                            totalDebits += debit;
+                            debitSummary[category] = (debitSummary[category] || 0) + debit;
+                        }
+
+                        // 3. Add to credit summary
+                        if (credit > 0) {
+                            totalCredits += credit;
+                            // Clean up credit categories for a cleaner chart
+                            const creditCat = (category === 'Gift / From Friend' || category === 'Family Support')
+                                ? 'Gifts & Support'
+                                : category;
+                            creditSummary[creditCat] = (creditSummary[creditCat] || 0) + credit;
+                        }
+                    }
+                }
+
+                // 4. Reverse the list for "Recent to Initial"
+                transactions.reverse();
+
+                // 5. Format BOTH summaries
+                const debitChartData = {
+                    labels: Object.keys(debitSummary),
+                    values: Object.values(debitSummary),
+                    total: totalDebits
+                };
+
+                const creditChartData = {
+                    labels: Object.keys(creditSummary),
+                    values: Object.values(creditSummary),
+                    total: totalCredits
+                };
+
+                responseData = { success: true, data: { transactions, debitChartData, creditChartData } };
+                break;
             }
-
-            // 4. Reverse the list for "Recent to Initial"
-            transactions.reverse();
-
-            // 5. Format BOTH summaries
-            const debitChartData = {
-                labels: Object.keys(debitSummary),
-                values: Object.values(debitSummary),
-                total: totalDebits
-            };
-
-            const creditChartData = {
-                labels: Object.keys(creditSummary),
-                values: Object.values(creditSummary),
-                total: totalCredits
-            };
-
-            responseData = { success: true, data: { transactions, debitChartData, creditChartData } };
-            break;
-        }
 
             default:
                 responseData = { success: false, error: 'Invalid action.' };
