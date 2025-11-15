@@ -1,3 +1,4 @@
+// --- api.js ---
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 // These will be set in your Netlify Environment Variables
@@ -19,9 +20,7 @@ async function getAuthenticatedDoc() {
 }
 
 /**
- * --- UPGRADED ---
  * Helper function to read the 'Config' tab (1 row).
- * This is now the "Live Cache".
  */
 async function getConfig(doc) {
     const configSheet = doc.sheetsByTitle['Config'];
@@ -57,7 +56,7 @@ exports.handler = async function (event, context) {
 
         switch (action) {
             
-            // --- ACTION 1: Get All Tracker Data (UPGRADED: FAST ⚡) ---
+            // --- ACTION 1: Get All Tracker Data (UPGRADED: SMARTER 🧠) ---
             case 'getTrackerData': {
                 const config = await getConfig(doc); // Reads 1 row
 
@@ -69,27 +68,34 @@ exports.handler = async function (event, context) {
                 const pool = (salary * 0.40) + openingBalance;
                 const goalShares = pool * 0.25;
                 const goalSavings = pool * 0.25;
-                const goalExpenses = pool * 0.50;
+                const goalExpenses = pool * 0.50; // This is the 'Total Available' for the wallet
                 const goals = { goalFamily, goalShares, goalSavings, goalExpenses };
 
                 // Actuals are read DIRECTLY from the config cache
+                const actualExpenses = parseFloat(config.Current_Expenses || 0);
                 const actuals = {
                     family: parseFloat(config.Current_Family || 0),
                     shares: parseFloat(config.Current_Shares || 0),
                     savings: parseFloat(config.Current_Savings || 0),
-                    expenses: parseFloat(config.Current_Expenses || 0)
+                    expenses: actualExpenses
                 };
                 
-                // NO HISTORY is returned. This is the fix.
-                responseData = { success: true, data: { config, goals, actuals, history: [] } };
+                // --- NEW: Pre-calculate wallet values for the "dumber" frontend ---
+                const wallet = {
+                    balance: goalExpenses - actualExpenses,
+                    totalAvailable: goalExpenses,
+                    totalSpent: actualExpenses
+                };
+
+                // Return all data
+                responseData = { success: true, data: { config, goals, actuals, wallet } };
                 break;
             }
 
-            // --- ACTION 2: Log a New Transaction (UPGRADED: SMART 🧠) ---
+            // --- ACTION 2: Log a New Transaction (No change) ---
             case 'logTransaction': {
                 const { amount, type, category, notes, transactionDate, paymentMode } = data;
                 
-                // --- Step 1: Write to the permanent 'Transactions' archive ---
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 await transactionsSheet.addRow({
                     Date: transactionDate,
@@ -101,8 +107,7 @@ exports.handler = async function (event, context) {
                     Time_stamp: new Date().toISOString()
                 });
 
-                // --- Step 2: Update the 'Config' cache ---
-                const config = await getConfig(doc); // Get the 1-row cache
+                const config = await getConfig(doc);
                 const numAmount = parseFloat(amount);
 
                 if (type === 'debit') {
@@ -133,7 +138,7 @@ exports.handler = async function (event, context) {
                 }
                 
                 config.Time_stamp = new Date().toISOString();
-                await config.save(); // Save the updated 1-row cache
+                await config.save();
                 
                 responseData = { success: true };
                 break;
@@ -149,26 +154,20 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 4: Run the Month-End (UPGRADED: CLEAN 🧹) ---
+            // --- ACTION 4: Run the Month-End (No change) ---
             case 'runMonthEnd': {
                 const config = await getConfig(doc);
-
-                // --- 1. Calculate this month's final numbers ---
                 const salaryGoal = parseFloat(config.Total_Salary || 0);
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
                 const pool = (salaryGoal * 0.40) + openingBalance;
                 const goalExpenses = pool * 0.50;
                 const actualExpenses = parseFloat(config.Current_Expenses || 0);
-                
-                const closingBalance = goalExpenses - actualExpenses; // The new rollover
+                const closingBalance = goalExpenses - actualExpenses;
 
-                // --- 2. Write new row to the 'Monthly_Archive' ---
                 const archiveSheet = doc.sheetsByTitle['Monthly_Archive'];
                 if (!archiveSheet) throw new Error("Sheet 'Monthly_Archive' not found.");
-
                 const now = new Date();
                 const monthYear = `${now.getMonth() + 1}-${now.getFullYear()}`;
-
                 await archiveSheet.addRow({
                     Month_Year: monthYear,
                     Opening_Balance: openingBalance.toFixed(2),
@@ -181,7 +180,6 @@ exports.handler = async function (event, context) {
                     Closing_Balance: closingBalance.toFixed(2)
                 });
 
-                // --- 3. Reset the Config sheet for next month ---
                 config.Current_Opening_Balance = closingBalance.toFixed(2);
                 config.Current_Family = "0";
                 config.Current_Shares = "0";
@@ -213,6 +211,37 @@ exports.handler = async function (event, context) {
                 }));
                 
                 responseData = { success: true, data: documents };
+                break;
+            }
+
+            // --- ACTION 6: Get Transaction History (NEW ✨) ---
+            case 'getTransactionHistory': {
+                const { limit = 20, offset = 0 } = data;
+                const numLimit = parseInt(limit, 10);
+                const numOffset = parseInt(offset, 10);
+
+                const transactionsSheet = doc.sheetsByTitle['Transactions'];
+                if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
+                
+                // Fetch limit + 1 to check if there's a next page
+                const rows = await transactionsSheet.getRows({ limit: numLimit + 1, offset: numOffset });
+                
+                const hasMore = rows.length > numLimit;
+                if (hasMore) {
+                    rows.pop(); // Remove the extra row, don't send it to client
+                }
+
+                const transactions = rows.map(row => ({
+                    date: row.Date,
+                    category: row.Category,
+                    debit: row.Amount_DR,
+                    credit: row.Amount_CR,
+                    notes: row.Notes,
+                    paymentMode: row.Payment_Mode
+                }));
+
+                // Return transactions and the 'hasMore' flag for pagination
+                responseData = { success: true, data: { transactions, hasMore } };
                 break;
             }
 

@@ -6,15 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="tracker.css">
     <link rel="stylesheet" href="nav.css">
-    <script src="tracker.js" defer></script>
-</head>
+    </head>
 <body>
 
     <nav class="navbar">
         <ul class="nav-links">
             <li><a href="main.html">Dashboard</a></li>
             <li><a href="log.html">Log</a></li>
-            <li><a href="documents.html">Documents</a></li>
+            <li><a href="history.html">History</a></li> <li><a href="documents.html">Documents</a></li>
             <li><a href="settings.html" class="active">Settings</a></li>
         </ul>
     </nav>
@@ -28,10 +27,10 @@
             <h2>Settings</h2>
             <form id="settings-form" class="settings-form">
                 <div class="form-group">
-                    <label for="salary-goal">Monthly Salary Goal</label>
-                    <input type="number" id="salary-goal" placeholder="e.g., 50000">
+                    <label for="salary-input">Monthly Salary</label>
+                    <input type="number" id="salary-input" placeholder="e.g., 50000">
                 </div>
-                <button type="submit" id="save-settings-btn">Save Goal</button>
+                <button type="submit" id="save-settings-btn">Save Salary</button>
             </form>
         </section>
 
@@ -41,5 +40,7 @@
         </section>
     </main>
 
+    <script src="common.js" defer></script>
+    <script src="settings.js" defer></script>
 </body>
 </html>

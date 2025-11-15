@@ -1,56 +1,39 @@
+// --- documents.js ---
+// Manages the Documents page (documents.html)
+
 document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.getElementById('doc-table-body');
 
-    // Simple API call helper
-    const callApi = async (action, data = {}) => {
-        try {
-            const response = await fetch('/.netlify/functions/api', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, data }),
-            });
-            if (!response.ok) throw new Error('Network response was not ok');
-            const result = await response.json();
-            if (!result.success) throw new Error(result.error || 'API request failed');
-            return result.data;
-        } catch (error) {
-            console.error('API Error:', error);
-            // --- CHANGED: Colspan is now 6 ---
-            tableBody.innerHTML = `<tr><td colspan="6">Error loading data.</td></tr>`;
-        }
-    };
-
     // Main function to load and render documents
     const loadDocuments = async () => {
-        const documents = await callApi('getDocumentData');
+        // The global `callApi` function is from common.js
+        // It now handles the loader and error alerts automatically.
+        const result = await callApi('getDocumentData');
         
-        if (!documents || documents.length === 0) {
-            // --- CHANGED: Colspan is now 6 ---
+        if (!result || !result.data || result.data.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="6">No documents found.</td></tr>`;
             return;
         }
 
+        const documents = result.data;
         tableBody.innerHTML = ''; // Clear loading row
         
         documents.forEach(doc => {
             const tr = document.createElement('tr');
             
-            // --- NEW: Helper for 'Drive_Link' ---
             const driveLink = doc.link && doc.link.startsWith('http') 
                 ? `<a href="${doc.link}" target="_blank">Open Link</a>` 
                 : (doc.link || '-');
             
-            // --- NEW: Helper for 'Uploded_Pdfs' ---
             const pdfLink = doc.pdf && doc.pdf.startsWith('http')
                 ? `<a href="${doc.pdf}" target="_blank">Open PDF</a>`
                 : (doc.pdf || '-');
 
-            // --- UPDATED: Added the new pdfLink to the table ---
             tr.innerHTML = `
                 <td><strong>${doc.docType}</strong><br><small>${doc.fullName}</small></td>
                 <td>${doc.docNumber || '-'}</td>
                 <td>${doc.issued || '-'}</td>
-                <td>${doc.expiry || '-'}</td>
+                <td ${doc.expiry ? '' : 'style="color: var(--text-light);"'}>${doc.expiry || 'N/A'}</td>
                 <td>${driveLink}</td>
                 <td>${pdfLink}</td>
             `;
@@ -58,5 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Initial load
     loadDocuments();
 });

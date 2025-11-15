@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    <link rel="stylesheet" href="tracker.css">
+    <link rel="stylesheet" href="nav.css"> 
+    <style>
+        .history-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: var(--bg-color);
+        }
+        .history-controls button {
+            width: 100px;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        .history-controls span {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="main.html">Dashboard</a></li>
+            <li><a href="log.html">Log</a></li>
+            <li><a href="history.html" class="active">History</a></li>
+            <li><a href="documents.html">Documents</a></li>
+            <li><a href="settings.html">Settings</a></li>
+        </ul>
+    </nav>
+
+    <main class="tracker-container">
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+        </div>
+        
+        <section class="history-table-container">
+            <h2>Transaction History</h2>
+            <table class="history-table" id="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <tr><td colspan="5">Loading history...</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="history-controls">
+            <button id="prev-btn" disabled>Previous</button>
+            <span id="page-info">Page 1</span>
+            <button id="next-btn" disabled>Next</button>
+        </section>
+    </main>
+    
+    <script src="common.js" defer></script>
+    <script src="history.js" defer></script>
+</body>
+</html>
