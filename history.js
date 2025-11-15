@@ -4,7 +4,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- State ---
     let currentFilter = '1M';
+    let currentViewMode = 'debit'; // 'debit' or 'credit'
     let allTransactions = []; // Stores all transactions for client-side search
+    let apiData = {}; // Stores the full response from the API
     let historyChart; // Holds the Chart.js instance
 
     // --- DOM Elements ---
@@ -14,17 +16,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const chartTotal = document.getElementById('chart-total');
     const searchNotes = document.getElementById('search-notes');
     const searchCategory = document.getElementById('search-category');
+    
+    // New Toggle Elements
+    const analysisTitle = document.getElementById('analysis-title');
+    const toggleExpenseBtn = document.getElementById('toggle-expense');
+    const toggleIncomeBtn = document.getElementById('toggle-income');
 
     /**
-     * Renders the Pie Chart with Chart.js
+     * Renders the Pie Chart with Chart.js based on the currentViewMode
      */
-    const renderChart = (chartData) => {
+    const renderChart = () => {
+        const chartData = (currentViewMode === 'debit') 
+            ? apiData.debitChartData 
+            : apiData.creditChartData;
+
         if (historyChart) {
             historyChart.destroy(); // Destroy old chart
         }
         
-        // Update total spent
-        chartTotal.querySelector('h4').textContent = formatCurrency(chartData.totalDebits);
+        // Update total
+        chartTotal.querySelector('h4').textContent = formatCurrency(chartData.total);
+        chartTotal.querySelector('p').textContent = (currentViewMode === 'debit') ? 'Total Spent' : 'Total Received';
 
         if (chartData.labels.length === 0) {
             chartCanvas.style.display = 'none';
@@ -39,7 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: chartData.labels,
                 datasets: [{
                     data: chartData.values,
-                    backgroundColor: ['#4a90e2', '#f39c12', '#f44336', '#4caf50', '#9b59b6', '#34495e'],
+                    backgroundColor: (currentViewMode === 'debit')
+                        ? ['#f44336', '#f39c12', '#4a90e2', '#9b59b6', '#34495e', '#e74c3c']
+                        : ['#4caf50', '#2ecc71', '#8e44ad', '#27ae60'],
                 }]
             },
             options: {
@@ -57,11 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Populates the category filter dropdown from the loaded transactions.
+     * Populates the category filter dropdown based on the currentViewMode.
      */
     const populateCategoryFilter = () => {
         const categories = new Set();
-        allTransactions.forEach(tx => categories.add(tx.category));
+        const filterList = (currentViewMode === 'debit')
+            ? allTransactions.filter(tx => parseFloat(tx.debit || 0) > 0)
+            : allTransactions.filter(tx => parseFloat(tx.credit || 0) > 0);
+
+        filterList.forEach(tx => categories.add(tx.category));
         
         searchCategory.innerHTML = '<option value="">All Categories</option>'; // Reset
         categories.forEach(cat => {
@@ -70,20 +88,30 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Renders transactions to the table, applying client-side filters.
+     * Renders transactions to the table, applying client-side filters
+     * AND the new debit/credit view mode.
      */
     const renderTable = () => {
         const noteFilter = searchNotes.value.toLowerCase();
         const categoryFilter = searchCategory.value;
 
         const filteredTransactions = allTransactions.filter(tx => {
+            // 1. Filter by View Mode (Debit/Credit)
+            const isDebit = parseFloat(tx.debit || 0) > 0;
+            const isCredit = parseFloat(tx.credit || 0) > 0;
+            
+            if (currentViewMode === 'debit' && !isDebit) return false;
+            if (currentViewMode === 'credit' && !isCredit) return false;
+
+            // 2. Filter by Search & Category
             const noteMatch = (tx.notes || '').toLowerCase().includes(noteFilter);
             const categoryMatch = (categoryFilter === '') || (tx.category === categoryFilter);
+            
             return noteMatch && categoryMatch;
         });
 
         if (!filteredTransactions || filteredTransactions.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5">No transactions found for these filters.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="5">No transactions found.</td></tr>`;
             return;
         }
 
@@ -125,23 +153,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await callApi('getHistoryAnalysis', { filter });
 
         if (result && result.data) {
-            const { transactions, chartData } = result.data;
-            allTransactions = transactions; // Store for client-side search
+            // Store all data
+            apiData = result.data;
+            allTransactions = result.data.transactions; 
             
-            renderChart(chartData);
-            populateCategoryFilter();
-            renderTable(); // First render
+            // Render the page based on the current state (default 'debit')
+            renderPage();
         } else {
             tableBody.innerHTML = `<tr><td colspan="5">Error loading history.</td></tr>`;
         }
+    };
+    
+    /**
+     * Renders all components based on the currentViewMode
+     */
+    const renderPage = () => {
+        if (!apiData.transactions) return; // Not loaded yet
+        
+        // Update titles and buttons
+        analysisTitle.textContent = (currentViewMode === 'debit') ? 'Expense Analysis' : 'Income Analysis';
+        toggleExpenseBtn.classList.toggle('active', currentViewMode === 'debit');
+        toggleIncomeBtn.classList.toggle('active', currentViewMode === 'credit');
+
+        // Re-render all components
+        renderChart();
+        populateCategoryFilter();
+        renderTable();
     };
 
     // --- Event Listeners ---
     
     // 1. For top filter buttons (1D, 1W, etc.)
     filterButtons.addEventListener('click', (e) => {
-        if (e.target.classList.contains('filter-btn')) {
-            const filter = e.target.dataset.filter;
+        if (e.target.classList.contains('filter-btn') || e.target.closest('.filter-btn')) {
+            const button = e.target.closest('.filter-btn');
+            const filter = button.dataset.filter;
             if (filter !== currentFilter) {
                 loadHistory(filter);
             }
@@ -151,6 +197,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. For client-side search (instant)
     searchNotes.addEventListener('input', renderTable);
     searchCategory.addEventListener('change', renderTable);
+
+    // 3. For new Toggle Buttons
+    toggleExpenseBtn.addEventListener('click', () => {
+        if (currentViewMode !== 'debit') {
+            currentViewMode = 'debit';
+            renderPage();
+        }
+    });
+    
+    toggleIncomeBtn.addEventListener('click', () => {
+        if (currentViewMode !== 'credit') {
+            currentViewMode = 'credit';
+            renderPage();
+        }
+    });
 
     // --- Initial Load ---
     loadHistory(currentFilter); // Load '1M' (This Cycle) by default

@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction History</title>
     <link rel="stylesheet" href="tracker.css">
-    <link rel="stylesheet" href="nav.css"> 
+    <link rel="stylesheet" href="nav.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -24,10 +27,18 @@
         <div class="loader-overlay" id="loader">
             <div class="spinner"></div>
         </div>
-        
+
         <section class="history-table-container">
-            <h2>Transaction Analysis</h2>
-            
+            <div class="analysis-header">
+                <h2 id="analysis-title">Expense Analysis</h2>
+                <div class="toggle-buttons">
+                    <button id="toggle-expense" class="toggle-btn active" title="Show Expenses"><i
+                            class="fas fa-arrow-up"></i></button>
+                    <button id="toggle-income" class="toggle-btn" title="Show Income"><i
+                            class="fas fa-arrow-down"></i></button>
+                </div>
+            </div>
+
             <div class="history-filters" id="history-filters">
                 <button class="filter-btn" data-filter="1D">1D</button>
                 <button class="filter-btn" data-filter="1W">1W</button>
@@ -65,14 +76,17 @@
                     </tr>
                 </thead>
                 <tbody id="history-table-body">
-                    <tr><td colspan="5">Loading history...</td></tr>
+                    <tr>
+                        <td colspan="5">Loading history...</td>
+                    </tr>
                 </tbody>
             </table>
         </section>
 
     </main>
-    
+
     <script src="common.js" defer></script>
     <script src="history.js" defer></script>
 </body>
+
 </html>
