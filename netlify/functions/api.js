@@ -25,7 +25,7 @@ async function getConfig(doc) {
     const configSheet = doc.sheetsByTitle['Config'];
     if (!configSheet) throw new Error("Sheet 'Config' not found.");
     const configRows = await configSheet.getRows();
-    
+
     if (configRows.length > 0) {
         return configRows[0]; // Return the first (and only) row object
     } else {
@@ -54,7 +54,7 @@ exports.handler = async function (event, context) {
         let responseData = {};
 
         switch (action) {
-            
+
             // --- ACTION 1: Get All Tracker Data ---
             case 'getTrackerData': {
                 const config = await getConfig(doc); // Reads 1 row
@@ -76,21 +76,26 @@ exports.handler = async function (event, context) {
                     savings: parseFloat(config.Current_Savings || 0),
                     expenses: actualExpenses
                 };
-                
+
                 const wallet = {
                     balance: goalExpenses - actualExpenses,
                     totalAvailable: goalExpenses,
                     totalSpent: actualExpenses
                 };
 
-                responseData = { success: true, data: { config, goals, actuals, wallet } };
+                // Create a plain object with only the values
+                const configData = {
+                    Total_Salary: config.Total_Salary
+                };
+
+                responseData = { success: true, data: { config: configData, goals, actuals, wallet } };
                 break;
             }
 
             // --- ACTION 2: Log a New Transaction ---
             case 'logTransaction': {
                 const { amount, type, category, notes, transactionDate, paymentMode } = data;
-                
+
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 await transactionsSheet.addRow({
                     Date: transactionDate,
@@ -131,10 +136,10 @@ exports.handler = async function (event, context) {
                             break;
                     }
                 }
-                
+
                 config.Time_stamp = new Date().toISOString();
                 await config.save();
-                
+
                 responseData = { success: true };
                 break;
             }
@@ -184,7 +189,7 @@ exports.handler = async function (event, context) {
                 config.Current_Other_In = "0";
                 config.Time_stamp = new Date().toISOString();
                 await config.save();
-                
+
                 responseData = { success: true, newOpeningBalance: closingBalance.toFixed(2) };
                 break;
             }
@@ -193,7 +198,7 @@ exports.handler = async function (event, context) {
             case 'getDocumentData': {
                 const docSheet = doc.sheetsByTitle['Documents'];
                 if (!docSheet) throw new Error("Sheet 'Documents' not found.");
-                
+
                 const rows = await docSheet.getRows();
                 const documents = rows.map(row => ({
                     fullName: row.Full_Name,
@@ -204,7 +209,7 @@ exports.handler = async function (event, context) {
                     link: row.Drive_Link,
                     pdf: row.Uploded_Pdfs
                 }));
-                
+
                 responseData = { success: true, data: documents };
                 break;
             }
@@ -217,12 +222,12 @@ exports.handler = async function (event, context) {
 
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
-                
+
                 const rows = await transactionsSheet.getRows({ limit: numLimit + 1, offset: numOffset });
-                
+
                 const hasMore = rows.length > numLimit;
                 if (hasMore) {
-                    rows.pop(); 
+                    rows.pop();
                 }
 
                 const transactions = rows.map(row => ({
