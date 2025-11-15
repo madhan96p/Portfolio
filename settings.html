@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Settings</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="tracker.css">
+    <link rel="stylesheet" href="nav.css">
+    <script src="tracker.js" defer></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="log.html">Log</a></li>
+            <li><a href="documents.html">Documents</a></li>
+            <li><a href="settings.html" class="active">Settings</a></li>
+        </ul>
+    </nav>
+
+    <main class="tracker-container">
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+        </div>
+
+        <section class="settings-card">
+            <h2>Settings</h2>
+            <form id="settings-form" class="settings-form">
+                </form>
+        </section>
+
+        <section class="admin-section">
+            <h3>Admin Actions</h3>
+            <button id="end-month-btn">End Month & Start New Cycle</button>
+        </section>
+    </main>
+
+</body>
+</html>

@@ -218,6 +218,25 @@ exports.handler = async function (event, context) {
                 break;
             }
 
+            // --- ACTION 5: Get All Document Data (NEW) ---
+            case 'getDocumentData': {
+                const docSheet = doc.sheetsByTitle['Documents'];
+                if (!docSheet) throw new Error("Sheet 'Documents' not found.");
+                
+                const rows = await docSheet.getRows();
+                const documents = rows.map(row => ({
+                    fullName: row.Full_Name,
+                    docType: row.Document_Type,
+                    docNumber: row.Document_Number,
+                    issued: row.Issued_Date,
+                    expiry: row.Expiry_Date,
+                    link: row.Drive_Link
+                }));
+                
+                responseData = { success: true, data: documents };
+                break;
+            }
+
             default:
                 responseData = { success: false, error: 'Invalid action.' };
                 break;

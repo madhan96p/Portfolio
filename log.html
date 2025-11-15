@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Log Transaction</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="tracker.css">
+    <link rel="stylesheet" href="nav.css">
+    <script src="tracker.js" defer></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="log.html" class="active">Log</a></li>
+            <li><a href="documents.html">Documents</a></li>
+            <li><a href="settings.html">Settings</a></li>
+        </ul>
+    </nav>
+
+    <main class="tracker-container">
+        <section class="expense-form-container">
+            <h3>Log a Transaction</h3>
+            <form id="log-form">
+                <div class="form-group">
+                    <label for="amount">Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="e.g., 150" required>
+                </div>
+                <div class="form-group">
+                    <label for="transaction-date">Date</label>
+                    <input type="date" id="transaction-date" required>
+                </div>
+                <button type="submit" id="log-btn">Log Transaction</button>
+            </form>
+        </section>
+    </main>
+
+</body>
+</html>

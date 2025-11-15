@@ -1,77 +1,59 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Define Categories ---
-    const DEBIT_CATEGORIES = [
-        'Personal Expense', 
-        'Family Transfer', 
-        'Share Investment', 
-        'Savings Transfer',
-        'Other Debit'
-    ];
-    const CREDIT_CATEGORIES = [
-        'Salary', 
-        'Gift / From Friend', 
-        'Other Income'
-    ];
+    const DEBIT_CATEGORIES = [ 'Personal Expense', 'Family Transfer', 'Share Investment', 'Savings Transfer', 'Other Debit' ];
+    const CREDIT_CATEGORIES = [ 'Salary', 'Gift / From Friend', 'Other Income' ];
 
-    // --- Get All DOM Elements ---
+    // --- Get All DOM Elements (Use conditional checks later) ---
     const loader = document.getElementById('loader');
-
-    // Settings
+    
+    // Settings Page Elements
     const settingsForm = document.getElementById('settings-form');
     const salaryGoalInput = document.getElementById('salary-goal');
     const saveSettingsBtn = document.getElementById('save-settings-btn');
+    const endMonthBtn = document.getElementById('end-month-btn');
 
-    // Transaction Form
+    // Log Page Elements
     const logForm = document.getElementById('log-form');
     const amountInput = document.getElementById('amount');
-    const transactionDateInput = document.getElementById('transaction-date'); // <-- NEW
+    const transactionDateInput = document.getElementById('transaction-date');
     const transactionTypeInput = document.getElementById('transaction-type');
     const categoryInput = document.getElementById('category');
-    const paymentModeInput = document.getElementById('payment-mode'); // <-- NEW
+    const paymentModeInput = document.getElementById('payment-mode');
     const notesInput = document.getElementById('notes');
     const logBtn = document.getElementById('log-btn');
 
-    // Action Center
+    // Dashboard Page Elements
     const familyCard = document.getElementById('family-card');
     const familyPending = document.getElementById('family-pending');
     const familyProgress = document.getElementById('family-progress');
     const familySummary = document.getElementById('family-summary');
+    
     const sharesCard = document.getElementById('shares-card');
     const sharesPending = document.getElementById('shares-pending');
     const sharesProgress = document.getElementById('shares-progress');
     const sharesSummary = document.getElementById('shares-summary');
+    
     const savingsCard = document.getElementById('savings-card');
     const savingsPending = document.getElementById('savings-pending');
     const savingsProgress = document.getElementById('savings-progress');
     const savingsSummary = document.getElementById('savings-summary');
 
-    // Expense Wallet
     const balanceEl = document.getElementById('balance');
     const totalAvailableEl = document.getElementById('total-available');
     const totalSpentEl = document.getElementById('total-spent');
 
-    // History Table
     const historyTableBody = document.getElementById('history-table-body');
-    
-    // Admin
-    const endMonthBtn = document.getElementById('end-month-btn');
+
 
     // --- Helper Functions ---
-    const showLoader = (show) => loader.classList.toggle('visible', show);
-    const formatCurrency = (num) => `₹${Number(num).toFixed(2)}`;
-
-    /**
-     * NEW: Helper to set the date input to today.
-     */
-    const setTodayDate = () => {
-        // Using valueAsDate is the cleanest way to set an <input type="date">
-        transactionDateInput.valueAsDate = new Date(); 
+    const showLoader = (show) => {
+        if (loader) loader.classList.toggle('visible', show);
     };
 
-    /**
-     * Updates a progress bar element.
-     */
+    const formatCurrency = (num) => `₹${Number(num).toFixed(2)}`;
+    
     const updateProgressBar = (card, progressEl, summaryEl, pendingEl, actual, goal, labels) => {
+        if (!card) return; // Guard clause
         actual = Math.max(0, actual);
         goal = Math.max(0, goal);
         let pending = goal - actual;
@@ -90,14 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
         pendingEl.textContent = `${labels.pending}: ${formatCurrency(pending)}`;
     };
 
-    /**
-     * Updates the category dropdown based on transaction type.
-     */
     const updateCategoryDropdown = () => {
+        if (!transactionTypeInput || !categoryInput) return;
         const type = transactionTypeInput.value;
         const categories = (type === 'credit') ? CREDIT_CATEGORIES : DEBIT_CATEGORIES;
         
-        categoryInput.innerHTML = ''; // Clear existing options
+        categoryInput.innerHTML = ''; 
         categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
@@ -106,11 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    /**
-     * Renders the transaction history table.
-     */
     const renderHistory = (history) => {
-        historyTableBody.innerHTML = ''; // Clear old history
+        if (!historyTableBody) return;
+        historyTableBody.innerHTML = ''; 
         if (history.length === 0) {
             historyTableBody.innerHTML = '<tr><td colspan="4">No transactions for this month yet.</td></tr>';
             return;
@@ -122,48 +100,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${row.date || ''}</td>
                 <td>${row.category || ''}</td>
                 <td>${row.amount_dr !== '0' ? formatCurrency(row.amount_dr) : '-'}</td>
-                <td>${row.amount_cr !== '0' ? formatG(row.amount_cr) : '-'}</td>
+                <td>${row.amount_cr !== '0' ? formatCurrency(row.amount_cr) : '-'}</td>
             `;
             historyTableBody.appendChild(tr);
         });
     };
-
-    /**
-     * Updates the entire UI based on data from the API.
-     */
+    
     const updateUI = (data) => {
         const { config, goals, actuals, history } = data;
         
-        // 1. Update Settings Card
-        salaryGoalInput.value = parseFloat(config.Total_Salary || 0);
+        // Update Settings (if present)
+        if (salaryGoalInput) salaryGoalInput.value = parseFloat(config.Total_Salary || 0);
 
-        // 2. Update Action Center
+        // Update Dashboard (if present)
         updateProgressBar(familyCard, familyProgress, familySummary, familyPending, 
-            actuals.family, goals.goalFamily, 
-            { sent: 'Sent', goal: 'Goal', pending: 'Pending' }
-        );
-        updateProgressBar(sharesCard, sharesProgress, sharesSummary, sharesPending, 
-            actuals.shares, goals.goalShares, 
-            { sent: 'Invested', goal: 'Goal', pending: 'Pending' }
-        );
-        updateProgressBar(savingsCard, savingsProgress, savingsSummary, savingsPending, 
-            actuals.savings, goals.goalSavings, 
-            { sent: 'Saved', goal: 'Goal', pending: 'Pending' }
-        );
+            actuals.family, goals.goalFamily, { sent: 'Sent', goal: 'Goal', pending: 'Pending' });
         
-        // 3. Update Expense Wallet
-        const balance = goals.goalExpenses - actuals.expenses;
-        balanceEl.textContent = formatCurrency(balance);
-        totalAvailableEl.textContent = formatCurrency(goals.goalExpenses);
-        totalSpentEl.textContent = formatCurrency(actuals.expenses);
+        updateProgressBar(sharesCard, sharesProgress, sharesSummary, sharesPending, 
+            actuals.shares, goals.goalShares, { sent: 'Invested', goal: 'Goal', pending: 'Pending' });
+        
+        updateProgressBar(savingsCard, savingsProgress, savingsSummary, savingsPending, 
+            actuals.savings, goals.goalSavings, { sent: 'Saved', goal: 'Goal', pending: 'Pending' });
+        
+        if (balanceEl) {
+            const balance = goals.goalExpenses - actuals.expenses;
+            balanceEl.textContent = formatCurrency(balance);
+            totalAvailableEl.textContent = formatCurrency(goals.goalExpenses);
+            totalSpentEl.textContent = formatCurrency(actuals.expenses);
+        }
 
-        // 4. Update History Table
         renderHistory(history);
     };
-
-    /**
-     * Main API call function
-     */
+    
     const callApi = async (action, data = {}) => {
         showLoader(true);
         try {
@@ -178,107 +146,95 @@ document.addEventListener('DOMContentLoaded', () => {
             return result;
         } catch (error) {
             console.error('API Error:', error);
-            alert(`Error: ${error.message}`);
+            // Only alert if we are interacting with a form, otherwise it's annoying on load
+            if (action !== 'getTrackerData') alert(`Error: ${error.message}`);
         } finally {
             showLoader(false);
         }
     };
 
-    // --- Event Handlers ---
+    // --- Event Handlers & Initialization ---
 
-    // 1. Load initial data on page load
     const loadDashboardData = async () => {
         const result = await callApi('getTrackerData');
         if (result && result.data) {
-            updateUI(result.data);
+            updateUI(result.data); 
         }
     };
 
-    // 2. Handle transaction type change
-    transactionTypeInput.addEventListener('change', updateCategoryDropdown);
+    // 1. LOG PAGE Logic
+    if (logForm) {
+        // Initialize Date to Today
+        if (transactionDateInput) transactionDateInput.valueAsDate = new Date();
+        // Initialize Categories
+        updateCategoryDropdown();
 
-    // 3. Handle settings form submission
-    settingsForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const newSalary = parseFloat(salaryGoalInput.value);
-        if (isNaN(newSalary) || newSalary < 0) {
-            alert('Please enter a valid salary goal.');
-            return;
-        }
+        // Listen for Type Change
+        transactionTypeInput.addEventListener('change', updateCategoryDropdown);
 
-        saveSettingsBtn.disabled = true;
-        saveSettingsBtn.textContent = 'Saving...';
-        
-        await callApi('updateSalaryGoal', { newSalary });
-        
-        saveSettingsBtn.disabled = false;
-        saveSettingsBtn.textContent = 'Save Goal';
-        
-        alert('Salary goal updated!');
-        await loadDashboardData(); // Reload data with new goal
-    });
+        // Listen for Submit
+        logForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const amount = parseFloat(amountInput.value);
+            const type = transactionTypeInput.value;
+            const category = categoryInput.value;
+            const notes = notesInput.value.trim();
+            const transactionDate = transactionDateInput.value;
+            const paymentMode = paymentModeInput.value;
 
-    // 4. Handle transaction form submission (CHANGED)
-    logForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const amount = parseFloat(amountInput.value);
-        const type = transactionTypeInput.value;
-        const category = categoryInput.value;
-        const notes = notesInput.value.trim();
-        const transactionDate = transactionDateInput.value; // <-- NEW
-        const paymentMode = paymentModeInput.value; // <-- NEW
+            if (isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
+            if (!transactionDate) { alert('Select valid date'); return; }
 
-        if (isNaN(amount) || amount <= 0) {
-            alert('Please enter a valid amount.');
-            return;
-        }
-        if (!transactionDate) {
-            alert('Please select a valid date.');
-            return;
-        }
-
-        logBtn.disabled = true;
-        logBtn.textContent = 'Logging...';
-        
-        // Pass all new data to the API
-        await callApi('logTransaction', { 
-            amount, 
-            type, 
-            category, 
-            notes, 
-            transactionDate, 
-            paymentMode 
-        });
-        
-        // Clear the form
-        amountInput.value = '';
-        notesInput.value = '';
-        paymentModeInput.value = 'UPI'; // Reset to default
-        setTodayDate(); // Reset date to today
-        
-        logBtn.disabled = false;
-        logBtn.textContent = 'Log Transaction';
-        
-        await loadDashboardData(); // Reload all data
-    });
-
-    // 5. Handle "End Month" button click
-    endMonthBtn.addEventListener('click', async () => {
-        const confirmEnd = confirm(
-            'Are you SURE you want to end the month?\n\nThis will calculate your rollover and start the new month. This action cannot be undone.'
-        );
-        if (confirmEnd) {
-            const result = await callApi('runMonthEnd');
+            logBtn.disabled = true;
+            logBtn.textContent = 'Logging...';
+            
+            const result = await callApi('logTransaction', { amount, type, category, notes, transactionDate, paymentMode });
+            
             if (result && result.success) {
-                alert(`Success! New month started.\nYour rollover balance is: ${formatCurrency(result.newOpeningBalance)}`);
-                await loadDashboardData();
+                alert('Transaction logged successfully!');
+                window.location.href = 'index.html'; // Redirect to Dashboard
+            } else {
+                logBtn.disabled = false;
+                logBtn.textContent = 'Log Transaction';
             }
-        }
-    });
+        });
+    }
 
-    // --- Initialize ---
-    updateCategoryDropdown(); // Set initial category options
-    setTodayDate(); // Set date input to today
-    loadDashboardData();
+    // 2. SETTINGS PAGE Logic
+    if (settingsForm) {
+        // Load current salary when page opens
+        loadDashboardData();
+
+        settingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newSalary = parseFloat(salaryGoalInput.value);
+            if (isNaN(newSalary) || newSalary < 0) return;
+
+            saveSettingsBtn.disabled = true;
+            saveSettingsBtn.textContent = 'Saving...';
+            await callApi('updateSalaryGoal', { newSalary });
+            saveSettingsBtn.disabled = false;
+            saveSettingsBtn.textContent = 'Save Goal';
+            alert('Salary goal updated!');
+        });
+    }
+
+    if (endMonthBtn) {
+        endMonthBtn.addEventListener('click', async () => {
+            if(confirm('Are you sure you want to End Month?')) {
+                const result = await callApi('runMonthEnd');
+                if (result && result.success) {
+                    alert(`New month started. Rollover: ${formatCurrency(result.newOpeningBalance)}`);
+                    // If on dashboard, reload data. If on settings, maybe redirect.
+                    loadDashboardData(); 
+                }
+            }
+        });
+    }
+
+    // 3. DASHBOARD PAGE Logic
+    if (historyTableBody) {
+        loadDashboardData();
+    }
 });

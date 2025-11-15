@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Documents</title>
+    <link rel="stylesheet" href="tracker.css">
+    </head>
+<body>
+    <main class="tracker-container">
+        <section class="history-table-container">
+            <h2>My Documents</h2>
+            <table class="history-table" id="doc-table">
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Number</th>
+                        <th>Issued</th>
+                        <th>Expiry</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody id="doc-table-body">
+                    <tr><td colspan="5">Loading documents...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    
+    <script src="documents.js" defer></script>
+</body>
+</html>
