@@ -168,7 +168,7 @@ exports.handler = async function (event, context) {
                     Opening_Balance: openingBalance.toFixed(2),
                     Total_Salary_Received: parseFloat(config.Current_Salary_In || 0).toFixed(2),
                     Total_Other_Income: parseFloat(config.Current_Other_In || 0).toFixed(2),
-                    Total_Spent__Family: parseFloat(config.Current_Family || 0).toFixed(2),
+                    Total_Spent_Family: parseFloat(config.Current_Family || 0).toFixed(2),
                     Total_Spent_Shares: parseFloat(config.Current_Shares || 0).toFixed(2),
                     Total_Spent_Savings: parseFloat(config.Current_Savings || 0).toFixed(2),
                     Total_Spent_Personal: actualExpenses.toFixed(2),
