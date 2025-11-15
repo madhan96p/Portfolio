@@ -65,6 +65,7 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
             const debit = parseFloat(row.Amount_DR || 0);
             const credit = parseFloat(row.Amount_CR || 0);
 
+            // This now uses the new categories from log.js
             switch (row.Category) {
                 // --- Debits ---
                 case 'Family Transfer':
@@ -76,11 +77,10 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
                 case 'Savings Transfer':
                     totals.savings += debit;
                     break;
-                // Both new categories map to "personal wallet"
-                case 'Personal Spending':
+                case 'Personal Spending': // New
                     totals.personal += debit;
                     break;
-                case 'Household Spending':
+                case 'Household Spending': // New
                     totals.household += debit;
                     break;
                 
@@ -122,7 +122,7 @@ exports.handler = async function (event, context) {
 
         switch (action) {
 
-            // --- ACTION 1: Get All Tracker Data (REWRITTEN) ---
+            // --- ACTION 1: Get All Tracker Data (REWRITTEN FOR "SMART" LOGIC) ---
             case 'getTrackerData': {
                 const config = await getConfig(doc);
                 let goals, actuals, wallet, configData;
@@ -135,52 +135,58 @@ exports.handler = async function (event, context) {
                     configData = { Total_Salary: 0, Emp_Name: null, Net_Salary: 0 }; // Simplified
                     
                 } else {
-                    // --- Config exists, calculate everything ---
-                    const salary = parseFloat(config.Total_Salary || 0); // This is the PLAN
+                    // --- Config exists, run the "SMART" CALCULATION ---
+                    
+                    // 1. Get all transaction totals for this cycle
+                    const { totals } = await getCurrentCycleTransactions(doc, config.Cycle_Start_Date);
+                    
+                    // 2. THIS IS THE KEY: Determine the "Salary Base"
+                    // Use actual logged salary if > 0. Otherwise, base is 0.
+                    const salaryBase = totals.salary > 0 ? totals.salary : 0;
+                    
+                    // 3. Get Opening Balance
                     const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
-                    // 1. Get Goals (from the Plan)
-                    const goalFamily = salary * 0.60;
-                    const pool = (salary * 0.40) + openingBalance;
+                    // 4. Calculate Goals (Phase 1 or Phase 2)
+                    const goalFamily = salaryBase * 0.60; // 60% of actual salary
+                    const pool = (salaryBase * 0.40) + openingBalance; // 40% of actual salary + rollover
                     const goalShares = pool * 0.25;
                     const goalSavings = pool * 0.25;
                     const goalExpenses = pool * 0.50; // This is the 20% wallet
                     goals = { goalFamily, goalShares, goalSavings, goalExpenses };
 
-                    // 2. Get Actuals (Calculated from Transactions)
-                    const { totals } = await getCurrentCycleTransactions(doc, config.Cycle_Start_Date);
-                    
+                    // 5. Get Actuals (already have from `totals`)
                     const totalWalletSpent = totals.personal + totals.household;
                     
                     actuals = {
                         family: totals.family,
                         shares: totals.shares,
                         savings: totals.savings,
-                        personal: totals.personal,     // For the new breakdown card
-                        household: totals.household,   // For the new breakdown card
-                        salary: totals.salary,         // For the income card
-                        otherIncome: totals.otherIncome  // For the income card
+                        personal: totals.personal,
+                        household: totals.household,
+                        salary: totals.salary,
+                        otherIncome: totals.otherIncome
                     };
 
-                    // 3. Get Wallet (Goals vs. Actuals)
+                    // 6. Get Wallet
                     wallet = {
                         balance: goalExpenses - totalWalletSpent,
                         totalAvailable: goalExpenses,
                         totalSpent: totalWalletSpent
                     };
 
-                    // 4. Get Config Data (for Settings page, etc.)
+                    // 7. Get Config Data (for Settings page)
                     configData = {
-                        Total_Salary: config.Total_Salary,
+                        Total_Salary: config.Total_Salary, // This is the "Plan"
                         Emp_Name: config.Emp_Name,
                         Employee_No: config.Employee_No,
                         PAN_No: config.PAN_No,
                         PF_No: config.PF_No,
                         UAN_No: config.UAN_No,
                         Gross_Salary: config.Gross_Salary,
-                        Total_Deductions: config.Total_Deductions,
-                        Net_Salary: config.Net_Salary
-                        // All the 'Current_' fields are gone!
+                        Total_Deductions: config.Total_DDeductions,
+                        Net_Salary: config.Net_Salary,
+                        Cycle_Start_Date: config.Cycle_Start_Date // For the "smart" end-month button
                     };
                 }
 
@@ -188,20 +194,15 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 2: Log a New Transaction (REWRITTEN) ---
+            // --- ACTION 2: Log a New Transaction (UNCHANGED from last refactor) ---
             case 'logTransaction': {
-                // This function is now MUCH simpler.
-                // Its only job is to add a row to 'Transactions'.
-                
                 const { amount, type, category, notes, transactionDate, paymentMode } = data;
 
-                // 1. Check if profile is set up. This is still important.
                 const config = await getConfig(doc);
                 if (!config) {
                     throw new Error("Cannot log transaction. Please set up your profile in Settings first.");
                 }
 
-                // 2. Add the transaction.
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 await transactionsSheet.addRow({
                     Date: transactionDate,
@@ -212,15 +213,15 @@ exports.handler = async function (event, context) {
                     Payment_Mode: paymentMode,
                     Time_stamp: new Date().toISOString()
                 });
-
-                // 3. That's it. No more updating Config.
                 
                 responseData = { success: true };
                 break;
             }
 
-            // --- ACTION 3: Update Salary Goal (Unchanged) ---
+            // --- ACTION 3: Update Salary Goal (This is now just for the "Plan") ---
             case 'updateSalaryGoal': {
+                // This action is now less important, but we keep it.
+                // It only updates the "Plan" (Total_Salary) in settings.
                 const config = await getConfig(doc);
                 config.Total_Salary = data.newSalary;
                 config.Time_stamp = new Date().toISOString();
@@ -229,7 +230,7 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 4: Run the Month-End (REWRITTEN) ---
+            // --- ACTION 4: Run the Month-End (UNCHANGED from last refactor) ---
             case 'runMonthEnd': {
                 const config = await getConfig(doc);
                 if (!config) {
@@ -240,10 +241,11 @@ exports.handler = async function (event, context) {
                 const { totals } = await getCurrentCycleTransactions(doc, config.Cycle_Start_Date);
 
                 // 2. Calculate the closing balance.
-                const salary = parseFloat(config.Total_Salary || 0); // The Plan
+                // THIS MUST USE THE FINAL, LOGGED SALARY.
+                const salaryBase = totals.salary > 0 ? totals.salary : 0;
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
-                const pool = (salary * 0.40) + openingBalance;
-                const goalExpenses = pool * 0.50; // The 20% wallet goal
+                const pool = (salaryBase * 0.40) + openingBalance;
+                const goalExpenses = pool * 0.50;
                 const totalWalletSpent = totals.personal + totals.household;
                 const closingBalance = goalExpenses - totalWalletSpent;
 
@@ -251,7 +253,7 @@ exports.handler = async function (event, context) {
                 const archiveSheet = doc.sheetsByTitle['Monthly_Archive'];
                 if (!archiveSheet) throw new Error("Sheet 'Monthly_Archive' not found.");
                 
-                const now = new Date(config.Cycle_Start_Date); // Use cycle start date to get correct month
+                const now = new Date(config.Cycle_Start_Date);
                 const monthYear = `${now.toLocaleString('default', { month: 'short' })}-${now.getFullYear()}`;
                 
                 await archiveSheet.addRow({
@@ -262,7 +264,7 @@ exports.handler = async function (event, context) {
                     Total_Spent_Family: totals.family.toFixed(2),
                     Total_Spent_Shares: totals.shares.toFixed(2),
                     Total_Spent_Savings: totals.savings.toFixed(2),
-                    Total_Spent_Personal: (totals.personal + totals.household).toFixed(2), // Total wallet spent
+                    Total_Spent_Personal: (totals.personal + totals.household).toFixed(2),
                     Closing_Balance: closingBalance.toFixed(2)
                 });
 
@@ -271,7 +273,6 @@ exports.handler = async function (event, context) {
                 config.Cycle_Start_Date = new Date().toISOString().split('T')[0]; // Set new start date to today
                 config.Time_stamp = new Date().toISOString();
                 
-                // All the 'Current_' fields are gone! No need to reset them.
                 await config.save();
 
                 responseData = { success: true, newOpeningBalance: closingBalance.toFixed(2) };
@@ -280,7 +281,6 @@ exports.handler = async function (event, context) {
 
             // --- ACTION 5: Get All Document Data (Unchanged) ---
             case 'getDocumentData': {
-                // ... (no changes to this case) ...
                 const docSheet = doc.sheetsByTitle['Documents'];
                 if (!docSheet) throw new Error("Sheet 'Documents' not found.");
                 const rows = await docSheet.getRows();
@@ -299,8 +299,8 @@ exports.handler = async function (event, context) {
 
             // --- ACTION 6: Get Transaction History (Unchanged) ---
             case 'getTransactionHistory': {
-                // ... (no changes to this case) ...
                 const { limit = 20, offset = 0 } = data;
+                // ... (code is identical to previous version) ...
                 const numLimit = parseInt(limit, 10);
                 const numOffset = parseInt(offset, 10);
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
@@ -322,7 +322,7 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 7: Update Profile (REWRITTEN) ---
+            // --- ACTION 7: Update Profile (UNCHANGED from last refactor) ---
             case 'updateProfile': {
                 const profileData = data;
                 profileData.Total_Salary = profileData.Net_Salary; // Your plan
@@ -334,12 +334,8 @@ exports.handler = async function (event, context) {
                     // --- FIRST TIME setup ---
                     const configSheet = doc.sheetsByTitle['Config'];
                     if (!configSheet) throw new Error("Sheet 'Config' not found.");
-
-                    // Initialize the *new* required fields
                     profileData.Current_Opening_Balance = 0;
                     profileData.Cycle_Start_Date = new Date().toISOString().split('T')[0]; // Set start date to today
-
-                    // We no longer add any 'Current_' fields
                     await configSheet.addRow(profileData);
 
                 } else {
@@ -364,7 +360,7 @@ exports.handler = async function (event, context) {
 
             // --- ACTION 8: Get Unique Notes (Unchanged) ---
             case 'getUniqueNotes': {
-                // ... (no changes to this case) ...
+                // ... (code is identical to previous version) ...
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
                 const rows = await transactionsSheet.getRows();
