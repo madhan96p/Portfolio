@@ -1,4 +1,3 @@
-// --- api.js ---
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 // These will be set in your Netlify Environment Variables
@@ -56,22 +55,20 @@ exports.handler = async function (event, context) {
 
         switch (action) {
             
-            // --- ACTION 1: Get All Tracker Data (UPGRADED: SMARTER 🧠) ---
+            // --- ACTION 1: Get All Tracker Data ---
             case 'getTrackerData': {
                 const config = await getConfig(doc); // Reads 1 row
 
                 const salary = parseFloat(config.Total_Salary || 0);
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
-                // Goals are calculated from the config goal
                 const goalFamily = salary * 0.60;
                 const pool = (salary * 0.40) + openingBalance;
                 const goalShares = pool * 0.25;
                 const goalSavings = pool * 0.25;
-                const goalExpenses = pool * 0.50; // This is the 'Total Available' for the wallet
+                const goalExpenses = pool * 0.50;
                 const goals = { goalFamily, goalShares, goalSavings, goalExpenses };
 
-                // Actuals are read DIRECTLY from the config cache
                 const actualExpenses = parseFloat(config.Current_Expenses || 0);
                 const actuals = {
                     family: parseFloat(config.Current_Family || 0),
@@ -80,19 +77,17 @@ exports.handler = async function (event, context) {
                     expenses: actualExpenses
                 };
                 
-                // --- NEW: Pre-calculate wallet values for the "dumber" frontend ---
                 const wallet = {
                     balance: goalExpenses - actualExpenses,
                     totalAvailable: goalExpenses,
                     totalSpent: actualExpenses
                 };
 
-                // Return all data
                 responseData = { success: true, data: { config, goals, actuals, wallet } };
                 break;
             }
 
-            // --- ACTION 2: Log a New Transaction (No change) ---
+            // --- ACTION 2: Log a New Transaction ---
             case 'logTransaction': {
                 const { amount, type, category, notes, transactionDate, paymentMode } = data;
                 
@@ -101,7 +96,7 @@ exports.handler = async function (event, context) {
                     Date: transactionDate,
                     Category: category,
                     Amount_DR: type === 'debit' ? amount : '0',
-                    Amount_CR: type === 'credit' ? amount : '0',
+                    Amount_CR: type === 'credit' ? amount : '0', // <<< --- THIS LINE IS NOW FIXED
                     Notes: notes,
                     Payment_Mode: paymentMode,
                     Time_stamp: new Date().toISOString()
@@ -144,7 +139,7 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 3: Update Salary Goal (No change) ---
+            // --- ACTION 3: Update Salary Goal ---
             case 'updateSalaryGoal': {
                 const config = await getConfig(doc);
                 config.Total_Salary = data.newSalary;
@@ -154,7 +149,7 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 4: Run the Month-End (No change) ---
+            // --- ACTION 4: Run the Month-End ---
             case 'runMonthEnd': {
                 const config = await getConfig(doc);
                 const salaryGoal = parseFloat(config.Total_Salary || 0);
@@ -173,7 +168,7 @@ exports.handler = async function (event, context) {
                     Opening_Balance: openingBalance.toFixed(2),
                     Total_Salary_Received: parseFloat(config.Current_Salary_In || 0).toFixed(2),
                     Total_Other_Income: parseFloat(config.Current_Other_In || 0).toFixed(2),
-                    Total_Spent_Family: parseFloat(config.Current_Family || 0).toFixed(2),
+                    Total_Spent__Family: parseFloat(config.Current_Family || 0).toFixed(2),
                     Total_Spent_Shares: parseFloat(config.Current_Shares || 0).toFixed(2),
                     Total_Spent_Savings: parseFloat(config.Current_Savings || 0).toFixed(2),
                     Total_Spent_Personal: actualExpenses.toFixed(2),
@@ -194,7 +189,7 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 5: Get All Document Data (No change) ---
+            // --- ACTION 5: Get All Document Data ---
             case 'getDocumentData': {
                 const docSheet = doc.sheetsByTitle['Documents'];
                 if (!docSheet) throw new Error("Sheet 'Documents' not found.");
@@ -214,7 +209,7 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 6: Get Transaction History (NEW ✨) ---
+            // --- ACTION 6: Get Transaction History ---
             case 'getTransactionHistory': {
                 const { limit = 20, offset = 0 } = data;
                 const numLimit = parseInt(limit, 10);
@@ -223,12 +218,11 @@ exports.handler = async function (event, context) {
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
                 
-                // Fetch limit + 1 to check if there's a next page
                 const rows = await transactionsSheet.getRows({ limit: numLimit + 1, offset: numOffset });
                 
                 const hasMore = rows.length > numLimit;
                 if (hasMore) {
-                    rows.pop(); // Remove the extra row, don't send it to client
+                    rows.pop(); 
                 }
 
                 const transactions = rows.map(row => ({
@@ -240,7 +234,6 @@ exports.handler = async function (event, context) {
                     paymentMode: row.Payment_Mode
                 }));
 
-                // Return transactions and the 'hasMore' flag for pagination
                 responseData = { success: true, data: { transactions, hasMore } };
                 break;
             }
