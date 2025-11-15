@@ -56,76 +56,76 @@ exports.handler = async function (event, context) {
         switch (action) {
 
             // --- ACTION 1: Get All Tracker Data ---
-        case 'getTrackerData': {
-            const config = await getConfig(doc); // This can now be null
+            case 'getTrackerData': {
+                const config = await getConfig(doc); // This can now be null
 
-            let goals, actuals, wallet, configData;
+                let goals, actuals, wallet, configData;
 
-            if (config === null) {
-                // --- Config is empty, send a default "zeroed-out" state ---
+                if (config === null) {
+                    // --- Config is empty, send a default "zeroed-out" state ---
 
-                goals = { goalFamily: 0, goalShares: 0, goalSavings: 0, goalExpenses: 0 };
-                actuals = { family: 0, shares: 0, savings: 0, expenses: 0 };
-                wallet = { balance: 0, totalAvailable: 0, totalSpent: 0 };
-                configData = {
-                    Total_Salary: 0,
-                    Emp_Name: null,
-                    Employee_No: null,
-                    PAN_No: null,
-                    PF_No: null,
-                    UAN_No: null,
-                    Gross_Salary: 0,
-                    Total_Deductions: 0,
-                    Net_Salary: 0,
-                    Current_Salary_In: 0,
-                    Current_Other_In: 0
-                };
+                    goals = { goalFamily: 0, goalShares: 0, goalSavings: 0, goalExpenses: 0 };
+                    actuals = { family: 0, shares: 0, savings: 0, expenses: 0 };
+                    wallet = { balance: 0, totalAvailable: 0, totalSpent: 0 };
+                    configData = {
+                        Total_Salary: 0,
+                        Emp_Name: null,
+                        Employee_No: null,
+                        PAN_No: null,
+                        PF_No: null,
+                        UAN_No: null,
+                        Gross_Salary: 0,
+                        Total_Deductions: 0,
+                        Net_Salary: 0,
+                        Current_Salary_In: 0,
+                        Current_Other_In: 0
+                    };
 
-            } else {
-                // --- Config exists, run calculations as normal ---
+                } else {
+                    // --- Config exists, run calculations as normal ---
 
-                const salary = parseFloat(config.Total_Salary || 0);
-                const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
+                    const salary = parseFloat(config.Total_Salary || 0);
+                    const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
-                const goalFamily = salary * 0.60;
-                const pool = (salary * 0.40) + openingBalance;
-                const goalShares = pool * 0.25;
-                const goalSavings = pool * 0.25;
-                const goalExpenses = pool * 0.50;
-                goals = { goalFamily, goalShares, goalSavings, goalExpenses };
+                    const goalFamily = salary * 0.60;
+                    const pool = (salary * 0.40) + openingBalance;
+                    const goalShares = pool * 0.25;
+                    const goalSavings = pool * 0.25;
+                    const goalExpenses = pool * 0.50;
+                    goals = { goalFamily, goalShares, goalSavings, goalExpenses };
 
-                const actualExpenses = parseFloat(config.Current_Expenses || 0);
-                actuals = {
-                    family: parseFloat(config.Current_Family || 0),
-                    shares: parseFloat(config.Current_Shares || 0),
-                    savings: parseFloat(config.Current_Savings || 0),
-                    expenses: actualExpenses
-                };
+                    const actualExpenses = parseFloat(config.Current_Expenses || 0);
+                    actuals = {
+                        family: parseFloat(config.Current_Family || 0),
+                        shares: parseFloat(config.Current_Shares || 0),
+                        savings: parseFloat(config.Current_Savings || 0),
+                        expenses: actualExpenses
+                    };
 
-                wallet = {
-                    balance: goalExpenses - actualExpenses,
-                    totalAvailable: goalExpenses,
-                    totalSpent: actualExpenses
-                };
+                    wallet = {
+                        balance: goalExpenses - actualExpenses,
+                        totalAvailable: goalExpenses,
+                        totalSpent: actualExpenses
+                    };
 
-                configData = {
-                    Total_Salary: config.Total_Salary,
-                    Emp_Name: config.Emp_Name,
-                    Employee_No: config.Employee_No,
-                    PAN_No: config.PAN_No,
-                    PF_No: config.PF_No,
-                    UAN_No: config.UAN_No,
-                    Gross_Salary: config.Gross_Salary,
-                    Total_Deductions: config.Total_Deductions,
-                    Net_Salary: config.Net_Salary,
-                    Current_Salary_In: config.Current_Salary_In || 0,
-                    Current_Other_In: config.Current_Other_In || 0
-                };
+                    configData = {
+                        Total_Salary: config.Total_Salary,
+                        Emp_Name: config.Emp_Name,
+                        Employee_No: config.Employee_No,
+                        PAN_No: config.PAN_No,
+                        PF_No: config.PF_No,
+                        UAN_No: config.UAN_No,
+                        Gross_Salary: config.Gross_Salary,
+                        Total_Deductions: config.Total_Deductions,
+                        Net_Salary: config.Net_Salary,
+                        Current_Salary_In: config.Current_Salary_In || 0,
+                        Current_Other_In: config.Current_Other_In || 0
+                    };
+                }
+
+                responseData = { success: true, data: { config: configData, goals, actuals, wallet } };
+                break;
             }
-
-            responseData = { success: true, data: { config: configData, goals, actuals, wallet } };
-            break;
-        }
 
             // --- ACTION 2: Log a New Transaction ---
             case 'logTransaction': {
@@ -143,6 +143,11 @@ exports.handler = async function (event, context) {
                 });
 
                 const config = await getConfig(doc);
+
+                if (!config) {
+                    throw new Error("Cannot log transaction. Please set up your profile in Settings first.");
+                }
+
                 const numAmount = parseFloat(amount);
 
                 if (type === 'debit') {
@@ -280,24 +285,48 @@ exports.handler = async function (event, context) {
 
             // --- 7: Update Profile ---
             case 'updateProfile': {
-                const config = await getConfig(doc);
+                // This 'data' object has all the form fields
+                const profileData = data;
 
-                // data object comes from the new form in settings.js
-                config.Emp_Name = data.Emp_Name;
-                config.Employee_No = data.Employee_No;
-                config.PAN_No = data.PAN_No;
-                config.PF_No = data.PF_No;
-                config.UAN_No = data.UAN_No;
-                config.Gross_Salary = data.Gross_Salary;
-                config.Total_Deductions = data.Total_Deductions;
-                config.Net_Salary = data.Net_Salary;
+                // Set the budget salary and timestamp
+                profileData.Total_Salary = profileData.Net_Salary;
+                profileData.Time_stamp = new Date().toISOString();
 
-                // IMPORTANT: Also update the 'Total_Salary'
-                // This is the one the dashboard calculations use!
-                config.Total_Salary = data.Net_Salary;
+                let config = await getConfig(doc);
 
-                config.Time_stamp = new Date().toISOString();
-                await config.save();
+                if (config === null) {
+                    // --- This is the FIRST TIME setup ---
+                    // The Config sheet is empty, so we create the first row.
+                    const configSheet = doc.sheetsByTitle['Config'];
+                    if (!configSheet) throw new Error("Sheet 'Config' not found.");
+
+                    // Initialize all 'Current' fields to 0
+                    profileData.Current_Opening_Balance = 0;
+                    profileData.Current_Family = 0;
+                    profileData.Current_Shares = 0;
+                    profileData.Current_Savings = 0;
+                    profileData.Current_Expenses = 0;
+                    profileData.Current_Salary_In = 0;
+                    profileData.Current_Other_In = 0;
+
+                    // Add the complete new row
+                    await configSheet.addRow(profileData);
+
+                } else {
+                    // A row already exists, so we update its properties.
+                    config.Emp_Name = profileData.Emp_Name;
+                    config.Employee_No = profileData.Employee_No;
+                    config.PAN_No = profileData.PAN_No;
+                    config.PF_No = profileData.PF_No;
+                    config.UAN_No = profileData.UAN_No;
+                    config.Gross_Salary = profileData.Gross_Salary;
+                    config.Total_Deductions = profileData.Total_Deductions;
+                    config.Net_Salary = profileData.Net_Salary;
+                    config.Total_Salary = profileData.Total_Salary; // The main budget
+                    config.Time_stamp = profileData.Time_stamp;
+
+                    await config.save();
+                }
 
                 responseData = { success: true };
                 break;
