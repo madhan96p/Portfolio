@@ -408,10 +408,14 @@ button:disabled {
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 500px;
-    
+
     /* Pop-in animation */
     transform: scale(0.95);
     transition: transform 0.3s ease;
+
+    /* --- ADD THESE TWO LINES --- */
+    max-height: 85vh;   /* Limit height to 85% of the screen */
+    overflow-y: auto;   /* Make the form itself scrollable */
 }
 
 .modal-overlay.visible .modal-content {
