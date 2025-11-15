@@ -11,28 +11,58 @@
 <body>
 
     <nav class="navbar">
-        <ul class="nav-links">
-            <li><a href="index.html">Dashboard</a></li>
-            <li><a href="log.html" class="active">Log</a></li>
-            <li><a href="documents.html">Documents</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
-    </nav>
+    <ul class="nav-links">
+        <li><a href="main.html">Dashboard</a></li>
+        <li><a href="log.html" class="active">Log</a></li>
+        <li><a href="documents.html">Documents</a></li>
+        <li><a href="settings.html">Settings</a></li>
+    </ul>
+</nav>
 
     <main class="tracker-container">
         <section class="expense-form-container">
             <h3>Log a Transaction</h3>
             <form id="log-form">
-                <div class="form-group">
-                    <label for="amount">Amount (₹)</label>
-                    <input type="number" id="amount" placeholder="e.g., 150" required>
-                </div>
-                <div class="form-group">
-                    <label for="transaction-date">Date</label>
-                    <input type="date" id="transaction-date" required>
-                </div>
-                <button type="submit" id="log-btn">Log Transaction</button>
-            </form>
+            <div class="form-group">
+                <label for="amount">Amount (₹)</label>
+                <input type="number" id="amount" placeholder="e.g., 150" required>
+            </div>
+
+            <div class="form-group">
+                <label for="transaction-date">Date</label>
+                <input type="date" id="transaction-date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="transaction-type">Transaction Type</label>
+                <select id="transaction-type" required>
+                    <option value="debit">Debit (Money OUT)</option>
+                    <option value="credit">Credit (Money IN)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" required>
+                    </select>
+            </div>
+
+            <div class="form-group">
+                <label for="payment-mode">Payment Mode</label>
+                <select id="payment-mode" required>
+                    <option value="UPI">UPI</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes (Optional)</label>
+                <input type="text" id="notes" placeholder="e.g., Lunch, Sent to Amma">
+            </div>
+            <button type="submit" id="log-btn">Log Transaction</button>
+        </form>
         </section>
     </main>
 

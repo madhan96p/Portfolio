@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="tracker.css">
-    <link rel="stylesheet" href="nav.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="tracker.js" defer></script>
 </head>
+
 <body>
 
     <nav class="navbar">
         <ul class="nav-links">
-            <li><a href="index.html" class="active">Dashboard</a></li>
+            <li><a href="main.html" class="active">Dashboard</a></li>
             <li><a href="log.html">Log</a></li>
             <li><a href="documents.html">Documents</a></li>
             <li><a href="settings.html">Settings</a></li>
@@ -25,15 +28,79 @@
         </div>
 
         <section class="action-center">
-            </section>
+        <h2>Action Center (Debits)</h2>
+        <div class="goal-card" id="family-card">
+            <div class="goal-icon"><i class="fas fa-home"></i></div>
+            <div class="goal-details">
+                <div class="goal-header">
+                    <span>Family (60%)</span>
+                    <span id="family-pending">Pending: ₹0</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="family-progress"></div></div>
+                <div class="goal-summary" id="family-summary">Sent: ₹0 / Goal: ₹0</div>
+            </div>
+        </div>
+        <div class="goal-card" id="shares-card">
+            <div class="goal-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="goal-details">
+                <div class="goal-header">
+                    <span>Shares</span>
+                    <span id="shares-pending">Pending: ₹0</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="shares-progress"></div></div>
+                <div class="goal-summary" id="shares-summary">Invested: ₹0 / Goal: ₹0</div>
+            </div>
+        </div>
+        <div class="goal-card" id="savings-card">
+            <div class="goal-icon"><i class="fas fa-piggy-bank"></i></div>
+            <div class="goal-details">
+                <div class="goal-header">
+                    <span>Savings</span>
+                    <span id="savings-pending">Pending: ₹0</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="savings-progress"></div></div>
+                <div class="goal-summary" id="savings-summary">Saved: ₹0 / Goal: ₹0</div>
+            </div>
+        </div>
+    </section>
 
-        <section class="dashboard">
-            </section>
+    <section class="dashboard">
+        <h2>Your 20% Wallet (Personal)</h2>
+        <div class="balance-card">
+            <p>Balance Remaining</p>
+            <h1 id="balance">₹0.00</h1>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p>Total Available</p>
+                <h3 id="total-available">₹0.00</h3>
+            </div>
+            <div class="stat-card">
+                <p>Spent So Far</p>
+                <h3 id="total-spent">₹0.00</h3>
+            </div>
+        </div>
+    </section>
 
-        <section class="history-table-container">
-            </section>
+    <section class="history-table-container">
+        <h2>Recent Transactions</h2>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Debit (OUT)</th>
+                    <th>Credit (IN)</th>
+                </tr>
+            </thead>
+            <tbody id="history-table-body">
+                <tr><td colspan="4">Loading...</td></tr>
+            </tbody>
+        </table>
+    </section>
 
-        </main>
+    </main>
 
 </body>
+
 </html>

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notesInput = document.getElementById('notes');
     const logBtn = document.getElementById('log-btn');
 
-    // Dashboard Page Elements
+    // Dashboard Page Elements (from main.html)
     const familyCard = document.getElementById('family-card');
     const familyPending = document.getElementById('family-pending');
     const familyProgress = document.getElementById('family-progress');
@@ -146,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return result;
         } catch (error) {
             console.error('API Error:', error);
-            // Only alert if we are interacting with a form, otherwise it's annoying on load
             if (action !== 'getTrackerData') alert(`Error: ${error.message}`);
         } finally {
             showLoader(false);
@@ -164,18 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. LOG PAGE Logic
     if (logForm) {
-        // Initialize Date to Today
         if (transactionDateInput) transactionDateInput.valueAsDate = new Date();
-        // Initialize Categories
         updateCategoryDropdown();
-
-        // Listen for Type Change
         transactionTypeInput.addEventListener('change', updateCategoryDropdown);
 
-        // Listen for Submit
         logForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const amount = parseFloat(amountInput.value);
             const type = transactionTypeInput.value;
             const category = categoryInput.value;
@@ -193,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (result && result.success) {
                 alert('Transaction logged successfully!');
-                window.location.href = 'index.html'; // Redirect to Dashboard
+                // --- THIS IS THE KEY CHANGE ---
+                window.location.href = 'main.html'; // Redirect to Dashboard
             } else {
                 logBtn.disabled = false;
                 logBtn.textContent = 'Log Transaction';
@@ -203,9 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. SETTINGS PAGE Logic
     if (settingsForm) {
-        // Load current salary when page opens
         loadDashboardData();
-
         settingsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const newSalary = parseFloat(salaryGoalInput.value);
@@ -219,21 +211,19 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Salary goal updated!');
         });
     }
-
     if (endMonthBtn) {
         endMonthBtn.addEventListener('click', async () => {
             if(confirm('Are you sure you want to End Month?')) {
                 const result = await callApi('runMonthEnd');
                 if (result && result.success) {
                     alert(`New month started. Rollover: ${formatCurrency(result.newOpeningBalance)}`);
-                    // If on dashboard, reload data. If on settings, maybe redirect.
                     loadDashboardData(); 
                 }
             }
         });
     }
 
-    // 3. DASHBOARD PAGE Logic
+    // 3. DASHBOARD PAGE Logic (main.html)
     if (historyTableBody) {
         loadDashboardData();
     }
