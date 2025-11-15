@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentModeInput = document.getElementById('payment-mode');
     const notesInput = document.getElementById('notes');
     const logBtn = document.getElementById('log-btn');
+    
+    // --- NEW: Get the new button ---
+    const logNewBtn = document.getElementById('log-new-btn');
 
     /**
      * Populates the category dropdown based on transaction type.
@@ -33,6 +36,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    /**
+     * --- NEW: Helper function to clear the form for a new entry ---
+     */
+    const clearFormForNew = () => {
+        amountInput.value = '';
+        notesInput.value = '';
+        // We keep date, type, category, and payment mode for efficiency
+        amountInput.focus(); // Set focus back to the amount
+    };
+
+    /**
+     * --- NEW: A single, shared function to handle logging ---
+     * @param {boolean} redirectOnSuccess - True to go to dashboard, false to clear form
+     */
+    const handleLogSubmission = async (redirectOnSuccess) => {
+        const amount = parseFloat(amountInput.value);
+        const type = transactionTypeInput.value;
+        const category = categoryInput.value;
+        const notes = notesInput.value.trim();
+        const transactionDate = transactionDateInput.value;
+        const paymentMode = paymentModeInput.value;
+
+        if (isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
+        if (!transactionDate) { alert('Select valid date'); return; }
+
+        // Disable both buttons
+        logBtn.disabled = true;
+        logNewBtn.disabled = true;
+        const logBtnOriginalText = logBtn.textContent;
+        logBtn.textContent = 'Logging...';
+
+        // The global `callApi` function is from common.js
+        const result = await callApi('logTransaction', { amount, type, category, notes, transactionDate, paymentMode });
+        
+        if (result && result.success) {
+            alert('Transaction logged successfully!');
+            
+            if (redirectOnSuccess) {
+                window.location.href = 'main.html'; // Redirect to Dashboard
+            } else {
+                clearFormForNew(); // Clear form and stay here
+            }
+            
+        } 
+        
+        // Re-enable buttons (on failure OR success if not redirecting)
+        logBtn.disabled = false;
+        logNewBtn.disabled = false;
+        logBtn.textContent = logBtnOriginalText;
+    };
+
     // --- Initialization and Event Handlers ---
     if (logForm) {
         // Set default date to today
@@ -44,33 +98,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add listener for type change
         transactionTypeInput.addEventListener('change', updateCategoryDropdown);
 
-        // Add listener for form submission
+        // --- UPDATED: 'submit' handles the "Log Transaction" button ---
         logForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const amount = parseFloat(amountInput.value);
-            const type = transactionTypeInput.value;
-            const category = categoryInput.value;
-            const notes = notesInput.value.trim();
-            const transactionDate = transactionDateInput.value;
-            const paymentMode = paymentModeInput.value;
+            await handleLogSubmission(true); // true = redirect
+        });
 
-            if (isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
-            if (!transactionDate) { alert('Select valid date'); return; }
-
-            logBtn.disabled = true;
-            logBtn.textContent = 'Logging...';
-            
-            // The global `callApi` function is from common.js
-            const result = await callApi('logTransaction', { amount, type, category, notes, transactionDate, paymentMode });
-            
-            if (result && result.success) {
-                alert('Transaction logged successfully!');
-                window.location.href = 'main.html'; // Redirect to Dashboard
-            } else {
-                // Error alert is already handled by callApi
-                logBtn.disabled = false;
-                logBtn.textContent = 'Log Transaction';
-            }
+        // --- NEW: 'click' handles the "Log and Add New" button ---
+        logNewBtn.addEventListener('click', async () => {
+            await handleLogSubmission(false); // false = clear form
         });
     }
 });

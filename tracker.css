@@ -473,3 +473,27 @@ button:disabled {
 #save-profile-btn:hover {
     opacity: 0.85;
 }
+
+/* --- Styles for Log Page Button Group --- */
+.log-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Style the "add new" button as secondary */
+#log-new-btn {
+    background: transparent;
+    color: var(--primary-color, #4a90e2);
+    border: 1px solid var(--primary-color, #4a90e2);
+}
+#log-new-btn:hover {
+    background: #f0f7ff; /* A very light blue */
+}
+
+/* The main log button (type="submit") */
+#log-btn {
+    background: var(--primary-color, #4a90e2);
+    color: white;
+}
