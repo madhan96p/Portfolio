@@ -604,3 +604,27 @@ button:disabled {
     width: 100%; /* Use 100% for grid */
 }
 /* (The rest of the styles for .filter-btn.active, etc. are fine) */
+
+/* --- "Smart" End Month Button --- */
+#end-month-btn.end-month-alert {
+    background: #f39c12; /* A warning-yellow/orange */
+    color: #fff;
+    /* Add a subtle pulse animation */
+    animation: pulse 1.5s infinite;
+}
+
+#end-month-btn.end-month-alert:hover {
+    background: #e08e0b; /* Darker yellow/orange */
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(243, 156, 18, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+    }
+}

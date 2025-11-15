@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile-gross').textContent = formatCurrency(profile.Gross_Salary || 0);
         document.getElementById('profile-deductions').textContent = formatCurrency(profile.Total_Deductions || 0);
         document.getElementById('profile-net').textContent = formatCurrency(profile.Net_Salary || 0);
-
+        checkMonthEndStatus(profile.Cycle_Start_Date);
         // --- NEW: Also fill the *form* with existing data ---
         formName.value = profile.Emp_Name || '';
         formId.value = profile.Employee_No || '';
@@ -57,7 +57,33 @@ document.addEventListener('DOMContentLoaded', () => {
         formDeductions.value = profile.Total_Deductions || '';
         formNet.value = profile.Net_Salary || '';
     };
+    const checkMonthEndStatus = (cycleStartDate) => {
+        if (!cycleStartDate) return; // Not set up yet
 
+        const btn = document.getElementById('end-month-btn');
+        if (!btn) return;
+
+        const now = new Date();
+        const cycleStart = new Date(cycleStartDate);
+
+        // Get month and year for comparison
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        const cycleMonth = cycleStart.getMonth();
+        const cycleYear = cycleStart.getFullYear();
+
+        // Check if today is in a new month/year
+        if (currentYear > cycleYear || (currentYear === cycleYear && currentMonth > cycleMonth)) {
+            // We are in a new month!
+            const lastMonthName = cycleStart.toLocaleString('default', { month: 'long' });
+            btn.textContent = `Run Cycle for ${lastMonthName}`;
+            btn.classList.add('end-month-alert'); // Add CSS class to make it pop
+        } else {
+            // We are still in the current cycle
+            btn.textContent = 'End Month & Start New Cycle';
+            btn.classList.remove('end-month-alert');
+        }
+    };
     // --- NEW: Modal Show/Hide Functions ---
     const showModal = () => modal.classList.add('visible');
     const hideModal = () => modal.classList.remove('visible');
@@ -111,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await callApi('runMonthEnd');
                 if (result && result.success) {
                     alert(`Success! Month archived.\nNew rollover: ${formatCurrency(result.newOpeningBalance)}`);
-                    loadProfileData(); 
+                    loadProfileData();
                 }
             }
         });
