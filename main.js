@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalAvailableEl = document.getElementById('total-available');
     const totalSpentEl = document.getElementById('total-spent');
 
+    // --- ADDED THESE LINES ---
+    const incomeSalaryEl = document.getElementById('income-salary');
+    const incomeOtherEl = document.getElementById('income-other');
+
     /**
      * Helper to update a single progress bar card.
      */
@@ -41,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         progressEl.style.width = `${percent}%`;
-        summaryEl.textContent = `${labels.sent}: ${formatCurrency(actual)} / ${labels.goal}: ${formatCurrency(goal)}`;
+        summaryEl.textContent = `${labels.sent}: ${formatCurrency(actual)} / ${labels.goal}: ${formatCurency(goal)}`;
         pendingEl.textContent = `${labels.pending}: ${formatCurrency(pending)}`;
     };
 
@@ -50,7 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * This is now "dumber" and just displays data.
      */
     const updateUI = (data) => {
-        const { goals, actuals, wallet } = data;
+        // 'config' now has Current_Salary_In thanks to api.js
+        const { config, goals, actuals, wallet } = data; 
         
         // Update Dashboard
         updateProgressBar(familyCard, familyProgress, familySummary, familyPending, 
@@ -67,6 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
             balanceEl.textContent = formatCurrency(wallet.balance);
             totalAvailableEl.textContent = formatCurrency(wallet.totalAvailable);
             totalSpentEl.textContent = formatCurrency(wallet.totalSpent);
+        }
+
+        // --- ADDED THIS BLOCK ---
+        if (incomeSalaryEl) {
+            incomeSalaryEl.textContent = formatCurrency(config.Current_Salary_In);
+            incomeOtherEl.textContent = formatCurrency(config.Current_Other_In);
         }
     };
     

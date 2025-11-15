@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +8,16 @@
     <link rel="stylesheet" href="tracker.css">
     <link rel="stylesheet" href="nav.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    </head>
+</head>
+
 <body>
 
     <nav class="navbar">
         <ul class="nav-links">
             <li><a href="main.html" class="active">Dashboard</a></li>
             <li><a href="log.html">Log</a></li>
-            <li><a href="history.html">History</a></li> <li><a href="documents.html">Documents</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="documents.html">Documents</a></li>
             <li><a href="settings.html">Settings</a></li>
         </ul>
     </nav>
@@ -23,7 +26,14 @@
         <div class="loader-overlay" id="loader">
             <div class="spinner"></div>
         </div>
-
+        <section class="card income-card">
+            <h3>This Month's Income (Actual)</h3>
+            <div class="income-details">
+                <p>Salary Received: <strong id="income-salary">₹0.00</strong></p>
+                <p>Other Income: <strong id="income-other">₹0.00</strong></p>
+            </div>
+            <small>Your budget goals are based on your 'Plan' (in Settings).</small>
+        </section>
         <section class="action-center">
             <h2>Action Center (Debits)</h2>
             <div class="goal-card" id="family-card">
@@ -33,7 +43,9 @@
                         <span>Family (60%)</span>
                         <span id="family-pending">Pending: ₹0</span>
                     </div>
-                    <div class="progress-bar"><div class="progress" id="family-progress"></div></div>
+                    <div class="progress-bar">
+                        <div class="progress" id="family-progress"></div>
+                    </div>
                     <div class="goal-summary" id="family-summary">Sent: ₹0 / Goal: ₹0</div>
                 </div>
             </div>
@@ -44,7 +56,9 @@
                         <span>Shares</span>
                         <span id="shares-pending">Pending: ₹0</span>
                     </div>
-                    <div class="progress-bar"><div class="progress" id="shares-progress"></div></div>
+                    <div class="progress-bar">
+                        <div class="progress" id="shares-progress"></div>
+                    </div>
                     <div class="goal-summary" id="shares-summary">Invested: ₹0 / Goal: ₹0</div>
                 </div>
             </div>
@@ -55,7 +69,9 @@
                         <span>Savings</span>
                         <span id="savings-pending">Pending: ₹0</span>
                     </div>
-                    <div class="progress-bar"><div class="progress" id="savings-progress"></div></div>
+                    <div class="progress-bar">
+                        <div class="progress" id="savings-progress"></div>
+                    </div>
                     <div class="goal-summary" id="savings-summary">Saved: ₹0 / Goal: ₹0</div>
                 </div>
             </div>
@@ -79,9 +95,10 @@
             </div>
         </section>
 
-        </main>
+    </main>
 
     <script src="common.js" defer></script>
     <script src="main.js" defer></script>
 </body>
+
 </html>
