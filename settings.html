@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Settings</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="tracker.css">
     <link rel="stylesheet" href="nav.css">
-    </head>
+</head>
+
 <body>
 
     <nav class="navbar">
         <ul class="nav-links">
             <li><a href="main.html">Dashboard</a></li>
             <li><a href="log.html">Log</a></li>
-            <li><a href="history.html">History</a></li> <li><a href="documents.html">Documents</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="documents.html">Documents</a></li>
             <li><a href="settings.html" class="active">Settings</a></li>
         </ul>
     </nav>
@@ -23,15 +26,29 @@
             <div class="spinner"></div>
         </div>
 
-        <section class="settings-card">
-            <h2>Settings</h2>
-            <form id="settings-form" class="settings-form">
-                <div class="form-group">
-                    <label for="salary-input">Monthly Salary</label>
-                    <input type="number" id="salary-input" placeholder="e.g., 50000">
-                </div>
-                <button type="submit" id="save-settings-btn">Save Salary</button>
-            </form>
+        <section class="profile-card">
+            <h2 id="profile-name">Loading...</h2>
+            <div class="profile-details">
+                <p><strong>Employee ID:</strong> <span id="profile-emp-id">-</span></p>
+                <p><strong>PAN:</strong> <span id="profile-pan">-</span></p>
+                <p><strong>PF No:</strong> <span id="profile-pf">-</span></p>
+                <p><strong>UAN No:</strong> <span id="profile-uan">-</span></p>
+            </div>
+        </section>
+
+        <section class="salary-card">
+            <h3>Salary Details (Based on Last Payslip)</h3>
+            <div class="salary-details">
+                <p>Gross Salary: <strong id="profile-gross">₹0.00</strong></p>
+                <p>Total Deductions: <strong id="profile-deductions">₹0.00</strong></p>
+                <p><strong>Net Take-Home:</strong> <strong id="profile-net">₹0.00</strong></p>
+            </div>
+            <small>Your dashboard budget is based on this Net Take-Home amount.</small>
+        </section>
+
+        <section class="admin-section">
+            <h3>Admin Actions</h3>
+            <button id="end-month-btn">End Month & Start New Cycle</button>
         </section>
 
         <section class="admin-section">
@@ -43,4 +60,5 @@
     <script src="common.js" defer></script>
     <script src="settings.js" defer></script>
 </body>
+
 </html>

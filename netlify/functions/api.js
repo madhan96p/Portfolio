@@ -83,9 +83,19 @@ exports.handler = async function (event, context) {
                     totalSpent: actualExpenses
                 };
 
-                // Create a plain object with only the values
                 const configData = {
-                    Total_Salary: config.Total_Salary
+                    // This one is for the dashboard's calculations:
+                    Total_Salary: config.Total_Salary,
+
+                    // These are for the new profile page display:
+                    Emp_Name: config.Emp_Name,
+                    Employee_No: config.Employee_No,
+                    PAN_No: config.PAN_No,
+                    PF_No: config.PF_No,
+                    UAN_No: config.UAN_No,
+                    Gross_Salary: config.Gross_Salary,
+                    Total_Deductions: config.Total_Deductions,
+                    Net_Salary: config.Net_Salary
                 };
 
                 responseData = { success: true, data: { config: configData, goals, actuals, wallet } };

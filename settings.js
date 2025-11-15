@@ -1,58 +1,50 @@
 // --- settings.js ---
-// Manages the Settings page (settings.html)
+// Manages the Settings (Profile) page (settings.html)
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Settings Page Elements
-    const settingsForm = document.getElementById('settings-form');
-    const salaryInput = document.getElementById('salary-input'); // Renamed from salary-goal
-    const saveSettingsBtn = document.getElementById('save-settings-btn');
+    // --- Page Elements ---
     const endMonthBtn = document.getElementById('end-month-btn');
 
     /**
-     * Loads just the config data needed for the settings page.
+     * Loads profile and salary data to display on the page.
      */
-    const loadSettings = async () => {
+    const loadProfileData = async () => {
         const result = await callApi('getTrackerData');
-        if (result && result.data) {
-            if (salaryInput) {
-                salaryInput.value = parseFloat(result.data.config.Total_Salary || 0);
-            }
+
+        if (!result || !result.data || !result.data.config) {
+            document.getElementById('profile-name').textContent = "Error loading data.";
+            return;
         }
+
+        const profile = result.data.config;
+
+        // Populate Profile Card
+        document.getElementById('profile-name').textContent = profile.Emp_Name || 'N/A';
+        document.getElementById('profile-emp-id').textContent = profile.Employee_No || '-';
+        document.getElementById('profile-pan').textContent = profile.PAN_No || '-';
+        document.getElementById('profile-pf').textContent = profile.PF_No || '-';
+        document.getElementById('profile-uan').textContent = profile.UAN_No || '-';
+
+        // Populate Salary Card (using formatCurrency from common.js)
+        document.getElementById('profile-gross').textContent = formatCurrency(profile.Gross_Salary || 0);
+        document.getElementById('profile-deductions').textContent = formatCurrency(profile.Total_Deductions || 0);
+        document.getElementById('profile-net').textContent = formatCurrency(profile.Net_Salary || 0);
     };
 
     // --- Initialization and Event Handlers ---
 
-    // 1. SETTINGS PAGE Logic
-    if (settingsForm) {
-        loadSettings(); // Load current salary
+    // 1. Load the profile data on page load
+    loadProfileData();
 
-        settingsForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const newSalary = parseFloat(salaryInput.value);
-            if (isNaN(newSalary) || newSalary < 0) {
-                alert('Please enter a valid salary.');
-                return;
-            }
-
-            saveSettingsBtn.disabled = true;
-            saveSettingsBtn.textContent = 'Saving...';
-            // The global `callApi` function is from common.js
-            await callApi('updateSalaryGoal', { newSalary });
-            saveSettingsBtn.disabled = false;
-            saveSettingsBtn.textContent = 'Save Salary';
-            alert('Salary updated!');
-        });
-    }
-
-    // 2. END OF MONTH Logic
+    // 2. END OF MONTH Logic (This stays the same)
     if (endMonthBtn) {
         endMonthBtn.addEventListener('click', async () => {
             if (confirm('Are you SURE you want to end the month? This will archive your totals and reset the dashboard.')) {
-                // The global `callApi` function is from common.js
+
                 const result = await callApi('runMonthEnd');
                 if (result && result.success) {
                     alert(`Success! Month archived.\nYour rollover balance for the new month is: ${formatCurrency(result.newOpeningBalance)}`);
-                    loadSettings(); // Reload settings page to show new state (salary)
+                    loadProfileData(); 
                 }
             }
         });
