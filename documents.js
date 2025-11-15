@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return result.data;
         } catch (error) {
             console.error('API Error:', error);
-            tableBody.innerHTML = `<tr><td colspan="5">Error loading data.</td></tr>`;
+            // --- CHANGED: Colspan is now 6 ---
+            tableBody.innerHTML = `<tr><td colspan="6">Error loading data.</td></tr>`;
         }
     };
 
@@ -24,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const documents = await callApi('getDocumentData');
         
         if (!documents || documents.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5">No documents found.</td></tr>`;
+            // --- CHANGED: Colspan is now 6 ---
+            tableBody.innerHTML = `<tr><td colspan="6">No documents found.</td></tr>`;
             return;
         }
 
@@ -32,16 +34,25 @@ document.addEventListener('DOMContentLoaded', () => {
         
         documents.forEach(doc => {
             const tr = document.createElement('tr');
+            
+            // --- NEW: Helper for 'Drive_Link' ---
+            const driveLink = doc.link && doc.link.startsWith('http') 
+                ? `<a href="${doc.link}" target="_blank">Open Link</a>` 
+                : (doc.link || '-');
+            
+            // --- NEW: Helper for 'Uploded_Pdfs' ---
+            const pdfLink = doc.pdf && doc.pdf.startsWith('http')
+                ? `<a href="${doc.pdf}" target="_blank">Open PDF</a>`
+                : (doc.pdf || '-');
+
+            // --- UPDATED: Added the new pdfLink to the table ---
             tr.innerHTML = `
                 <td><strong>${doc.docType}</strong><br><small>${doc.fullName}</small></td>
                 <td>${doc.docNumber || '-'}</td>
                 <td>${doc.issued || '-'}</td>
                 <td>${doc.expiry || '-'}</td>
-                <td>
-                    ${doc.link.startsWith('http') ? 
-                        `<a href="${doc.link}" target="_blank">Open</a>` : 
-                        (doc.link || '-')}
-                </td>
+                <td>${driveLink}</td>
+                <td>${pdfLink}</td>
             `;
             tableBody.appendChild(tr);
         });

@@ -23,6 +23,9 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     padding: 20px;
+    /* --- UI/UX UPGRADE: Crisper text --- */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Main Container */
@@ -36,7 +39,7 @@ body {
     position: relative;
 }
 
-/* Loader (Same as before) */
+/* Loader */
 .loader-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(255, 255, 255, 0.8);
@@ -51,10 +54,10 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* NEW: Settings Card */
+/* Settings Card */
 .settings-card {
     padding: 24px;
-    border-bottom: 10px solid var(--bg-color); /* Thicker separator */
+    border-bottom: 10px solid var(--bg-color);
 }
 .settings-card h2 {
     font-size: 1.2rem;
@@ -67,11 +70,11 @@ body {
     gap: 10px;
 }
 .settings-form .form-group {
-    flex-grow: 1; /* Input takes available space */
+    flex-grow: 1;
     margin-bottom: 0;
 }
 .settings-form button {
-    flex-shrink: 0; /* Button does not shrink */
+    flex-shrink: 0;
     width: auto;
     background-color: var(--success-color);
 }
@@ -80,10 +83,10 @@ body {
 }
 
 
-/* Section 3: Form - (Inputs & Select) */
+/* Form (Inputs & Select) */
 .expense-form-container {
     padding: 24px;
-    border-bottom: 10px solid var(--bg-color); /* Thicker separator */
+    border-bottom: 10px solid var(--bg-color);
 }
 .expense-form-container h3 { font-size: 1.2rem; margin-bottom: 16px; }
 .form-group { margin-bottom: 16px; }
@@ -96,18 +99,32 @@ body {
     border-radius: 8px;
     background: var(--bg-color);
     font-family: inherit;
-    -webkit-appearance: none; /* Removes default iOS styling */
+    -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    /* --- UI/UX UPGRADE: Smooth transitions --- */
+    transition: all 0.3s ease;
 }
+
+/* --- UI/UX UPGRADE: Add custom dropdown arrow --- */
+.form-group select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23aaa" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    cursor: pointer;
+}
+
+/* --- UI/UX UPGRADE: Add a 'pop' on focus --- */
 .form-group input:focus, .form-group select:focus {
     outline: none;
     border-color: var(--primary-color);
     background: var(--card-bg);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
 
 
-/* Section 1: Action Center */
+/* Action Center */
 .action-center {
     padding: 24px;
     border-bottom: 1px solid var(--border-color);
@@ -181,10 +198,10 @@ body {
     content: "✅ Done";
 }
 
-/* Section 2: Dashboard (Wallet) */
+/* Dashboard (Wallet) */
 .dashboard {
     padding: 24px;
-    border-bottom: 10px solid var(--bg-color); /* Thicker separator */
+    border-bottom: 10px solid var(--bg-color);
 }
 .dashboard h2 {
     font-size: 1.2rem;
@@ -206,7 +223,7 @@ body {
 .stat-card:last-child h3 { color: var(--danger-color); }
 
 
-/* NEW: History Table */
+/* History Table */
 .history-table-container {
     padding: 24px;
     border-bottom: 1px solid var(--border-color);
@@ -242,7 +259,7 @@ body {
 .history-table tr:last-child td {
     border-bottom: none;
 }
-.history-table td[colspan="4"] {
+.history-table td[colspan="6"] { /* --- CHANGED TO 6 for documents page --- */
     text-align: center;
     color: var(--text-light);
     padding: 20px;
@@ -253,15 +270,29 @@ body {
 button {
     font-family: inherit; font-size: 1rem; font-weight: 600;
     border: none; border-radius: 8px; padding: 14px 20px;
-    cursor: pointer; transition: background-color 0.2s, opacity 0.2s;
+    cursor: pointer;
     width: 100%;
+    /* --- UI/UX UPGRADE: Responsive feel --- */
+    transition: background-color 0.2s, opacity 0.2s, transform 0.2s ease;
 }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
+button:hover {
+    /* --- UI/UX UPGRADE: Physical feel --- */
+    transform: scale(1.02);
+}
+button:disabled { 
+    opacity: 0.5; 
+    cursor: not-allowed; 
+    transform: none; /* No hover effect when disabled */
+}
+
 #log-btn { background-color: var(--primary-color); color: white; }
-#log-btn:hover { background-color: #3a75c4; }
+#log-btn:hover:not(:disabled) { background-color: #3a75c4; }
+
 #end-month-btn { background-color: var(--danger-color); color: white; }
-#end-month-btn:hover { background-color: #c9302c; }
+#end-month-btn:hover:not(:disabled) { background-color: #c9302c; }
 
 /* Admin Section */
 .admin-section { padding: 24px; background: var(--bg-color); }
 .admin-section h3 { font-size: 1.2rem; margin-bottom: 16px; color: var(--text-light); }
+
+/* --- BUG FIX: Removed the extra '}' that was here --- */
