@@ -27,7 +27,10 @@
         </div>
 
         <section class="profile-card">
-            <h2 id="profile-name">Loading...</h2>
+            <div class="profile-header">
+                <h2 id="profile-name">Loading...</h2>
+                <button id="edit-profile-btn">Edit</button>
+            </div>
             <div class="profile-details">
                 <p><strong>Employee ID:</strong> <span id="profile-emp-id">-</span></p>
                 <p><strong>PAN:</strong> <span id="profile-pan">-</span></p>
@@ -50,13 +53,53 @@
             <h3>Admin Actions</h3>
             <button id="end-month-btn">End Month & Start New Cycle</button>
         </section>
-
-        <section class="admin-section">
-            <h3>Admin Actions</h3>
-            <button id="end-month-btn">End Month & Start New Cycle</button>
-        </section>
     </main>
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Update My Profile</h3>
+            <form id="profile-form">
+                <p>Fill this out once to set up your profile.</p>
 
+                <div class="form-group">
+                    <label for="profile-form-name">Employee Name</label>
+                    <input type="text" id="profile-form-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-form-id">Employee ID</label>
+                    <input type="text" id="profile-form-id" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-form-pan">PAN No.</label>
+                    <input type="text" id="profile-form-pan" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-form-pf">PF No.</label>
+                    <input type="text" id="profile-form-pf">
+                </div>
+                <div class="form-group">
+                    <label for="profile-form-uan">UAN No.</label>
+                    <input type="text" id="profile-form-uan">
+                </div>
+                <div class="form-group">
+                    <label for="profile-form-gross">Gross Salary (from payslip)</label>
+                    <input type="number" id="profile-form-gross" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-form-deductions">Total Deductions (from payslip)</label>
+                    <input type="number" id="profile-form-deductions" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-form-net">Net Salary (Take-Home)</label>
+                    <input type="number" id="profile-form-net" required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="close-modal-btn">Cancel</button>
+                    <button type="submit" id="save-profile-btn">Save Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script src="common.js" defer></script>
     <script src="settings.js" defer></script>
 </body>

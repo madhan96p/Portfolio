@@ -95,9 +95,12 @@ exports.handler = async function (event, context) {
                     UAN_No: config.UAN_No,
                     Gross_Salary: config.Gross_Salary,
                     Total_Deductions: config.Total_Deductions,
-                    Net_Salary: config.Net_Salary
-                };
+                    Net_Salary: config.Net_Salary,
 
+                    // --- ADD THESE TWO LINES ---
+                    Current_Salary_In: config.Current_Salary_In || 0,
+                    Current_Other_In: config.Current_Other_In || 0
+                };
                 responseData = { success: true, data: { config: configData, goals, actuals, wallet } };
                 break;
             }
@@ -250,6 +253,31 @@ exports.handler = async function (event, context) {
                 }));
 
                 responseData = { success: true, data: { transactions, hasMore } };
+                break;
+            }
+
+            // --- 7: Update Profile ---
+            case 'updateProfile': {
+                const config = await getConfig(doc);
+
+                // data object comes from the new form in settings.js
+                config.Emp_Name = data.Emp_Name;
+                config.Employee_No = data.Employee_No;
+                config.PAN_No = data.PAN_No;
+                config.PF_No = data.PF_No;
+                config.UAN_No = data.UAN_No;
+                config.Gross_Salary = data.Gross_Salary;
+                config.Total_Deductions = data.Total_Deductions;
+                config.Net_Salary = data.Net_Salary;
+
+                // IMPORTANT: Also update the 'Total_Salary'
+                // This is the one the dashboard calculations use!
+                config.Total_Salary = data.Net_Salary;
+
+                config.Time_stamp = new Date().toISOString();
+                await config.save();
+
+                responseData = { success: true };
                 break;
             }
 
