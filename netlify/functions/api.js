@@ -29,7 +29,7 @@ async function getConfig(doc) {
     if (configRows.length > 0) {
         return configRows[0]; // Return the first (and only) row object
     } else {
-        throw new Error("Config sheet is empty. Please initialize it with one row of data.");
+        return null; // Return null if the sheet is empty
     }
 }
 
@@ -56,8 +56,33 @@ exports.handler = async function (event, context) {
         switch (action) {
 
             // --- ACTION 1: Get All Tracker Data ---
-            case 'getTrackerData': {
-                const config = await getConfig(doc); // Reads 1 row
+        case 'getTrackerData': {
+            const config = await getConfig(doc); // This can now be null
+
+            let goals, actuals, wallet, configData;
+
+            if (config === null) {
+                // --- Config is empty, send a default "zeroed-out" state ---
+
+                goals = { goalFamily: 0, goalShares: 0, goalSavings: 0, goalExpenses: 0 };
+                actuals = { family: 0, shares: 0, savings: 0, expenses: 0 };
+                wallet = { balance: 0, totalAvailable: 0, totalSpent: 0 };
+                configData = {
+                    Total_Salary: 0,
+                    Emp_Name: null,
+                    Employee_No: null,
+                    PAN_No: null,
+                    PF_No: null,
+                    UAN_No: null,
+                    Gross_Salary: 0,
+                    Total_Deductions: 0,
+                    Net_Salary: 0,
+                    Current_Salary_In: 0,
+                    Current_Other_In: 0
+                };
+
+            } else {
+                // --- Config exists, run calculations as normal ---
 
                 const salary = parseFloat(config.Total_Salary || 0);
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
@@ -67,27 +92,24 @@ exports.handler = async function (event, context) {
                 const goalShares = pool * 0.25;
                 const goalSavings = pool * 0.25;
                 const goalExpenses = pool * 0.50;
-                const goals = { goalFamily, goalShares, goalSavings, goalExpenses };
+                goals = { goalFamily, goalShares, goalSavings, goalExpenses };
 
                 const actualExpenses = parseFloat(config.Current_Expenses || 0);
-                const actuals = {
+                actuals = {
                     family: parseFloat(config.Current_Family || 0),
                     shares: parseFloat(config.Current_Shares || 0),
                     savings: parseFloat(config.Current_Savings || 0),
                     expenses: actualExpenses
                 };
 
-                const wallet = {
+                wallet = {
                     balance: goalExpenses - actualExpenses,
                     totalAvailable: goalExpenses,
                     totalSpent: actualExpenses
                 };
 
-                const configData = {
-                    // This one is for the dashboard's calculations:
+                configData = {
                     Total_Salary: config.Total_Salary,
-
-                    // These are for the new profile page display:
                     Emp_Name: config.Emp_Name,
                     Employee_No: config.Employee_No,
                     PAN_No: config.PAN_No,
@@ -96,14 +118,14 @@ exports.handler = async function (event, context) {
                     Gross_Salary: config.Gross_Salary,
                     Total_Deductions: config.Total_Deductions,
                     Net_Salary: config.Net_Salary,
-
-                    // --- ADD THESE TWO LINES ---
                     Current_Salary_In: config.Current_Salary_In || 0,
                     Current_Other_In: config.Current_Other_In || 0
                 };
-                responseData = { success: true, data: { config: configData, goals, actuals, wallet } };
-                break;
             }
+
+            responseData = { success: true, data: { config: configData, goals, actuals, wallet } };
+            break;
+        }
 
             // --- ACTION 2: Log a New Transaction ---
             case 'logTransaction': {
