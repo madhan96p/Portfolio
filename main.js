@@ -15,11 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const familyProgress = document.getElementById('family-progress');
     const familySummary = document.getElementById('family-summary');
     
+    // --- THIS IS THE CORRECTED BLOCK ---
     const sharesCard = document.getElementById('shares-card');
     const sharesPending = document.getElementById('shares-pending');
-    // ... (rest of goal card elements) ...
-    const savingsSummary = document.getElementById('savings-summary');
+    const sharesProgress = document.getElementById('shares-progress');
+    const sharesSummary = document.getElementById('shares-summary');
     
+    const savingsCard = document.getElementById('savings-card');
+    const savingsPending = document.getElementById('savings-pending');
+    const savingsProgress = document.getElementById('savings-progress');
+    const savingsSummary = document.getElementById('savings-summary');
+    // --- END OF FIX ---
+
     // Wallet Card
     const balanceEl = document.getElementById('balance');
     const totalAvailableEl = document.getElementById('total-available');
@@ -71,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             otherIncomeEl.textContent = formatCurrency(actuals.otherIncome);
         }
 
-        // 2. Update Goal Progress Bars (Unchanged)
+        // 2. Update Goal Progress Bars (This will now work)
         updateProgressBar(familyCard, familyProgress, familySummary, familyPending, 
             actuals.family, goals.goalFamily, { sent: 'Sent', goal: 'Goal', pending: 'Pending' });
         
