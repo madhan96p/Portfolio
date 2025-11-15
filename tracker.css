@@ -497,3 +497,29 @@ button:disabled {
     background: var(--primary-color, #4a90e2);
     color: white;
 }
+
+/* --- Styles for Wallet Breakdown --- */
+.wallet-breakdown {
+    background: var(--bg-color);
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+.wallet-breakdown p {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-light);
+}
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    padding: 6px 0;
+}
+.breakdown-item span {
+    color: var(--text-color);
+}
+.breakdown-item strong {
+    color: var(--danger-color);
+    font-weight: 600;
+}

@@ -2,7 +2,9 @@
 // Manages the Dashboard page (main.html)
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Dashboard Page Elements
+    // --- Dashboard Page Elements ---
+    
+    // Goal Cards
     const familyCard = document.getElementById('family-card');
     const familyPending = document.getElementById('family-pending');
     const familyProgress = document.getElementById('family-progress');
@@ -18,13 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const savingsProgress = document.getElementById('savings-progress');
     const savingsSummary = document.getElementById('savings-summary');
 
+    // Income Card
+    const incomeSalaryEl = document.getElementById('income-salary');
+    const incomeOtherEl = document.getElementById('income-other');
+    
+    // Wallet Card
     const balanceEl = document.getElementById('balance');
     const totalAvailableEl = document.getElementById('total-available');
     const totalSpentEl = document.getElementById('total-spent');
 
-    // --- ADDED THESE LINES ---
-    const incomeSalaryEl = document.getElementById('income-salary');
-    const incomeOtherEl = document.getElementById('income-other');
+    // --- NEW: Wallet Breakdown Elements ---
+    const breakdownPersonalEl = document.getElementById('breakdown-personal');
+    const breakdownHouseholdEl = document.getElementById('breakdown-household');
 
     /**
      * Helper to update a single progress bar card.
@@ -45,19 +52,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         progressEl.style.width = `${percent}%`;
-        summaryEl.textContent = `${labels.sent}: ${formatCurrency(actual)} / ${labels.goal}: ${formatCurency(goal)}`;
+        // --- FIX: Fixed typo 'formatCurency' to 'formatCurrency' ---
+        summaryEl.textContent = `${labels.sent}: ${formatCurrency(actual)} / ${labels.goal}: ${formatCurrency(goal)}`;
         pendingEl.textContent = `${labels.pending}: ${formatCurrency(pending)}`;
     };
 
     /**
-     * Updates the entire dashboard UI from API data.
-     * This is now "dumber" and just displays data.
+     * --- REWRITTEN: Updates the entire dashboard UI from API data. ---
      */
     const updateUI = (data) => {
-        // 'config' now has Current_Salary_In thanks to api.js
-        const { config, goals, actuals, wallet } = data; 
+        // Data now comes from our new "calculator" api.js
+        const { goals, actuals, wallet } = data; 
         
-        // Update Dashboard
+        // 1. Update Goal Progress Bars
         updateProgressBar(familyCard, familyProgress, familySummary, familyPending, 
             actuals.family, goals.goalFamily, { sent: 'Sent', goal: 'Goal', pending: 'Pending' });
         
@@ -67,17 +74,23 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProgressBar(savingsCard, savingsProgress, savingsSummary, savingsPending, 
             actuals.savings, goals.goalSavings, { sent: 'Saved', goal: 'Goal', pending: 'Pending' });
         
-        // Update Wallet (receives pre-calculated values from API)
+        // 2. Update Income Card (now reads from 'actuals')
+        if (incomeSalaryEl) {
+            incomeSalaryEl.textContent = formatCurrency(actuals.salary);
+            incomeOtherEl.textContent = formatCurrency(actuals.otherIncome);
+        }
+
+        // 3. Update Wallet Card (receives pre-calculated values)
         if (balanceEl) {
             balanceEl.textContent = formatCurrency(wallet.balance);
             totalAvailableEl.textContent = formatCurrency(wallet.totalAvailable);
             totalSpentEl.textContent = formatCurrency(wallet.totalSpent);
         }
 
-        // --- ADDED THIS BLOCK ---
-        if (incomeSalaryEl) {
-            incomeSalaryEl.textContent = formatCurrency(config.Current_Salary_In);
-            incomeOtherEl.textContent = formatCurrency(config.Current_Other_In);
+        // 4. --- NEW: Update Wallet Breakdown Card ---
+        if (breakdownPersonalEl) {
+            breakdownPersonalEl.textContent = formatCurrency(actuals.personal);
+            breakdownHouseholdEl.textContent = formatCurrency(actuals.household);
         }
     };
     
@@ -86,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const loadDashboardData = async () => {
         // The global `callApi` function is from common.js
+        // It now gets data from our new "calculator" API
         const result = await callApi('getTrackerData');
         if (result && result.data) {
             updateUI(result.data); 

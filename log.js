@@ -3,7 +3,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Define Categories ---
-    const DEBIT_CATEGORIES = [ 'Personal Expense', 'Family Transfer', 'Share Investment', 'Savings Transfer', 'Other Debit' ];
+    const DEBIT_CATEGORIES = [ 'Personal Spending', 'Household Spending', 'Family Transfer', 'Share Investment', 'Savings Transfer', 'Other Debit' ];
     const CREDIT_CATEGORIES = [ 'Salary', 'Gift / From Friend', 'Other Income' ];
 
     // --- Get Log Page DOM Elements ---
