@@ -332,6 +332,30 @@ exports.handler = async function (event, context) {
                 break;
             }
 
+            // --- ACTION 8: Get Unique Notes for Datalist ---
+            case 'getUniqueNotes': {
+                const transactionsSheet = doc.sheetsByTitle['Transactions'];
+                if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
+
+                const rows = await transactionsSheet.getRows();
+
+                // Use a Set to store only unique, non-empty notes
+                const notesSet = new Set();
+
+                rows.forEach(row => {
+                    const note = row.Notes;
+                    if (note && note.trim() !== '') {
+                        notesSet.add(note.trim());
+                    }
+                });
+
+                // Convert the Set back to an array for sending
+                const uniqueNotes = Array.from(notesSet);
+
+                responseData = { success: true, data: uniqueNotes };
+                break;
+            }
+
             default:
                 responseData = { success: false, error: 'Invalid action.' };
                 break;

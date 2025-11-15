@@ -46,6 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
         amountInput.focus(); // Set focus back to the amount
     };
 
+    const loadPreviousNotes = async () => {
+        const datalist = document.getElementById('previous-notes');
+        if (!datalist) return;
+
+        // Use a 'soft' call, don't block the UI or show alerts on failure
+        try {
+            // We don't use the global `callApi` because we don't want
+            // the loader to show for this background task.
+            const response = await fetch('/.netlify/functions/api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'getUniqueNotes' }),
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.data) {
+                    datalist.innerHTML = ''; // Clear any old options
+                    result.data.forEach(note => {
+                        datalist.innerHTML += `<option value="${note}"></option>`;
+                    });
+                }
+            }
+        } catch (error) {
+            console.warn('Could not load previous notes:', error);
+        }
+    };
+
     /**
      * --- NEW: A single, shared function to handle logging ---
      * @param {boolean} redirectOnSuccess - True to go to dashboard, false to clear form
@@ -89,6 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization and Event Handlers ---
     if (logForm) {
+
+        loadPreviousNotes();
         // Set default date to today
         if (transactionDateInput) transactionDateInput.valueAsDate = new Date();
         
