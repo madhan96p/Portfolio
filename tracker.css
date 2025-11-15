@@ -523,3 +523,53 @@ button:disabled {
     color: var(--danger-color);
     font-weight: 600;
 }
+
+/* --- History Page Analysis --- */
+.history-filters {
+    display: flex;
+    background: var(--bg-color);
+    padding: 16px 24px 0 24px;
+    gap: 10px;
+}
+.filter-btn {
+    flex-grow: 1;
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    font-size: 0.9rem;
+    width: auto; /* Override 100% width */
+}
+.filter-btn.active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+.chart-container {
+    position: relative;
+    height: 250px;
+    padding: 24px;
+    background: var(--bg-color);
+}
+.chart-total {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.chart-total h4 { font-size: 1.5rem; margin: 0; }
+.chart-total p { margin: 0; color: var(--text-light); }
+
+.search-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 16px 24px;
+    background: var(--bg-color);
+    border-bottom: 10px solid var(--bg-color);
+}
+/* Stop search controls from stretching */
+.search-controls .form-group {
+    margin-bottom: 0;
+}

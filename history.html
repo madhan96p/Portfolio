@@ -6,25 +6,7 @@
     <title>Transaction History</title>
     <link rel="stylesheet" href="tracker.css">
     <link rel="stylesheet" href="nav.css"> 
-    <style>
-        .history-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            background: var(--bg-color);
-        }
-        .history-controls button {
-            width: 100px;
-            padding: 10px;
-            font-size: 0.9rem;
-        }
-        .history-controls span {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -44,15 +26,42 @@
         </div>
         
         <section class="history-table-container">
-            <h2>Transaction History</h2>
+            <h2>Transaction Analysis</h2>
+            
+            <div class="history-filters" id="history-filters">
+                <button class="filter-btn" data-filter="1D">1D</button>
+                <button class="filter-btn" data-filter="1W">1W</button>
+                <button class="filter-btn active" data-filter="1M">This Cycle</button>
+                <button class="filter-btn" data-filter="All">All Time</button>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="history-chart"></canvas>
+                <div class="chart-total" id="chart-total">
+                    <h4>₹0.00</h4>
+                    <p>Total Spent</p>
+                </div>
+            </div>
+
+            <div class="search-controls">
+                <div class="form-group">
+                    <input type="text" id="search-notes" placeholder="Search in notes..." style="margin-bottom: 0;">
+                </div>
+                <div class="form-group">
+                    <select id="search-category" style="margin-bottom: 0;">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+            </div>
+
             <table class="history-table" id="history-table">
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Category</th>
+                        <th>Category & Notes</th>
                         <th>Debit</th>
                         <th>Credit</th>
-                        <th>Notes</th>
+                        <th>Mode</th>
                     </tr>
                 </thead>
                 <tbody id="history-table-body">
@@ -61,11 +70,6 @@
             </table>
         </section>
 
-        <section class="history-controls">
-            <button id="prev-btn" disabled>Previous</button>
-            <span id="page-info">Page 1</span>
-            <button id="next-btn" disabled>Next</button>
-        </section>
     </main>
     
     <script src="common.js" defer></script>

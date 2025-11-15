@@ -47,20 +47,20 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
     if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
 
     const rows = await transactionsSheet.getRows();
-    
+
     // We must manually filter by date
     const startDate = new Date(cycleStartDate);
-    
+
     const transactions = [];
     const totals = { family: 0, shares: 0, savings: 0, personal: 0, household: 0, salary: 0, otherIncome: 0 };
 
     for (const row of rows) {
         const txDate = new Date(row.Date);
-        
+
         // Filter for transactions within the current cycle
         if (txDate >= startDate) {
             transactions.push(row);
-            
+
             // Calculate totals on-the-fly
             const debit = parseFloat(row.Amount_DR || 0);
             const credit = parseFloat(row.Amount_CR || 0);
@@ -83,7 +83,7 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
                 case 'Household Spending': // New
                     totals.household += debit;
                     break;
-                
+
                 // --- Credits ---
                 case 'Salary':
                     totals.salary += credit;
@@ -95,7 +95,7 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
             }
         }
     }
-    
+
     return { transactions, totals };
 }
 
@@ -133,17 +133,17 @@ exports.handler = async function (event, context) {
                     actuals = { family: 0, shares: 0, savings: 0, personal: 0, household: 0, salary: 0, otherIncome: 0 };
                     wallet = { balance: 0, totalAvailable: 0, totalSpent: 0 };
                     configData = { Total_Salary: 0, Emp_Name: null, Net_Salary: 0 }; // Simplified
-                    
+
                 } else {
                     // --- Config exists, run the "SMART" CALCULATION ---
-                    
+
                     // 1. Get all transaction totals for this cycle
                     const { totals } = await getCurrentCycleTransactions(doc, config.Cycle_Start_Date);
-                    
+
                     // 2. THIS IS THE KEY: Determine the "Salary Base"
                     // Use actual logged salary if > 0. Otherwise, base is 0.
                     const salaryBase = totals.salary > 0 ? totals.salary : 0;
-                    
+
                     // 3. Get Opening Balance
                     const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
@@ -157,7 +157,7 @@ exports.handler = async function (event, context) {
 
                     // 5. Get Actuals (already have from `totals`)
                     const totalWalletSpent = totals.personal + totals.household;
-                    
+
                     actuals = {
                         family: totals.family,
                         shares: totals.shares,
@@ -213,7 +213,7 @@ exports.handler = async function (event, context) {
                     Payment_Mode: paymentMode,
                     Time_stamp: new Date().toISOString()
                 });
-                
+
                 responseData = { success: true };
                 break;
             }
@@ -252,10 +252,10 @@ exports.handler = async function (event, context) {
                 // 3. Archive this cycle's data.
                 const archiveSheet = doc.sheetsByTitle['Monthly_Archive'];
                 if (!archiveSheet) throw new Error("Sheet 'Monthly_Archive' not found.");
-                
+
                 const now = new Date(config.Cycle_Start_Date);
                 const monthYear = `${now.toLocaleString('default', { month: 'short' })}-${now.getFullYear()}`;
-                
+
                 await archiveSheet.addRow({
                     Month_Year: monthYear,
                     Opening_Balance: openingBalance.toFixed(2),
@@ -272,7 +272,7 @@ exports.handler = async function (event, context) {
                 config.Current_Opening_Balance = closingBalance.toFixed(2);
                 config.Cycle_Start_Date = new Date().toISOString().split('T')[0]; // Set new start date to today
                 config.Time_stamp = new Date().toISOString();
-                
+
                 await config.save();
 
                 responseData = { success: true, newOpeningBalance: closingBalance.toFixed(2) };
@@ -318,6 +318,9 @@ exports.handler = async function (event, context) {
                     notes: row.Notes,
                     paymentMode: row.Payment_Mode
                 }));
+
+                transactions.reverse();
+
                 responseData = { success: true, data: { transactions, hasMore } };
                 break;
             }
@@ -350,7 +353,7 @@ exports.handler = async function (event, context) {
                     config.Net_Salary = profileData.Net_Salary;
                     config.Total_Salary = profileData.Total_Salary;
                     config.Time_stamp = profileData.Time_stamp;
-                    
+
                     await config.save();
                 }
 
@@ -373,6 +376,81 @@ exports.handler = async function (event, context) {
                 });
                 const uniqueNotes = Array.from(notesSet);
                 responseData = { success: true, data: uniqueNotes };
+                break;
+            }
+
+            // --- ACTION 9: Get History Analysis (for chart & filters) ---
+            case 'getHistoryAnalysis': {
+                const { filter } = data; // filter is '1D', '1W', '1M', 'All'
+
+                const transactionsSheet = doc.sheetsByTitle['Transactions'];
+                if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
+
+                const rows = await transactionsSheet.getRows();
+
+                // Determine the start date for the filter
+                const now = new Date();
+                let startDate = new Date('1970-01-01'); // Default for 'All'
+
+                if (filter === '1D') {
+                    startDate.setDate(now.getDate() - 1);
+                } else if (filter === '1W') {
+                    startDate.setDate(now.getDate() - 7);
+                } else if (filter === '1M') {
+                    // This uses the current "Cycle Start Date" logic from getTrackerData
+                    const config = await getConfig(doc);
+                    if (config && config.Cycle_Start_Date) {
+                        startDate = new Date(config.Cycle_Start_Date);
+                    } else {
+                        startDate.setDate(now.getDate() - 30); // Fallback
+                    }
+                }
+
+                const transactions = [];
+                const summary = {}; // For the pie chart
+                let totalDebits = 0;
+
+                for (const row of rows) {
+                    const txDate = new Date(row.Date);
+
+                    if (txDate >= startDate) {
+                        const debit = parseFloat(row.Amount_DR || 0);
+                        const credit = parseFloat(row.Amount_CR || 0);
+                        const category = row.Category;
+
+                        // 1. Add to the full transaction list
+                        transactions.push({
+                            date: row.Date,
+                            category: category,
+                            debit: row.Amount_DR,
+                            credit: row.Amount_CR,
+                            notes: row.Notes,
+                            paymentMode: row.Payment_Mode
+                        });
+
+                        // 2. Add to the pie chart summary (only for debits)
+                        if (debit > 0) {
+                            totalDebits += debit;
+                            if (summary[category]) {
+                                summary[category] += debit;
+                            } else {
+                                summary[category] = debit;
+                            }
+                        }
+                    }
+                }
+
+                // 3. Reverse the list for "Recent to Initial"
+                transactions.reverse();
+
+                // 4. Format the summary for Chart.js
+                const chartData = {
+                    labels: Object.keys(summary),
+                    values: Object.values(summary),
+                    totalDebits: totalDebits
+                };
+
+                responseData = { success: true, data: { transactions, chartData } };
                 break;
             }
 
