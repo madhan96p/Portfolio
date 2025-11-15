@@ -33,6 +33,11 @@
                     <label for="amount">Amount (₹)</label>
                     <input type="number" id="amount" placeholder="e.g., 150" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="transaction-date">Date</label>
+                    <input type="date" id="transaction-date" required>
+                </div>
                 
                 <div class="form-group">
                     <label for="transaction-type">Transaction Type</label>
@@ -45,8 +50,16 @@
                 <div class="form-group">
                     <label for="category">Category</label>
                     <select id="category" required>
-                        <option value="Personal Expense">Personal Expense</option>
-                        <option value="Family Transfer">Family Transfer</option>
+                        </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-mode">Payment Mode</label>
+                    <select id="payment-mode" required>
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
 

@@ -24,8 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Transaction Form
     const logForm = document.getElementById('log-form');
     const amountInput = document.getElementById('amount');
+    const transactionDateInput = document.getElementById('transaction-date'); // <-- NEW
     const transactionTypeInput = document.getElementById('transaction-type');
     const categoryInput = document.getElementById('category');
+    const paymentModeInput = document.getElementById('payment-mode'); // <-- NEW
     const notesInput = document.getElementById('notes');
     const logBtn = document.getElementById('log-btn');
 
@@ -57,6 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Helper Functions ---
     const showLoader = (show) => loader.classList.toggle('visible', show);
     const formatCurrency = (num) => `₹${Number(num).toFixed(2)}`;
+
+    /**
+     * NEW: Helper to set the date input to today.
+     */
+    const setTodayDate = () => {
+        // Using valueAsDate is the cleanest way to set an <input type="date">
+        transactionDateInput.valueAsDate = new Date(); 
+    };
 
     /**
      * Updates a progress bar element.
@@ -102,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderHistory = (history) => {
         historyTableBody.innerHTML = ''; // Clear old history
         if (history.length === 0) {
-            historyTableBody.innerHTML = '<tr><td colspan="4">No transactions yet.</td></tr>';
+            historyTableBody.innerHTML = '<tr><td colspan="4">No transactions for this month yet.</td></tr>';
             return;
         }
         
@@ -112,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${row.date || ''}</td>
                 <td>${row.category || ''}</td>
                 <td>${row.amount_dr !== '0' ? formatCurrency(row.amount_dr) : '-'}</td>
-                <td>${row.amount_cr !== '0' ? formatCurrency(row.amount_cr) : '-'}</td>
+                <td>${row.amount_cr !== '0' ? formatG(row.amount_cr) : '-'}</td>
             `;
             historyTableBody.appendChild(tr);
         });
@@ -208,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadDashboardData(); // Reload data with new goal
     });
 
-    // 4. Handle transaction form submission
+    // 4. Handle transaction form submission (CHANGED)
     logForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -216,20 +226,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const type = transactionTypeInput.value;
         const category = categoryInput.value;
         const notes = notesInput.value.trim();
+        const transactionDate = transactionDateInput.value; // <-- NEW
+        const paymentMode = paymentModeInput.value; // <-- NEW
 
         if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');
+            return;
+        }
+        if (!transactionDate) {
+            alert('Please select a valid date.');
             return;
         }
 
         logBtn.disabled = true;
         logBtn.textContent = 'Logging...';
         
-        await callApi('logTransaction', { amount, type, category, notes });
+        // Pass all new data to the API
+        await callApi('logTransaction', { 
+            amount, 
+            type, 
+            category, 
+            notes, 
+            transactionDate, 
+            paymentMode 
+        });
         
         // Clear the form
         amountInput.value = '';
         notesInput.value = '';
+        paymentModeInput.value = 'UPI'; // Reset to default
+        setTodayDate(); // Reset date to today
+        
         logBtn.disabled = false;
         logBtn.textContent = 'Log Transaction';
         
@@ -239,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Handle "End Month" button click
     endMonthBtn.addEventListener('click', async () => {
         const confirmEnd = confirm(
-            'Are you SURE you want to end the month?\n\nThis will calculate your rollover and permanently clear all transactions.'
+            'Are you SURE you want to end the month?\n\nThis will calculate your rollover and start the new month. This action cannot be undone.'
         );
         if (confirmEnd) {
             const result = await callApi('runMonthEnd');
@@ -252,5 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialize ---
     updateCategoryDropdown(); // Set initial category options
+    setTodayDate(); // Set date input to today
     loadDashboardData();
 });

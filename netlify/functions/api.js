@@ -40,7 +40,8 @@ async function getConfig(doc) {
 }
 
 /**
- * Helper function to get transactions and calculate totals.
+ * --- CHANGED ---
+ * Helper function to get transactions *for the current month only*.
  */
 async function getTransactions(doc) {
     const transactionsSheet = doc.sheetsByTitle['Transactions'];
@@ -50,7 +51,20 @@ async function getTransactions(doc) {
     const actuals = { family: 0, shares: 0, savings: 0, expenses: 0 };
     const history = [];
 
+    // Get current year and month to filter
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0 = January, 11 = December
+
     rows.forEach(row => {
+        // --- NEW: Date Filtering Logic ---
+        // GSheet might return dates as strings; parse them reliably.
+        const rowDate = new Date(row.Date);
+        if (rowDate.getFullYear() !== currentYear || rowDate.getMonth() !== currentMonth) {
+            return; // Skip this row, it's not from the current month
+        }
+        // --- END: Date Filtering Logic ---
+
         // Calculate totals based on 'Amount_DR'
         const amount = parseFloat(row.Amount_DR || 0);
         switch (row.Category) {
@@ -78,7 +92,7 @@ async function getTransactions(doc) {
         });
     });
 
-    // Return most recent 15 transactions
+    // Return most recent 15 transactions *from this month*
     const recentHistory = history.slice(-15).reverse();
     return { actuals, history: recentHistory };
 }
@@ -105,9 +119,10 @@ exports.handler = async function (event, context) {
 
         switch (action) {
             
-            // --- ACTION 1: Get All Tracker Data (Upgraded) ---
+            // --- ACTION 1: Get All Tracker Data (Now filters by month) ---
             case 'getTrackerData': {
                 const config = await getConfig(doc);
+                // --- CHANGED: This now only gets CURRENT MONTH data ---
                 const { actuals, history } = await getTransactions(doc);
 
                 const salary = parseFloat(config.Total_Salary || 0);
@@ -127,17 +142,23 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 2: Log a New Transaction (Upgraded for DR/CR) ---
+            // --- ACTION 2: Log a New Transaction (Upgraded with new fields) ---
             case 'logTransaction': {
-                const { amount, type, category, notes } = data;
+                // --- CHANGED: Added transactionDate & paymentMode ---
+                const { amount, type, category, notes, transactionDate, paymentMode } = data;
                 
+                if (!transactionDate) {
+                    throw new Error("Transaction date is required.");
+                }
+
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
                 const newRow = {
-                    Date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+                    Date: transactionDate, // --- CHANGED: Uses date from frontend
                     Category: category,
                     Amount_DR: type === 'debit' ? amount : '0',
                     Amount_CR: type === 'credit' ? amount : '0',
                     Notes: notes,
+                    Payment_Mode: paymentMode, // --- ADDED ---
                     Time_stamp: new Date().toISOString()
                 };
                 
@@ -146,7 +167,7 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 3: Update Salary Goal (NEW) ---
+            // --- ACTION 3: Update Salary Goal (No change) ---
             case 'updateSalaryGoal': {
                 const { newSalary } = data;
                 const configSheet = doc.sheetsByTitle['Config'];
@@ -158,7 +179,6 @@ exports.handler = async function (event, context) {
                     firstRow.Time_stamp = new Date().toISOString();
                     await firstRow.save();
                 } else {
-                    // If no rows, create one
                     await configSheet.addRow({ Total_Salary: newSalary, Time_stamp: new Date().toISOString() });
                 }
                 
@@ -166,9 +186,10 @@ exports.handler = async function (event, context) {
                 break;
             }
 
-            // --- ACTION 4: Run the Month-End Re-balancing (Upgraded) ---
+            // --- ACTION 4: Run the Month-End (CHANGED: NO LONGER DELETES) ---
             case 'runMonthEnd': {
                 const config = await getConfig(doc);
+                // --- CHANGED: This gets *current month* totals to calculate rollover ---
                 const { actuals } = await getTransactions(doc);
 
                 const salary = parseFloat(config.Total_Salary || 0);
@@ -176,9 +197,10 @@ exports.handler = async function (event, context) {
                 const pool = (salary * 0.40) + openingBalance;
                 const goalExpenses = pool * 0.50;
 
+                // This is the rollover
                 const newOpeningBalance = goalExpenses - actuals.expenses;
 
-                // Update the Config sheet
+                // Update the Config sheet for the *next* month
                 const configSheet = doc.sheetsByTitle['Config'];
                 const configRows = await configSheet.getRows();
                 if (configRows.length > 0) {
@@ -188,10 +210,9 @@ exports.handler = async function (event, context) {
                     await firstRow.save();
                 }
 
-                // Clear the Transactions sheet
-                const transactionsSheet = doc.sheetsByTitle['Transactions'];
-                await transactionsSheet.clear();
-                await transactionsSheet.setHeaderRow(['Date', 'Category', 'Amount_DR', 'Amount_CR', 'Notes', 'Time_stamp']);
+                // --- REMOVED ---
+                // We no longer clear the transactions sheet.
+                // It is now a permanent archive.
                 
                 responseData = { success: true, newOpeningBalance: newOpeningBalance.toFixed(2) };
                 break;
