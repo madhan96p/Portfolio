@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEBIT_CATEGORIES = [ 'Personal Expense', 'Family Transfer', 'Share Investment', 'Savings Transfer', 'Other Debit' ];
     const CREDIT_CATEGORIES = [ 'Salary', 'Gift / From Friend', 'Other Income' ];
 
-    // --- Get All DOM Elements (Use conditional checks later) ---
+    // --- Get All DOM Elements ---
     const loader = document.getElementById('loader');
     
     // Settings Page Elements
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalAvailableEl = document.getElementById('total-available');
     const totalSpentEl = document.getElementById('total-spent');
 
-    const historyTableBody = document.getElementById('history-table-body');
+    // --- REMOVED: historyTableBody ---
 
 
     // --- Helper Functions ---
@@ -86,28 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const renderHistory = (history) => {
-        if (!historyTableBody) return;
-        historyTableBody.innerHTML = ''; 
-        if (history.length === 0) {
-            historyTableBody.innerHTML = '<tr><td colspan="4">No transactions for this month yet.</td></tr>';
-            return;
-        }
-        
-        history.forEach(row => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${row.date || ''}</td>
-                <td>${row.category || ''}</td>
-                <td>${row.amount_dr !== '0' ? formatCurrency(row.amount_dr) : '-'}</td>
-                <td>${row.amount_cr !== '0' ? formatCurrency(row.amount_cr) : '-'}</td>
-            `;
-            historyTableBody.appendChild(tr);
-        });
-    };
+    // --- REMOVED: renderHistory function ---
     
     const updateUI = (data) => {
-        const { config, goals, actuals, history } = data;
+        const { config, goals, actuals } = data; // 'history' is no longer used
         
         // Update Settings (if present)
         if (salaryGoalInput) salaryGoalInput.value = parseFloat(config.Total_Salary || 0);
@@ -128,8 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
             totalAvailableEl.textContent = formatCurrency(goals.goalExpenses);
             totalSpentEl.textContent = formatCurrency(actuals.expenses);
         }
-
-        renderHistory(history);
+        
+        // --- REMOVED: renderHistory(history) call ---
     };
     
     const callApi = async (action, data = {}) => {
@@ -186,22 +168,26 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (result && result.success) {
                 alert('Transaction logged successfully!');
-                // --- THIS IS THE KEY CHANGE ---
                 window.location.href = 'main.html'; // Redirect to Dashboard
             } else {
                 logBtn.disabled = false;
                 logBtn.textContent = 'Log Transaction';
+                // Show error if API call failed but didn't throw
+                if (!result) alert('Logging failed. Please try again.');
             }
         });
     }
 
     // 2. SETTINGS PAGE Logic
     if (settingsForm) {
-        loadDashboardData();
+        loadDashboardData(); // Load current salary
         settingsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const newSalary = parseFloat(salaryGoalInput.value);
-            if (isNaN(newSalary) || newSalary < 0) return;
+            if (isNaN(newSalary) || newSalary < 0) {
+                 alert('Please enter a valid salary.');
+                 return;
+            }
 
             saveSettingsBtn.disabled = true;
             saveSettingsBtn.textContent = 'Saving...';
@@ -213,18 +199,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (endMonthBtn) {
         endMonthBtn.addEventListener('click', async () => {
-            if(confirm('Are you sure you want to End Month?')) {
+            if(confirm('Are you SURE you want to end the month? This will archive your totals and reset the dashboard.')) {
                 const result = await callApi('runMonthEnd');
                 if (result && result.success) {
-                    alert(`New month started. Rollover: ${formatCurrency(result.newOpeningBalance)}`);
-                    loadDashboardData(); 
+                    alert(`Success! Month archived.\nYour rollover balance for the new month is: ${formatCurrency(result.newOpeningBalance)}`);
+                    loadDashboardData(); // Reload settings page to show new state
                 }
             }
         });
     }
 
     // 3. DASHBOARD PAGE Logic (main.html)
-    if (historyTableBody) {
+    // --- UPDATED: Check for 'balanceEl' instead of 'historyTableBody' ---
+    if (balanceEl) { 
         loadDashboardData();
     }
 });

@@ -19,7 +19,9 @@ async function getAuthenticatedDoc() {
 }
 
 /**
- * Helper function to read all values from the 'Config' tab.
+ * --- UPGRADED ---
+ * Helper function to read the 'Config' tab (1 row).
+ * This is now the "Live Cache".
  */
 async function getConfig(doc) {
     const configSheet = doc.sheetsByTitle['Config'];
@@ -27,86 +29,10 @@ async function getConfig(doc) {
     const configRows = await configSheet.getRows();
     
     if (configRows.length > 0) {
-        // Return the first (and only) row's data
-        return configRows[0];
+        return configRows[0]; // Return the first (and only) row object
     } else {
-        // Default empty config if sheet is empty
-        return { Total_Salary: "0", Current_Opening_Balance: "0" };
+        throw new Error("Config sheet is empty. Please initialize it with one row of data.");
     }
-}
-
-/**
- * --- UPGRADED ---
- * Helper function to get transactions *for the current month only*.
- * Now calculates both DEBIT and CREDIT totals.
- */
-async function getTransactions(doc) {
-    const transactionsSheet = doc.sheetsByTitle['Transactions'];
-    if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
-    
-    const rows = await transactionsSheet.getRows();
-    
-    // Split into two objects for clarity
-    const debitActuals = { family: 0, shares: 0, savings: 0, expenses: 0 };
-    const creditActuals = { salary: 0, otherIncome: 0 };
-    
-    const history = [];
-
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth(); // 0 = January, 11 = December
-
-    rows.forEach(row => {
-        const rowDate = new Date(row.Date);
-        if (rowDate.getFullYear() !== currentYear || rowDate.getMonth() !== currentMonth) {
-            return; // Skip: not from the current month
-        }
-
-        // --- Calculate DEBITS (Amount_DR) ---
-        const amount_dr = parseFloat(row.Amount_DR || 0);
-        if (amount_dr > 0) {
-            switch (row.Category) {
-                case 'Family Transfer':
-                    debitActuals.family += amount_dr;
-                    break;
-                case 'Share Investment':
-                    debitActuals.shares += amount_dr;
-                    break;
-                case 'Savings Transfer':
-                    debitActuals.savings += amount_dr;
-                    break;
-                case 'Personal Expense':
-                    debitActuals.expenses += amount_dr;
-                    break;
-            }
-        }
-
-        // --- Calculate CREDITS (Amount_CR) ---
-        const amount_cr = parseFloat(row.Amount_CR || 0);
-        if (amount_cr > 0) {
-            switch (row.Category) {
-                case 'Salary':
-                    creditActuals.salary += amount_cr;
-                    break;
-                case 'Gift / From Friend':
-                case 'Other Income':
-                    creditActuals.otherIncome += amount_cr;
-                    break;
-            }
-        }
-        
-        // Add to history
-        history.push({
-            date: row.Date,
-            category: row.Category,
-            amount_dr: row.Amount_DR || '0',
-            amount_cr: row.Amount_CR || '0',
-            notes: row.Notes
-        });
-    });
-
-    const recentHistory = history.slice(-15).reverse();
-    return { debitActuals, creditActuals, history: recentHistory };
 }
 
 // --- Main API Handler ---
@@ -131,39 +57,41 @@ exports.handler = async function (event, context) {
 
         switch (action) {
             
-            // --- ACTION 1: Get All Tracker Data (Live Calculations) ---
+            // --- ACTION 1: Get All Tracker Data (UPGRADED: FAST ⚡) ---
             case 'getTrackerData': {
-                const config = await getConfig(doc);
-                // This now gets { debitActuals, creditActuals, history }
-                const { debitActuals, history } = await getTransactions(doc); 
+                const config = await getConfig(doc); // Reads 1 row
 
                 const salary = parseFloat(config.Total_Salary || 0);
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
-                // Goals are calculated "live" based on config
+                // Goals are calculated from the config goal
                 const goalFamily = salary * 0.60;
                 const pool = (salary * 0.40) + openingBalance;
                 const goalShares = pool * 0.25;
                 const goalSavings = pool * 0.25;
                 const goalExpenses = pool * 0.50;
-
                 const goals = { goalFamily, goalShares, goalSavings, goalExpenses };
+
+                // Actuals are read DIRECTLY from the config cache
+                const actuals = {
+                    family: parseFloat(config.Current_Family || 0),
+                    shares: parseFloat(config.Current_Shares || 0),
+                    savings: parseFloat(config.Current_Savings || 0),
+                    expenses: parseFloat(config.Current_Expenses || 0)
+                };
                 
-                // We pass debitActuals as 'actuals' to the frontend
-                responseData = { success: true, data: { config, goals, actuals: debitActuals, history } };
+                // NO HISTORY is returned. This is the fix.
+                responseData = { success: true, data: { config, goals, actuals, history: [] } };
                 break;
             }
 
-            // --- ACTION 2: Log a New Transaction (No change) ---
+            // --- ACTION 2: Log a New Transaction (UPGRADED: SMART 🧠) ---
             case 'logTransaction': {
                 const { amount, type, category, notes, transactionDate, paymentMode } = data;
                 
-                if (!transactionDate) {
-                    throw new Error("Transaction date is required.");
-                }
-
+                // --- Step 1: Write to the permanent 'Transactions' archive ---
                 const transactionsSheet = doc.sheetsByTitle['Transactions'];
-                const newRow = {
+                await transactionsSheet.addRow({
                     Date: transactionDate,
                     Category: category,
                     Amount_DR: type === 'debit' ? amount : '0',
@@ -171,79 +99,104 @@ exports.handler = async function (event, context) {
                     Notes: notes,
                     Payment_Mode: paymentMode,
                     Time_stamp: new Date().toISOString()
-                };
+                });
+
+                // --- Step 2: Update the 'Config' cache ---
+                const config = await getConfig(doc); // Get the 1-row cache
+                const numAmount = parseFloat(amount);
+
+                if (type === 'debit') {
+                    switch (category) {
+                        case 'Family Transfer':
+                            config.Current_Family = (parseFloat(config.Current_Family || 0) + numAmount).toFixed(2);
+                            break;
+                        case 'Share Investment':
+                            config.Current_Shares = (parseFloat(config.Current_Shares || 0) + numAmount).toFixed(2);
+                            break;
+                        case 'Savings Transfer':
+                            config.Current_Savings = (parseFloat(config.Current_Savings || 0) + numAmount).toFixed(2);
+                            break;
+                        case 'Personal Expense':
+                            config.Current_Expenses = (parseFloat(config.Current_Expenses || 0) + numAmount).toFixed(2);
+                            break;
+                    }
+                } else { // Credit
+                    switch (category) {
+                        case 'Salary':
+                            config.Current_Salary_In = (parseFloat(config.Current_Salary_In || 0) + numAmount).toFixed(2);
+                            break;
+                        case 'Gift / From Friend':
+                        case 'Other Income':
+                            config.Current_Other_In = (parseFloat(config.Current_Other_In || 0) + numAmount).toFixed(2);
+                            break;
+                    }
+                }
                 
-                await transactionsSheet.addRow(newRow);
+                config.Time_stamp = new Date().toISOString();
+                await config.save(); // Save the updated 1-row cache
+                
                 responseData = { success: true };
                 break;
             }
 
             // --- ACTION 3: Update Salary Goal (No change) ---
             case 'updateSalaryGoal': {
-                const { newSalary } = data;
-                const configSheet = doc.sheetsByTitle['Config'];
-                const configRows = await configSheet.getRows();
-                
-                if (configRows.length > 0) {
-                    const firstRow = configRows[0];
-                    firstRow.Total_Salary = newSalary;
-                    firstRow.Time_stamp = new Date().toISOString();
-                    await firstRow.save();
-                } else {
-                    // This should not happen, but as a fallback
-                    await configSheet.addRow({ Total_Salary: newSalary, Time_stamp: new Date().toISOString() });
-                }
-                
+                const config = await getConfig(doc);
+                config.Total_Salary = data.newSalary;
+                config.Time_stamp = new Date().toISOString();
+                await config.save();
                 responseData = { success: true };
                 break;
             }
 
-            // --- ACTION 4: Run the Month-End (HEAVILY UPGRADED) ---
+            // --- ACTION 4: Run the Month-End (UPGRADED: CLEAN 🧹) ---
             case 'runMonthEnd': {
                 const config = await getConfig(doc);
-                const { debitActuals, creditActuals } = await getTransactions(doc);
 
                 // --- 1. Calculate this month's final numbers ---
                 const salaryGoal = parseFloat(config.Total_Salary || 0);
                 const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
                 const pool = (salaryGoal * 0.40) + openingBalance;
                 const goalExpenses = pool * 0.50;
+                const actualExpenses = parseFloat(config.Current_Expenses || 0);
+                
+                const closingBalance = goalExpenses - actualExpenses; // The new rollover
 
-                // This is the rollover for the *next* month
-                const closingBalance = goalExpenses - debitActuals.expenses;
-
-                // --- 2. Get the new 'Monthly_Archive' sheet ---
+                // --- 2. Write new row to the 'Monthly_Archive' ---
                 const archiveSheet = doc.sheetsByTitle['Monthly_Archive'];
                 if (!archiveSheet) throw new Error("Sheet 'Monthly_Archive' not found.");
 
                 const now = new Date();
-                // Format: "11-2025" (Month is 0-indexed, so +1)
                 const monthYear = `${now.getMonth() + 1}-${now.getFullYear()}`;
 
-                // --- 3. Write new row to the Archive ---
                 await archiveSheet.addRow({
                     Month_Year: monthYear,
                     Opening_Balance: openingBalance.toFixed(2),
-                    Total_Salary_Received: creditActuals.salary.toFixed(2),
-                    Total_Other_Income: creditActuals.otherIncome.toFixed(2),
-                    Total_Spent_Family: debitActuals.family.toFixed(2),
-                    Total_Spent_Shares: debitActuals.shares.toFixed(2),
-                    Total_Spent_Savings: debitActuals.savings.toFixed(2),
-                    Total_Spent_Personal: debitActuals.expenses.toFixed(2),
+                    Total_Salary_Received: parseFloat(config.Current_Salary_In || 0).toFixed(2),
+                    Total_Other_Income: parseFloat(config.Current_Other_In || 0).toFixed(2),
+                    Total_Spent_Family: parseFloat(config.Current_Family || 0).toFixed(2),
+                    Total_Spent_Shares: parseFloat(config.Current_Shares || 0).toFixed(2),
+                    Total_Spent_Savings: parseFloat(config.Current_Savings || 0).toFixed(2),
+                    Total_Spent_Personal: actualExpenses.toFixed(2),
                     Closing_Balance: closingBalance.toFixed(2)
                 });
 
-                // --- 4. Update the Config sheet for next month ---
-                // We can reuse 'config' as it's the 1-row object
+                // --- 3. Reset the Config sheet for next month ---
                 config.Current_Opening_Balance = closingBalance.toFixed(2);
+                config.Current_Family = "0";
+                config.Current_Shares = "0";
+                config.Current_Savings = "0";
+                config.Current_Expenses = "0";
+                config.Current_Salary_In = "0";
+                config.Current_Other_In = "0";
                 config.Time_stamp = new Date().toISOString();
-                await config.save(); // Save the updated 1-row config
+                await config.save();
                 
                 responseData = { success: true, newOpeningBalance: closingBalance.toFixed(2) };
                 break;
             }
 
-            // --- ACTION 5: Get All Document Data (UPGRADED) ---
+            // --- ACTION 5: Get All Document Data (No change) ---
             case 'getDocumentData': {
                 const docSheet = doc.sheetsByTitle['Documents'];
                 if (!docSheet) throw new Error("Sheet 'Documents' not found.");
@@ -256,7 +209,7 @@ exports.handler = async function (event, context) {
                     issued: row.Issued_Date,
                     expiry: row.Expiry_Date,
                     link: row.Drive_Link,
-                    pdf: row.Uploded_Pdfs // <-- NEW: Added this column
+                    pdf: row.Uploded_Pdfs
                 }));
                 
                 responseData = { success: true, data: documents };
