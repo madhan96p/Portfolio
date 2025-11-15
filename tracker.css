@@ -628,3 +628,98 @@ button:disabled {
         box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
     }
 }
+
+/* --- New Dashboard UI/UX --- */
+
+/* 1. Monthly Story Card */
+.summary-card {
+    background: var(--bg-color);
+    padding: 24px;
+    border-bottom: 10px solid var(--bg-color);
+}
+.summary-card h3 {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    font-weight: 500;
+    margin-bottom: 16px;
+    margin-top: 0;
+}
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+.summary-item {
+    background: var(--card-bg);
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+}
+.summary-item p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 4px;
+}
+.summary-item h4 {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+.summary-item:nth-child(2) h4 {
+    color: var(--success-color);
+}
+
+/* 2. Approx Bank Balance Toggle */
+.approx-balance {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 0 24px;
+    margin-top: -8px; /* Pulls it up under the balance card */
+    margin-bottom: 16px;
+}
+.approx-balance span {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+.approx-balance .balance-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+.approx-balance .balance-value.hidden {
+    display: none;
+}
+.balance-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    width: auto; /* Override button defaults */
+    padding: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transform: none; /* Disable hover grow */
+}
+.balance-toggle-btn:hover {
+    color: var(--primary-color);
+    transform: none;
+}
+
+/* 3. Mobile Friendly Responsive */
+@media (max-width: 500px) {
+    /* Stack the summary grid */
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    /* Stack the wallet stats */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    /* Make nav links smaller */
+    .nav-links li a {
+        padding: 16px 8px;
+        font-size: 0.8rem;
+    }
+}

@@ -180,7 +180,16 @@ exports.handler = async function (event, context) {
                         totalSpent: totalWalletSpent
                     };
 
-                    // 7. Get Config Data (for Settings page)
+                    const pendingFamily = Math.max(0, goals.goalFamily - actuals.family);
+                    const pendingShares = Math.max(0, goals.goalShares - actuals.shares);
+                    const pendingSavings = Math.max(0, goals.goalSavings - actuals.savings);
+
+                    // Approx Bank Balance = What's left in wallet + all unspent pending "jobs"
+                    const approxBankBalance = wallet.balance + pendingFamily + pendingShares + pendingSavings;
+
+                    // 7. Add new data to the objects being sent
+                    wallet.approxBankBalance = approxBankBalance;
+                    actuals.openingBalance = openingBalance;
                     configData = {
                         Total_Salary: config.Total_Salary, // This is the "Plan"
                         Emp_Name: config.Emp_Name,

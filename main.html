@@ -26,16 +26,27 @@
         <div class="loader-overlay" id="loader">
             <div class="spinner"></div>
         </div>
-        <section class="card income-card">
-            <h3>This Month's Income (Actual)</h3>
-            <div class="income-details">
-                <p>Salary Received: <strong id="income-salary">₹0.00</strong></p>
-                <p>Other Income: <strong id="income-other">₹0.00</strong></p>
+
+        <section class="summary-card">
+            <h3>Your Monthly Story</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <p>Opening Balance</p>
+                    <h4 id="opening-balance">₹0.00</h4>
+                </div>
+                <div class="summary-item">
+                    <p>Salary Received</p>
+                    <h4 id="salary-received">₹0.00</h4>
+                </div>
+                <div class="summary-item">
+                    <p>Other Income</p>
+                    <h4 id="other-income-received">₹0.00</h4>
+                </div>
             </div>
-            <small>Your budget goals are based on your 'Plan' (in Settings).</small>
         </section>
+
         <section class="action-center">
-            <h2>Action Center (Debits)</h2>
+            <h2>Your 60/40 Plan</h2>
             <div class="goal-card" id="family-card">
                 <div class="goal-icon"><i class="fas fa-home"></i></div>
                 <div class="goal-details">
@@ -52,26 +63,12 @@
             <div class="goal-card" id="shares-card">
                 <div class="goal-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="goal-details">
-                    <div class="goal-header">
-                        <span>Shares</span>
-                        <span id="shares-pending">Pending: ₹0</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress" id="shares-progress"></div>
-                    </div>
                     <div class="goal-summary" id="shares-summary">Invested: ₹0 / Goal: ₹0</div>
                 </div>
             </div>
             <div class="goal-card" id="savings-card">
                 <div class="goal-icon"><i class="fas fa-piggy-bank"></i></div>
                 <div class="goal-details">
-                    <div class="goal-header">
-                        <span>Savings</span>
-                        <span id="savings-pending">Pending: ₹0</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress" id="savings-progress"></div>
-                    </div>
                     <div class="goal-summary" id="savings-summary">Saved: ₹0 / Goal: ₹0</div>
                 </div>
             </div>
@@ -83,6 +80,15 @@
                 <p>Balance Remaining</p>
                 <h1 id="balance">₹0.00</h1>
             </div>
+
+            <div class="approx-balance">
+                <span>Approx. Bank Balance:</span>
+                <span class="balance-value hidden" id="approx-balance-value">₹0.00</span>
+                <button class="balance-toggle-btn" id="approx-balance-toggle">
+                    <i class="fas fa-eye-slash" id="approx-balance-icon"></i>
+                </button>
+            </div>
+
             <div class="stats-grid">
                 <div class="stat-card">
                     <p>Wallet Budget</p>
