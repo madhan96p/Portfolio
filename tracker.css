@@ -573,46 +573,34 @@ button:disabled {
 .search-controls .form-group {
     margin-bottom: 0;
 }
-
-/* --- History Page Toggle --- */
-.analysis-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* Match padding of filters */
-    padding: 24px 24px 0 24px;
-    background: var(--bg-color);
-}
-.analysis-header h2 {
-    margin: 0;
+/* --- History Page Analysis --- */
+.analysis-title-main {
     font-size: 1.2rem;
     color: var(--text-light);
     font-weight: 500;
+    padding: 24px 24px 0 24px;
+    background: var(--bg-color);
 }
-.toggle-buttons {
-    display: flex;
-    gap: 5px;
-}
-.toggle-btn {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-light);
-    width: 40px; /* Fixed width */
-    height: 40px;
-    padding: 0;
-    font-size: 1rem;
-    border-radius: 6px; /* Match other buttons */
-}
-.toggle-btn.active {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: #fff;
-}
-.toggle-btn:hover:not(.active) {
-    background: var(--border-color);
-}
-
-/* Adjust filter padding to remove double top padding */
-.history-filters {
+#view-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    background: var(--bg-color);
     padding: 16px 24px 0 24px;
 }
+#time-filters {
+    display: flex;
+    background: var(--bg-color);
+    padding: 16px 24px 0 24px;
+    gap: 10px;
+}
+.filter-btn {
+    flex-grow: 1;
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    font-size: 0.9rem;
+    width: 100%; /* Use 100% for grid */
+}
+/* (The rest of the styles for .filter-btn.active, etc. are fine) */

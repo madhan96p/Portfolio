@@ -29,17 +29,15 @@
         </div>
 
         <section class="history-table-container">
-            <div class="analysis-header">
-                <h2 id="analysis-title">Expense Analysis</h2>
-                <div class="toggle-buttons">
-                    <button id="toggle-expense" class="toggle-btn active" title="Show Expenses"><i
-                            class="fas fa-arrow-up"></i></button>
-                    <button id="toggle-income" class="toggle-btn" title="Show Income"><i
-                            class="fas fa-arrow-down"></i></button>
-                </div>
+            <h2 id="analysis-title" class="analysis-title-main">Expense Analysis</h2>
+
+            <div class="history-filters" id="view-filters">
+                <button class="filter-btn active" data-view="expense">Expense Analysis</button>
+                <button class="filter-btn" data-view="income">Income Analysis</button>
+                <button class="filter-btn" data-view="all">All Transactions</button>
             </div>
 
-            <div class="history-filters" id="history-filters">
+            <div class="history-filters" id="time-filters">
                 <button class="filter-btn" data-filter="1D">1D</button>
                 <button class="filter-btn" data-filter="1W">1W</button>
                 <button class="filter-btn active" data-filter="1M">This Cycle</button>
