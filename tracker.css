@@ -573,7 +573,7 @@ button:disabled {
 .search-controls .form-group {
     margin-bottom: 0;
 }
-/* --- History Page Analysis --- */
+/* --- History Page Analysis (Premium UI) --- */
 .analysis-title-main {
     font-size: 1.2rem;
     color: var(--text-light);
@@ -581,29 +581,69 @@ button:disabled {
     padding: 24px 24px 0 24px;
     background: var(--bg-color);
 }
+
+/* 1. Main View Toggle (Segmented Control) */
 #view-filters {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
+    display: flex; /* Use flex for joined buttons */
     background: var(--bg-color);
     padding: 16px 24px 0 24px;
 }
-#time-filters {
-    display: flex;
-    background: var(--bg-color);
-    padding: 16px 24px 0 24px;
-    gap: 10px;
-}
-.filter-btn {
+
+#view-filters .filter-btn {
     flex-grow: 1;
-    background: transparent;
+    background: var(--card-bg); /* Use card background */
     color: var(--text-light);
     border: 1px solid var(--border-color);
-    padding: 10px;
+    padding: 12px 10px;
     font-size: 0.9rem;
-    width: 100%; /* Use 100% for grid */
+    font-weight: 600;
+    width: 100%;
+    border-radius: 0; /* Remove individual radius */
+    border-right-width: 0; /* Remove in-between borders */
 }
-/* (The rest of the styles for .filter-btn.active, etc. are fine) */
+
+#view-filters .filter-btn:first-child {
+    border-radius: 8px 0 0 8px; /* Round left corners */
+}
+
+#view-filters .filter-btn:last-child {
+    border-radius: 0 8px 8px 0; /* Round right corners */
+    border-right-width: 1px; /* Add final border */
+}
+
+#view-filters .filter-btn.active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    z-index: 2; /* Bring to front */
+}
+
+/* 2. Time Filters (Pills) */
+#time-filters {
+    display: flex;
+    justify-content: center; /* Center the pills */
+    background: var(--bg-color);
+    padding: 16px 24px 0 24px;
+    gap: 10px;
+}
+
+#time-filters .filter-btn {
+    flex-grow: 0; /* Do not stretch */
+    width: auto; /* Fit content */
+    background: var(--card-bg);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    padding: 6px 14px; /* Small pill padding */
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 20px; /* This makes it a "pill" */
+}
+
+#time-filters .filter-btn.active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
 
 /* --- "Smart" End Month Button --- */
 #end-month-btn.end-month-alert {
