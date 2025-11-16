@@ -723,3 +723,52 @@ button:disabled {
         font-size: 0.8rem;
     }
 }
+
+/* --- Document Modal Styles --- */
+/* Make the modal content wider for documents */
+.doc-modal-content {
+    max-width: 900px;
+    width: 90%;
+    height: 90vh; /* Make it tall */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style the new close button */
+.close-doc-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2.5rem;
+    color: #fff;
+    background: #000;
+    border-radius: 50%;
+    line-height: 1;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    opacity: 0.7;
+    border: none;
+    z-index: 10;
+    cursor: pointer;
+}
+.close-doc-btn:hover {
+    opacity: 1;
+}
+
+/* Container for the image or PDF */
+#doc-viewer {
+    width: 100%;
+    height: 100%;
+    background: #333; /* Dark background for contrast */
+    border-radius: 12px; /* Match modal */
+    overflow: hidden;
+}
+
+#doc-viewer img,
+#doc-viewer iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}

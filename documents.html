@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Documents</title>
     <link rel="stylesheet" href="tracker.css">
     <script src="auth.js"></script>
-    <link rel="stylesheet" href="nav.css"> 
-    </head>
+    <link rel="stylesheet" href="nav.css">
+</head>
+
 <body>
-<nav class="navbar">
+    <nav class="navbar">
         <ul class="nav-links">
             <li><a href="main.html">Dashboard</a></li>
             <li><a href="log.html">Log</a></li>
-            <li><a href="history.html">History</a></li> <li><a href="documents.html" class="active">Documents</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="documents.html" class="active">Documents</a></li>
             <li><a href="settings.html">Settings</a></li>
         </ul>
     </nav>
@@ -29,15 +32,27 @@
                         <th>Issued</th>
                         <th>Expiry</th>
                         <th>Drive Link</th>
-                        <th>Uploaded PDF</th> </tr>
+                        <th>Uploaded PDF</th>
+                    </tr>
                 </thead>
                 <tbody id="doc-table-body">
-                    <tr><td colspan="6">Loading documents...</td></tr>
+                    <tr>
+                        <td colspan="6">Loading documents...</td>
+                    </tr>
                 </tbody>
             </table>
         </section>
+
+        <div id="doc-modal" class="modal-overlay">
+            <div class="modal-content doc-modal-content">
+                <button id="close-doc-modal" class="close-doc-btn">&times;</button>
+                <div id="doc-viewer">
+                </div>
+            </div>
+        </div>
     </main>
-<script src="common.js" defer></script>
+    <script src="common.js" defer></script>
     <script src="documents.js" defer></script>
 </body>
+
 </html>
