@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="tracker.css">
     <script src="auth.js"></script>
     <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -22,26 +23,13 @@
     </nav>
 
     <main class="tracker-container">
-        <section class="history-table-container">
-            <h2>My Documents</h2>
-            <table class="history-table" id="doc-table">
-                <thead>
-                    <tr>
-                        <th>Document</th>
-                        <th>Number</th>
-                        <th>Issued</th>
-                        <th>Expiry</th>
-                        <th>Drive Link</th>
-                        <th>Uploaded PDF</th>
-                    </tr>
-                </thead>
-                <tbody id="doc-table-body">
-                    <tr>
-                        <td colspan="6">Loading documents...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+        </div>
+
+        <div class="doc-container" id="doc-card-container">
+            <h2 class="doc-category-header">Loading Documents...</h2>
+        </div>
 
         <div id="doc-modal" class="modal-overlay">
             <div class="modal-content doc-modal-content">
