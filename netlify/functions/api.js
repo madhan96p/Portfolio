@@ -402,23 +402,33 @@ exports.handler = async function (event, context) {
 
                 const rows = await transactionsSheet.getRows();
 
-                // Determine the start date for the filter
+                // --- START OF FIXED LOGIC ---
+                // Determine the filter start date
                 const now = new Date();
-                let startDate = new Date('1970-01-01'); // Default for 'All'
+                let filterStartDate = new Date('1970-01-01'); // Default for 'All'
 
                 if (filter === '1D') {
-                    startDate.setDate(now.getDate() - 1);
-                    startDate.setHours(0, 0, 0, 0); // <-- ADD THIS LINE
+                    const oneDayAgo = new Date(now); // Create new date object
+                    oneDayAgo.setDate(now.getDate() - 1);
+                    oneDayAgo.setHours(0, 0, 0, 0); // Set to midnight
+                    filterStartDate = oneDayAgo;
+
                 } else if (filter === '1W') {
-                    startDate.setDate(now.getDate() - 7);
-                    startDate.setHours(0, 0, 0, 0); // <-- ADD THIS LINE
+                    const oneWeekAgo = new Date(now); // Create new date object
+                    oneWeekAgo.setDate(now.getDate() - 7);
+                    oneWeekAgo.setHours(0, 0, 0, 0); // Set to midnight
+                    filterStartDate = oneWeekAgo;
+
                 } else if (filter === '1M') {
                     // This uses the current "Cycle Start Date" logic
                     const config = await getConfig(doc);
                     if (config && config.Cycle_Start_Date) {
-                        startDate = new Date(config.Cycle_Start_Date);
+                        filterStartDate = new Date(config.Cycle_Start_Date);
                     } else {
-                        startDate.setDate(now.getDate() - 30); // Fallback
+                        const thirtyDaysAgo = new Date(now); // Fallback
+                        thirtyDaysAgo.setDate(now.getDate() - 30);
+                        thirtyDaysAgo.setHours(0, 0, 0, 0);
+                        filterStartDate = thirtyDaysAgo;
                     }
                 }
 
@@ -431,7 +441,7 @@ exports.handler = async function (event, context) {
                 for (const row of rows) {
                     const txDate = new Date(row.Date);
 
-                    if (txDate >= startDate) {
+                    if (txDate >= filterStartDate) {
                         const debit = parseFloat(row.Amount_DR || 0);
                         const credit = parseFloat(row.Amount_CR || 0);
                         const category = row.Category;
