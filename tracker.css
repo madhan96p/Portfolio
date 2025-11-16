@@ -893,3 +893,11 @@ button:disabled {
 .doc-btn i {
     margin-right: 6px;
 }
+
+/* --- Responsive Body Padding --- */
+@media (max-width: 600px) {
+    body {
+        /* Add padding to the bottom so the nav doesn't hide content */
+        padding-bottom: 80px; 
+    }
+}

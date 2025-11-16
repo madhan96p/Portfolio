@@ -1,4 +1,7 @@
 /* nav.css */
+
+/* --- Desktop Nav (Default) --- */
+/* This is your existing code */
 .navbar {
     background: var(--card-bg);
     padding: 0 10px;
@@ -30,8 +33,80 @@
     color: var(--text-color);
 }
 
-/* Style for the 'active' page link */
 .nav-links li a.active {
     color: var(--primary-color);
     border-bottom-color: var(--primary-color);
+}
+
+/* --- Premium Mobile Bottom Nav --- */
+@media (max-width: 600px) {
+    .navbar {
+        /* Fix to bottom of screen */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        
+        /* Premium UI settings */
+        max-width: 100%;
+        margin: 0;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+        background: rgba(255, 255, 255, 0.95);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--border-color);
+        z-index: 999; /* Make sure it's on top */
+    }
+
+    .nav-links {
+        justify-content: space-around;
+        align-items: center;
+        height: 65px;
+    }
+
+    .nav-links li a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px; /* Space between icon and text */
+        padding: 8px 5px;
+        font-size: 0.75rem; /* Smaller text */
+        border-bottom: none; /* Remove desktop border */
+        color: var(--text-light);
+        position: relative;
+    }
+
+    /* Use ::before to add icons from Font Awesome */
+    .nav-links li a::before {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        font-size: 1.2rem;
+    }
+
+    /* Assign icons */
+    .nav-links li a[href="main.html"]::before { content: "\f0e4"; } /* fa-tachometer-alt (Dashboard) */
+    .nav-links li a[href="log.html"]::before { content: "\f0fe"; } /* fa-plus-square (Log) */
+    .nav-links li a[href="history.html"]::before { content: "\f1da"; } /* fa-history (History) */
+    .nav-links li a[href="documents.html"]::before { content: "\f15c"; } /* fa-file-alt (Documents) */
+    .nav-links li a[href="settings.html"]::before { content: "\f013"; } /* fa-cog (Settings) */
+
+    /* Active state for mobile */
+    .nav-links li a.active {
+        color: var(--primary-color);
+        border-bottom: none; /* Ensure no border */
+    }
+    
+    .nav-links li a.active::after {
+        /* Small dot under active icon */
+        content: '';
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        position: absolute;
+        bottom: 4px;
+    }
 }
