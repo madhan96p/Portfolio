@@ -1,7 +1,7 @@
 /* nav.css */
 
 /* --- Desktop Nav (Default) --- */
-/* This is your existing code */
+/* Your existing code, but with <span> */
 .navbar {
     background: var(--card-bg);
     padding: 0 10px;
@@ -28,15 +28,18 @@
     font-size: 0.9rem;
     border-bottom: 3px solid transparent;
 }
-
 .nav-links li a:hover {
     color: var(--text-color);
 }
-
 .nav-links li a.active {
     color: var(--primary-color);
     border-bottom-color: var(--primary-color);
 }
+/* Hide SVGs on desktop */
+.nav-links li a svg {
+    display: none;
+}
+
 
 /* --- Premium Mobile Bottom Nav --- */
 @media (max-width: 600px) {
@@ -78,19 +81,17 @@
         position: relative;
     }
 
-    /* Use ::before to add icons from Font Awesome */
-    .nav-links li a::before {
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        font-size: 1.2rem;
+    /* Show SVGs, hide text */
+    .nav-links li a svg {
+        display: block;
+        width: 24px;
+        height: 24px;
+        color: var(--text-light);
+        transition: color 0.2s ease;
     }
-
-    /* Assign icons */
-    .nav-links li a[href="main.html"]::before { content: "\f0e4"; } /* fa-tachometer-alt (Dashboard) */
-    .nav-links li a[href="log.html"]::before { content: "\f0fe"; } /* fa-plus-square (Log) */
-    .nav-links li a[href="history.html"]::before { content: "\f1da"; } /* fa-history (History) */
-    .nav-links li a[href="documents.html"]::before { content: "\f15c"; } /* fa-file-alt (Documents) */
-    .nav-links li a[href="settings.html"]::before { content: "\f013"; } /* fa-cog (Settings) */
+    .nav-links li a span {
+        display: none; /* Hide text on mobile */
+    }
 
     /* Active state for mobile */
     .nav-links li a.active {
@@ -98,15 +99,12 @@
         border-bottom: none; /* Ensure no border */
     }
     
-    .nav-links li a.active::after {
-        /* Small dot under active icon */
-        content: '';
-        display: block;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: var(--primary-color);
-        position: absolute;
-        bottom: 4px;
+    .nav-links li a.active svg {
+        color: var(--primary-color);
+    }
+    
+    /* Interactive "pop" on hover/active */
+    .nav-links li a.active svg {
+        transform: scale(1.1);
     }
 }
