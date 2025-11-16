@@ -934,37 +934,78 @@ button:disabled {
     margin-right: 6px;
 }
 
+/* --- Premium Mobile UI/UX Refactor --- */
 @media (max-width: 600px) {
     body {
-        padding-bottom: 80px; 
+        padding-bottom: 80px; /* For bottom nav */
+        /* NEW: Set body to the bg color */
+        background: var(--bg-color);
     }
 
+    .tracker-container {
+        border-radius: 0;
+        box-shadow: none;
+        /* NEW: Make container bg match body */
+        background: var(--bg-color);
+    }
+
+    /* 1. Remove padding/bg from main sections */
     .summary-card,
     .action-center,
     .dashboard {
-        padding: 16px; /* Reduced from 24px */
+        padding: 0; /* Remove section padding */
+        background: none;
+        border-bottom: none;
     }
 
+    /* 2. Add padding to HEADERS instead */
+    .summary-card h3,
+    .action-center h2,
+    .dashboard h2 {
+        padding: 24px 16px 16px 16px; /* Give headers space */
+        margin-bottom: 0;
+    }
+
+    /* 3. Make CARDS "float" with side margins */
     .summary-grid {
-        grid-template-columns: 1fr; /* Stack to 1 column */
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 0 16px; /* Side padding for grid */
     }
 
+    .action-center .goal-card {
+        margin: 0 16px 12px 16px; /* 16px side margin */
+    }
+
+    .dashboard .balance-card,
+    .dashboard .stats-grid,
+    .dashboard .wallet-breakdown {
+        margin: 0 16px 16px 16px; /* 16px side margin */
+    }
+
+    .dashboard .approx-balance {
+        padding: 0 16px; /* Align toggle with cards */
+    }
+
+    /* 4. Stack wallet stats */
     .stats-grid {
-        grid-template-columns: 1fr; /* Stack to 1 column */
+        grid-template-columns: 1fr;
     }
 
+    /* 5. Adjust "bada" font sizes */
     .balance-card h1 {
-        font-size: 2.0rem; /* Reduced from 2.5rem */
+        font-size: 2.0rem; /* Reduced */
     }
     .stat-card h3 {
-        font-size: 1.3rem; /* Reduced from 1.5rem */
+        font-size: 1.3rem; /* Reduced */
     }
     .summary-item h4 {
-        font-size: 1.15rem; /* Reduced from 1.25rem */
+        font-size: 1.15rem; /* Reduced */
     }
 
+    /* 6. Clean up spacing on cards */
     .goal-card {
-        padding: 12px; /* Reduced from 16px */
+        padding: 12px;
         gap: 12px;
     }
     .wallet-breakdown {
