@@ -408,8 +408,10 @@ exports.handler = async function (event, context) {
 
                 if (filter === '1D') {
                     startDate.setDate(now.getDate() - 1);
+                    startDate.setHours(0, 0, 0, 0); // <-- ADD THIS LINE
                 } else if (filter === '1W') {
                     startDate.setDate(now.getDate() - 7);
+                    startDate.setHours(0, 0, 0, 0); // <-- ADD THIS LINE
                 } else if (filter === '1M') {
                     // This uses the current "Cycle Start Date" logic
                     const config = await getConfig(doc);
