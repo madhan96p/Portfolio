@@ -1011,4 +1011,22 @@ button:disabled {
     .wallet-breakdown {
         padding: 12px;
     }
+    /* --- Summary Card Shrink Fix --- */
+    .summary-card h3 {
+        /* Reduce margin below the title */
+        margin-bottom: 12px; 
+    }
+    .summary-item {
+        /* Reduce overall vertical padding */
+        padding: 12px; 
+        margin-bottom: 0; 
+    }
+    .summary-item p {
+        /* Shrink the descriptive text */
+        font-size: 0.8rem;
+    }
+    .summary-item h4 {
+        /* Shrink the large value text */
+        font-size: 1.1rem; 
+    }
 }
