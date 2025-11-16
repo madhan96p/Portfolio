@@ -934,10 +934,40 @@ button:disabled {
     margin-right: 6px;
 }
 
-/* --- Responsive Body Padding --- */
 @media (max-width: 600px) {
     body {
-        /* Add padding to the bottom so the nav doesn't hide content */
         padding-bottom: 80px; 
+    }
+
+    .summary-card,
+    .action-center,
+    .dashboard {
+        padding: 16px; /* Reduced from 24px */
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr; /* Stack to 1 column */
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr; /* Stack to 1 column */
+    }
+
+    .balance-card h1 {
+        font-size: 2.0rem; /* Reduced from 2.5rem */
+    }
+    .stat-card h3 {
+        font-size: 1.3rem; /* Reduced from 1.5rem */
+    }
+    .summary-item h4 {
+        font-size: 1.15rem; /* Reduced from 1.25rem */
+    }
+
+    .goal-card {
+        padding: 12px; /* Reduced from 16px */
+        gap: 12px;
+    }
+    .wallet-breakdown {
+        padding: 12px;
     }
 }
