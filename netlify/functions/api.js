@@ -77,14 +77,14 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
                 case 'Savings Transfer':
                     totals.savings += debit;
                     break;
+                case 'Personal Expense': // For old data compatibility
                 case 'Personal Spending': // New
                     totals.personal += debit;
                     break;
                 case 'Household Spending': // New
                     totals.household += debit;
                     break;
-                // --- ADD THIS CASE ---
-                case 'Other Debit':
+                case 'Other Debit': // For old data compatibility
                     totals.personal += debit;
                     break;
 
@@ -92,7 +92,7 @@ async function getCurrentCycleTransactions(doc, cycleStartDate) {
                 case 'Salary':
                     totals.salary += credit;
                     break;
-                case 'Family Support': // <-- ADD THIS LINE
+                case 'Family Support':
                 case 'Gift / From Friend':
                 case 'Other Income':
                     totals.otherIncome += credit;
@@ -135,40 +135,29 @@ exports.handler = async function (event, context) {
                 if (config === null) {
                     // --- Config is empty, send a default "zeroed-out" state ---
                     goals = { goalFamily: 0, goalShares: 0, goalSavings: 0, goalExpenses: 0 };
-                    actuals = { family: 0, shares: 0, savings: 0, personal: 0, household: 0, salary: 0, otherIncome: 0 };
-                    wallet = { balance: 0, totalAvailable: 0, totalSpent: 0 };
-                    configData = { Total_Salary: 0, Emp_Name: null, Net_Salary: 0 }; // Simplified
+                    actuals = { family: 0, shares: 0, savings: 0, personal: 0, household: 0, salary: 0, otherIncome: 0, openingBalance: 0 };
+                    wallet = { balance: 0, totalAvailable: 0, totalSpent: 0, approxBankBalance: 0 };
+                    configData = { Total_Salary: 0, Emp_Name: null, Net_Salary: 0, Cycle_Start_Date: null }; 
 
                 } else {
                     // --- Config exists, run the "SMART" CALCULATION ---
-
-                    // 1. Get all transaction totals for this cycle
+                    
                     const { totals } = await getCurrentCycleTransactions(doc, config.Cycle_Start_Date);
-
-                    // 2. THIS IS THE KEY: Determine the "Salary Base"
-                    // Use actual logged salary if > 0. Otherwise, base is 0.
+                    
                     const salaryBase = totals.salary > 0 ? totals.salary : 0;
-
-                    // 3. Get Opening Balance
                     const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
-                    // 4. Calculate Goals (Phase 1 or Phase 2)
-                    const goalFamily = salaryBase * 0.60; // 60% of actual salary
-                    const pool = (salaryBase * 0.40) + openingBalance; // 40% of actual salary + rollover
+                    // 1. Calculate Goals (Phase 1 or Phase 2)
+                    const goalFamily = salaryBase * 0.60;
+                    const pool = (salaryBase * 0.40) + openingBalance;
                     const goalShares = pool * 0.25;
                     const goalSavings = pool * 0.25;
-                    const goalExpenses = pool * 0.50; // This is the 20% wallet
+                    const goalExpenses = pool * 0.50; // Wallet Goal
                     goals = { goalFamily, goalShares, goalSavings, goalExpenses };
 
-                    // 5. Get Actuals (already have from `totals`)
+                    // 2. Get Actuals & Wallet Spent
                     const totalWalletSpent = totals.personal + totals.household;
-
-                    wallet.cycleBreakdown = {
-                        salaryBaseUsed: salaryBase,
-                        poolValue: pool,
-                        goalFamily: goalFamily // Sending this again for quick display
-                    };
-
+                    
                     actuals = {
                         family: totals.family,
                         shares: totals.shares,
@@ -176,26 +165,33 @@ exports.handler = async function (event, context) {
                         personal: totals.personal,
                         household: totals.household,
                         salary: totals.salary,
-                        otherIncome: totals.otherIncome
+                        otherIncome: totals.otherIncome,
+                        openingBalance: openingBalance // Send Opening Balance to UI
                     };
 
-                    // 6. Get Wallet
+                    // 3. Define Wallet Object (MOVED UP TO FIX CRASH)
                     wallet = {
                         balance: goalExpenses - totalWalletSpent,
                         totalAvailable: goalExpenses,
                         totalSpent: totalWalletSpent
                     };
 
+                    // 4. Calculate Pending Jobs & Approx Bank Balance
                     const pendingFamily = Math.max(0, goals.goalFamily - actuals.family);
                     const pendingShares = Math.max(0, goals.goalShares - actuals.shares);
                     const pendingSavings = Math.max(0, goals.goalSavings - actuals.savings);
 
-                    // Approx Bank Balance = What's left in wallet + all unspent pending "jobs"
                     const approxBankBalance = wallet.balance + pendingFamily + pendingShares + pendingSavings;
 
-                    // 7. Add new data to the objects being sent
+                    // 5. Attach Final Properties (This now works)
                     wallet.approxBankBalance = approxBankBalance;
-                    actuals.openingBalance = openingBalance;
+                    wallet.cycleBreakdown = { // THIS IS THE LINE THAT WAS CRASHING
+                        salaryBaseUsed: salaryBase,
+                        poolValue: pool,
+                        goalFamily: goalFamily
+                    };
+
+                    // 6. Get ConfigData
                     configData = {
                         Total_Salary: config.Total_Salary, // This is the "Plan"
                         Emp_Name: config.Emp_Name,
