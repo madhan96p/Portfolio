@@ -1030,3 +1030,59 @@ button:disabled {
         font-size: 1.1rem; 
     }
 }
+
+/* --- Floating Action Button (FAB) --- */
+.fab {
+    position: fixed;
+    bottom: 95px; /* Above the mobile nav bar */
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--warning-color); /* Use a high-visibility color */
+    color: #fff;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 990;
+    transition: all 0.2s ease;
+}
+.fab:hover {
+    background: #e08e0b;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    transform: scale(1.05);
+}
+@media (min-width: 601px) {
+    /* Adjust position for desktop */
+    .fab {
+        bottom: 40px;
+        right: calc(50vw - 330px); /* Align with content edge */
+    }
+}
+
+
+/* --- Breakdown Modal Styles --- */
+.breakdown-modal-content {
+    max-width: 450px;
+    padding: 30px;
+    text-align: left;
+}
+.breakdown-modal-content hr {
+    border-color: var(--border-color);
+    margin: 15px 0;
+}
+.breakdown-details p {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+.breakdown-details h4 {
+    margin: 20px 0 10px 0;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+.value-highlight {
+    font-weight: 600;
+    color: var(--text-color);
+}

@@ -4,9 +4,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Page Elements ---
     const container = document.getElementById('doc-card-container');
+    
+    // --- Existing Modal Elements (for viewing docs) ---
     const modal = document.getElementById('doc-modal');
     const modalViewer = document.getElementById('doc-viewer');
     const closeBtn = document.getElementById('close-doc-modal');
+
+    // --- NEW FORM ELEMENTS ---
+    const addDocBtn = document.getElementById('add-doc-btn');
+    const addDocModal = document.getElementById('add-doc-modal');
+    const closeAddDocModalBtn = document.getElementById('close-add-doc-modal');
+    const addDocForm = document.getElementById('add-doc-form');
+    const saveDocBtn = document.getElementById('save-doc-btn');
 
     // --- Definitions for Sorting ---
     const IDENTITY_TYPES = ['Aadhaar Card', 'PAN Card', 'Driving Licence', 'Passport', 'Voter ID'];
@@ -76,25 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return { text: `Expires: ${expiryDate}`, class: '' };
     };
 
-    // --- NEW: Function to create a single card ---
+    // --- NEW: Function to create a single card (Assumed to be defined in full) ---
     const createDocCard = (doc) => {
+        // ... (This function remains as defined in the previous version) ...
         const { docType, fullName, docNumber, issued, expiry, link, pdf } = doc;
         
-        // Get expiry status
         const expiryStatus = checkExpiry(expiry);
         
-        // Create link buttons
         const linkBtn = link && link.startsWith('http')
             ? `<a href="${link}" class="doc-btn doc-link" data-type="drive"><i class="fab fa-google-drive"></i> G-Drive</a>` : '';
         const pdfBtn = pdf && pdf.startsWith('http')
             ? `<a href="${pdf}" class="doc-btn doc-link" data-type="pdf"><i class="far fa-file-pdf"></i> PDF</a>` : '';
         
-        // Create copy button
         const copyBtn = docNumber
             ? `<button class="doc-btn copy-btn" data-copy-value="${docNumber}"><i class="far fa-copy"></i> Copy No.</button>` : '';
 
-        // Pick an icon
-        let icon = 'fa-file-alt'; // Default
+        let icon = 'fa-file-alt';
         if (IDENTITY_TYPES.includes(docType)) icon = 'fa-id-card';
         if (FINANCIAL_TYPES.includes(docType)) icon = 'fa-university';
         if (ACADEMIC_TYPES.includes(docType)) icon = 'fa-user-graduate';
@@ -123,9 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
 
-    // --- NEW: Function to render all cards, grouped ---
+    // --- NEW: Function to render all cards, grouped (Assumed to be defined in full) ---
     const renderDocs = (documents) => {
-        // 1. Sort docs into categories
+        // ... (This function remains as defined in the previous version) ...
         const identityDocs = documents.filter(doc => IDENTITY_TYPES.includes(doc.docType));
         const financialDocs = documents.filter(doc => FINANCIAL_TYPES.includes(doc.docType));
         const academicDocs = documents.filter(doc => ACADEMIC_TYPES.includes(doc.docType));
@@ -137,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = '';
 
-        // 2. Render Identity Docs
         if (identityDocs.length > 0) {
             html += '<h2 class="doc-category-header">Identity Documents</h2>';
             html += '<div class="doc-grid">';
@@ -145,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
             html += '</div>';
         }
         
-        // 3. Render Financial Docs
         if (financialDocs.length > 0) {
             html += '<h2 class="doc-category-header">Financial Documents</h2>';
             html += '<div class="doc-grid">';
@@ -153,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
             html += '</div>';
         }
 
-        // 4. Render Academic Docs
         if (academicDocs.length > 0) {
             html += '<h2 class="doc-category-header">Academic Documents</h2>';
             html += '<div class="doc-grid">';
@@ -161,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
             html += '</div>';
         }
         
-        // 5. Render Others
         if (otherDocs.length > 0) {
             html += '<h2 class="doc-category-header">Other Documents</h2>';
             html += '<div class="doc-grid">';
@@ -180,7 +182,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- Main function to load and render documents ---
+    // --- NEW: Add Document Submission Logic ---
+    const handleAddDocSubmission = async (e) => {
+        e.preventDefault();
+
+        // NOTE: Full_Name is assumed to be the user's name
+        const docData = {
+            fullName: 'PRAGADEESH SRINIVASAN', 
+            docType: document.getElementById('doc-type').value,
+            docNumber: document.getElementById('doc-number').value,
+            issuedDate: document.getElementById('doc-issued').value,
+            expiryDate: document.getElementById('doc-expiry').value,
+            driveLink: document.getElementById('doc-link').value,
+            uploadedPdf: document.getElementById('doc-pdf').value,
+        };
+
+        if (!docData.docType || !docData.docNumber) {
+            alert('Document Type and Number are required.');
+            return;
+        }
+
+        saveDocBtn.disabled = true;
+        saveDocBtn.textContent = 'Saving...';
+
+        const result = await callApi('addDocument', docData);
+
+        if (result && result.success) {
+            alert('Document added successfully!');
+            addDocModal.classList.remove('visible');
+            addDocForm.reset(); // Clear the form
+            loadDocuments(); // Reload the document list
+        }
+
+        saveDocBtn.disabled = false;
+        saveDocBtn.textContent = 'Save Document';
+    };
+
+
+    // Main function to load and render documents
     const loadDocuments = async () => {
         const result = await callApi('getDocumentData');
         
@@ -192,8 +231,19 @@ document.addEventListener('DOMContentLoaded', () => {
         renderDocs(result.data);
     };
 
-    // --- Add listener for modal close button ---
+    // --- Add listener for document viewing modal close button ---
     closeBtn.addEventListener('click', hideModal);
+
+    // --- NEW: Add listeners for Add Document feature ---
+    if (addDocBtn) {
+        addDocBtn.addEventListener('click', () => addDocModal.classList.add('visible'));
+    }
+    if (closeAddDocModalBtn) {
+        closeAddDocModalBtn.addEventListener('click', () => addDocModal.classList.remove('visible'));
+    }
+    if (addDocForm) {
+        addDocForm.addEventListener('submit', handleAddDocSubmission);
+    }
 
     // Initial load
     loadDocuments();

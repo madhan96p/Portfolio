@@ -163,6 +163,12 @@ exports.handler = async function (event, context) {
                     // 5. Get Actuals (already have from `totals`)
                     const totalWalletSpent = totals.personal + totals.household;
 
+                    wallet.cycleBreakdown = {
+                        salaryBaseUsed: salaryBase,
+                        poolValue: pool,
+                        goalFamily: goalFamily // Sending this again for quick display
+                    };
+
                     actuals = {
                         family: totals.family,
                         shares: totals.shares,
@@ -491,6 +497,28 @@ exports.handler = async function (event, context) {
                 };
 
                 responseData = { success: true, data: { transactions, debitChartData, creditChartData } };
+                break;
+            }
+
+            // --- ACTION 10: Add New Document ---
+            case 'addDocument': {
+                const docData = data;
+                
+                const documentsSheet = doc.sheetsByTitle['Documents'];
+                if (!documentsSheet) throw new Error("Sheet 'Documents' not found.");
+
+                // The column names must match the sheet headers exactly
+                await documentsSheet.addRow({
+                    Full_Name: docData.fullName,
+                    Document_Type: docData.docType,
+                    Document_Number: docData.docNumber,
+                    Issued_Date: docData.issuedDate,
+                    Expiry_Date: docData.expiryDate,
+                    Drive_Link: docData.driveLink,
+                    Uploded_Pdfs: docData.uploadedPdf
+                });
+
+                responseData = { success: true };
                 break;
             }
 
