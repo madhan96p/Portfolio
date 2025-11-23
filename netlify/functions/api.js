@@ -137,13 +137,13 @@ exports.handler = async function (event, context) {
                     goals = { goalFamily: 0, goalShares: 0, goalSavings: 0, goalExpenses: 0 };
                     actuals = { family: 0, shares: 0, savings: 0, personal: 0, household: 0, salary: 0, otherIncome: 0, openingBalance: 0 };
                     wallet = { balance: 0, totalAvailable: 0, totalSpent: 0, approxBankBalance: 0 };
-                    configData = { Total_Salary: 0, Emp_Name: null, Net_Salary: 0, Cycle_Start_Date: null }; 
+                    configData = { Total_Salary: 0, Emp_Name: null, Net_Salary: 0, Cycle_Start_Date: null };
 
                 } else {
                     // --- Config exists, run the "SMART" CALCULATION ---
-                    
+
                     const { totals } = await getCurrentCycleTransactions(doc, config.Cycle_Start_Date);
-                    
+
                     const salaryBase = totals.salary > 0 ? totals.salary : 0;
                     const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
 
@@ -157,7 +157,7 @@ exports.handler = async function (event, context) {
 
                     // 2. Get Actuals & Wallet Spent
                     const totalWalletSpent = totals.personal + totals.household;
-                    
+
                     actuals = {
                         family: totals.family,
                         shares: totals.shares,
@@ -200,9 +200,10 @@ exports.handler = async function (event, context) {
                         PF_No: config.PF_No,
                         UAN_No: config.UAN_No,
                         Gross_Salary: config.Gross_Salary,
-                        Total_Deductions: config.Total_DDeductions,
+                        Total_Deductions: config.Total_Deductions,
                         Net_Salary: config.Net_Salary,
-                        Cycle_Start_Date: config.Cycle_Start_Date // For the "smart" end-month button
+                        Current_Opening_Balance: config.Current_Opening_Balance,
+                        Cycle_Start_Date: config.Cycle_Start_Date
                     };
                 }
 
@@ -499,7 +500,7 @@ exports.handler = async function (event, context) {
             // --- ACTION 10: Add New Document ---
             case 'addDocument': {
                 const docData = data;
-                
+
                 const documentsSheet = doc.sheetsByTitle['Documents'];
                 if (!documentsSheet) throw new Error("Sheet 'Documents' not found.");
 

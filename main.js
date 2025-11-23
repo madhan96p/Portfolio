@@ -3,23 +3,23 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Dashboard Page Elements ---
-    
+
     // NEW: Summary Card
     const openingBalanceEl = document.getElementById('opening-balance');
     const salaryReceivedEl = document.getElementById('salary-received');
     const otherIncomeEl = document.getElementById('other-income-received');
-    
+
     // Goal Cards
     const familyCard = document.getElementById('family-card');
     const familyPending = document.getElementById('family-pending');
     const familyProgress = document.getElementById('family-progress');
     const familySummary = document.getElementById('family-summary');
-    
+
     const sharesCard = document.getElementById('shares-card');
     const sharesPending = document.getElementById('shares-pending');
     const sharesProgress = document.getElementById('shares-progress');
     const sharesSummary = document.getElementById('shares-summary');
-    
+
     const savingsCard = document.getElementById('savings-card');
     const savingsPending = document.getElementById('savings-pending');
     const savingsProgress = document.getElementById('savings-progress');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wallet Breakdown
     const breakdownPersonalEl = document.getElementById('breakdown-personal');
     const breakdownHouseholdEl = document.getElementById('breakdown-household');
-    
+
     // NEW: Approx Balance Elements
     const approxBalanceToggle = document.getElementById('approx-balance-toggle');
     const approxBalanceValue = document.getElementById('approx-balance-value');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fab = document.getElementById('breakdown-fab');
     const breakdownModal = document.getElementById('breakdown-modal');
     const closeBreakdownModalBtn = document.getElementById('close-breakdown-modal');
-    
+
     // Breakdown Display Elements
     const bdStartDate = document.getElementById('bd-start-date');
     const bdOb = document.getElementById('bd-ob');
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         goal = Math.max(0, goal);
         let pending = goal - actual;
         let percent = (goal > 0) ? (actual / goal) * 100 : 0;
-        
+
         if (percent >= 100) {
             percent = 100;
             pending = 0;
@@ -85,19 +85,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const populateBreakdownModal = (config, goals, poolData) => {
         const salaryBase = poolData.salaryBaseUsed;
         const pool = poolData.poolValue;
-        const totalMoney = salaryBase + parseFloat(config.Current_Opening_Balance || 0);
+        const obValue = parseFloat(config.Current_Opening_Balance || 0);
+        const totalMoney = salaryBase + obValue; // This is the correct Total Money In
 
         // Header Info
         bdStartDate.textContent = config.Cycle_Start_Date || 'N/A';
-        bdOb.textContent = formatCurrency(parseFloat(config.Current_Opening_Balance || 0));
-        bdSalaryBase.textContent = formatCurrency(salaryBase);
-        
-        // Total Money
+
+        // --- FIX: Now reads the correct OB value ---
+        bdOb.textContent = formatCurrency(obValue);
+
+        // --- FIX: Total Money is the sum of Salary + OB ---
         bdTotalMoney.textContent = formatCurrency(totalMoney);
 
         // Allocation Details
         bdFamilyGoal.textContent = formatCurrency(goals.goalFamily); // 60%
-        bdPoolTotal.textContent = formatCurrency(pool); // 40% + OB
+        bdPoolTotal.textContent = formatCurrency(pool); // 40% + OB (Correct)
         bdSharesGoal.textContent = formatCurrency(goals.goalShares); // 25%
         bdSavingsGoal.textContent = formatCurrency(goals.goalSavings); // 25%
         bdWalletGoal.textContent = formatCurrency(goals.goalExpenses); // 50%
@@ -108,8 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * --- REWRITTEN: Updates the entire new dashboard UI ---
      */
     const updateUI = (data) => {
-        const { config, goals, actuals, wallet } = data; 
-        
+        const { config, goals, actuals, wallet } = data;
+
         // 1. Update NEW "Monthly Story" Card (Including Opening Balance)
         if (openingBalanceEl) {
             openingBalanceEl.textContent = formatCurrency(actuals.openingBalance);
@@ -118,15 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 2. Update Goal Progress Bars
-        updateProgressBar(familyCard, familyProgress, familySummary, familyPending, 
+        updateProgressBar(familyCard, familyProgress, familySummary, familyPending,
             actuals.family, goals.goalFamily, { sent: 'Sent', goal: 'Goal', pending: 'Pending' });
-        
-        updateProgressBar(sharesCard, sharesProgress, sharesSummary, sharesPending, 
+
+        updateProgressBar(sharesCard, sharesProgress, sharesSummary, sharesPending,
             actuals.shares, goals.goalShares, { sent: 'Invested', goal: 'Goal', pending: 'Pending' });
-        
-        updateProgressBar(savingsCard, savingsProgress, savingsSummary, savingsPending, 
+
+        updateProgressBar(savingsCard, savingsProgress, savingsSummary, savingsPending,
             actuals.savings, goals.goalSavings, { sent: 'Saved', goal: 'Goal', pending: 'Pending' });
-        
+
         // 3. Update Wallet Card
         if (balanceEl) {
             balanceEl.textContent = formatCurrency(wallet.balance);
@@ -147,14 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
             populateBreakdownModal(config, goals, wallet.cycleBreakdown);
         }
     };
-    
+
     /**
      * Main function to load dashboard data.
      */
     const loadDashboardData = async () => {
         const result = await callApi('getTrackerData');
         if (result && result.data) {
-            updateUI(result.data); 
+            updateUI(result.data);
         }
     };
 
@@ -171,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     // --- NEW: FAB and Modal Listeners ---
     if (fab) {
         fab.addEventListener('click', () => breakdownModal.classList.add('visible'));
