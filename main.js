@@ -80,29 +80,57 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * --- NEW: Populates the Cycle Breakdown Modal ---
+     * --- NEW: Populates the Cycle Breakdown Modal (Interactive and Meaningful) ---
      */
     const populateBreakdownModal = (config, goals, poolData) => {
+        // --- 1. Get Core Values ---
         const salaryBase = poolData.salaryBaseUsed;
         const pool = poolData.poolValue;
+        const familyGoalAmount = goals.goalFamily;
         const obValue = parseFloat(config.Current_Opening_Balance || 0);
-        const totalMoney = salaryBase + obValue; // This is the correct Total Money In
 
-        // Header Info
+        // --- 2. Calculate Intermediate Totals ---
+        // This is the money to be split (Family + Pool)
+        const totalMoneyIn = salaryBase + obValue;
+
+        // This is the total 40% assigned before OB is added
+        const initialFourtyPercent = salaryBase * 0.40;
+
+        // --- 3. Update Header Info ---
         bdStartDate.textContent = config.Cycle_Start_Date || 'N/A';
 
-        // --- FIX: Now reads the correct OB value ---
+        // --- 4. Update Detailed Breakdown ---
+
+        // Section 1: Money IN
         bdOb.textContent = formatCurrency(obValue);
+        bdSalaryBase.textContent = formatCurrency(salaryBase);
+        bdTotalMoney.textContent = formatCurrency(totalMoneyIn);
 
-        // --- FIX: Total Money is the sum of Salary + OB ---
-        bdTotalMoney.textContent = formatCurrency(totalMoney);
+        // Section 2: The 60/40 Split and Pool Calculation
 
-        // Allocation Details
-        bdFamilyGoal.textContent = formatCurrency(goals.goalFamily); // 60%
-        bdPoolTotal.textContent = formatCurrency(pool); // 40% + OB (Correct)
-        bdSharesGoal.textContent = formatCurrency(goals.goalShares); // 25%
-        bdSavingsGoal.textContent = formatCurrency(goals.goalSavings); // 25%
-        bdWalletGoal.textContent = formatCurrency(goals.goalExpenses); // 50%
+        // 60% Family Goal (Deduct from Total Money In)
+        bdFamilyGoal.textContent = formatCurrency(familyGoalAmount);
+
+        // 40% Pool Total (Should be 40% of salary base plus the OB)
+        bdPoolTotal.textContent = formatCurrency(pool);
+
+        // Section 3: Final Allocation
+        bdSharesGoal.textContent = formatCurrency(goals.goalShares);
+        bdSavingsGoal.textContent = formatCurrency(goals.goalSavings);
+        bdWalletGoal.textContent = formatCurrency(goals.goalExpenses);
+
+
+        // --- 5. Add Interactive Tooltips (Optional Text Clarity) ---
+        // We will make the labels more expressive to explain the logic flow:
+
+        // 60% Label Clarity
+        document.querySelector('#breakdown-details-content p:nth-child(5)').title =
+            `This 60% is deducted directly from your Salary Base (${formatCurrency(salaryBase)}).`;
+
+        // 40% Label Clarity
+        document.querySelector('#breakdown-details-content p:nth-child(6)').title =
+            `This 40% Pool Total is calculated as: (${formatCurrency(initialFourtyPercent)} from Salary) + (${formatCurrency(obValue)} Rollover).`;
+
     };
 
 
