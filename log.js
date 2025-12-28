@@ -1,12 +1,12 @@
 // --- log.js ---
-// Manages the Log Transaction page (log.html)
+// Manages the Log Transaction page (log.html) with Smart P2P and Investment logic
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Define Categories ---
-    const DEBIT_CATEGORIES = [ 'Personal Spending', 'Household Spending', 'Family Transfer', 'Share Investment', 'Savings Transfer', 'Other Debit' ];
-    const CREDIT_CATEGORIES = [ 'Salary', 'Family Support', 'Gift / From Friend', 'Other Income' ];
+    const DEBIT_CATEGORIES = ['Personal Spending', 'Household Spending', 'Family Transfer', 'Share Investment', 'Savings Transfer', 'Other Debit'];
+    const CREDIT_CATEGORIES = ['Salary', 'Family Support', 'Gift / From Friend', 'Other Income'];
 
-    // --- Get Log Page DOM Elements ---
+    // --- Get DOM Elements ---
     const logForm = document.getElementById('log-form');
     const amountInput = document.getElementById('amount');
     const transactionDateInput = document.getElementById('transaction-date');
@@ -15,12 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentModeInput = document.getElementById('payment-mode');
     const notesInput = document.getElementById('notes');
     const logBtn = document.getElementById('log-btn');
-    
-    // --- NEW: Get the new button ---
     const logNewBtn = document.getElementById('log-new-btn');
 
+    // --- NEW: Investment Specific Elements ---
+    const invFields = document.getElementById('investment-fields');
+    const shareSymbolInput = document.getElementById('share-symbol');
+    const shareUnitsInput = document.getElementById('share-units');
+    const shareBuyPriceInput = document.getElementById('share-buy-price');
+
     /**
-     * Populates the category dropdown based on transaction type.
+     * Populates the category dropdown and toggles Investment UI.
      */
     const updateCategoryDropdown = () => {
         if (!transactionTypeInput || !categoryInput) return;
@@ -34,49 +38,51 @@ document.addEventListener('DOMContentLoaded', () => {
             option.textContent = cat;
             categoryInput.appendChild(option);
         });
+        toggleInvestmentUI();
     };
 
     /**
-     * --- NEW: Helper function to clear the form for a new entry ---
+     * Shows/Hides the investment detail fields based on category.
      */
-    const clearFormForNew = () => {
-        amountInput.value = '';
-        notesInput.value = '';
-        // We keep date, type, category, and payment mode for efficiency
-        amountInput.focus(); // Set focus back to the amount
-    };
-
-    const loadPreviousNotes = async () => {
-        const datalist = document.getElementById('previous-notes');
-        if (!datalist) return;
-
-        // Use a 'soft' call, don't block the UI or show alerts on failure
-        try {
-            // We don't use the global `callApi` because we don't want
-            // the loader to show for this background task.
-            const response = await fetch('/.netlify/functions/api', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'getUniqueNotes' }),
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success && result.data) {
-                    datalist.innerHTML = ''; // Clear any old options
-                    result.data.forEach(note => {
-                        datalist.innerHTML += `<option value="${note}"></option>`;
-                    });
-                }
-            }
-        } catch (error) {
-            console.warn('Could not load previous notes:', error);
+    const toggleInvestmentUI = () => {
+        if (categoryInput.value === 'Share Investment') {
+            invFields.style.display = 'block';
+            shareSymbolInput.required = true;
+            shareUnitsInput.required = true;
+            shareBuyPriceInput.required = true;
+        } else {
+            invFields.style.display = 'none';
+            shareSymbolInput.required = false;
+            shareUnitsInput.required = false;
+            shareBuyPriceInput.required = false;
         }
     };
 
     /**
-     * --- NEW: A single, shared function to handle logging ---
-     * @param {boolean} redirectOnSuccess - True to go to dashboard, false to clear form
+     * Smart Parser: Extracts Entity name from Notes (e.g., "To Amma" -> "Amma")
+     */
+    const extractEntity = (category, notes) => {
+        if (category.includes('Family') || category.includes('Gift')) {
+            const match = notes.match(/(?:To|From|For)\s+([a-zA-Z]+)/i);
+            return match ? match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase() : 'Family';
+        }
+        if (category === 'Share Investment') {
+            return shareSymbolInput.value.replace('NSE:', '').replace('BSE:', '').toUpperCase() || 'Investment';
+        }
+        return 'None';
+    };
+
+    const clearFormForNew = () => {
+        amountInput.value = '';
+        notesInput.value = '';
+        shareSymbolInput.value = '';
+        shareUnitsInput.value = '';
+        shareBuyPriceInput.value = '';
+        amountInput.focus();
+    };
+
+    /**
+     * Handles the logging logic and API communication.
      */
     const handleLogSubmission = async (redirectOnSuccess) => {
         const amount = parseFloat(amountInput.value);
@@ -89,54 +95,59 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
         if (!transactionDate) { alert('Select valid date'); return; }
 
-        // Disable both buttons
+        // Capture Investment Data if applicable
+        const investment = (category === 'Share Investment') ? {
+            symbol: shareSymbolInput.value.toUpperCase(),
+            units: parseFloat(shareUnitsInput.value),
+            buyPrice: parseFloat(shareBuyPriceInput.value)
+        } : null;
+
+        // Perform Smart Entity Extraction
+        const entity = extractEntity(category, notes);
+
+        // Disable UI
         logBtn.disabled = true;
         logNewBtn.disabled = true;
         const logBtnOriginalText = logBtn.textContent;
         logBtn.textContent = 'Logging...';
 
-        // The global `callApi` function is from common.js
-        const result = await callApi('logTransaction', { amount, type, category, notes, transactionDate, paymentMode });
+        const payload = { 
+            amount, type, category, notes, transactionDate, paymentMode, 
+            entity, // For P2P Tracer
+            investment // For Portfolio Ledger
+        };
+
+        const result = await callApi('logTransaction', payload);
         
         if (result && result.success) {
             alert('Transaction logged successfully!');
-            
             if (redirectOnSuccess) {
-                window.location.href = 'main.html'; // Redirect to Dashboard
+                window.location.href = 'main.html';
             } else {
-                clearFormForNew(); // Clear form and stay here
+                clearFormForNew();
             }
-            
         } 
         
-        // Re-enable buttons (on failure OR success if not redirecting)
         logBtn.disabled = false;
         logNewBtn.disabled = false;
         logBtn.textContent = logBtnOriginalText;
     };
 
-    // --- Initialization and Event Handlers ---
+    // --- Initialization ---
     if (logForm) {
-
-        loadPreviousNotes();
-        // Set default date to today
         if (transactionDateInput) transactionDateInput.valueAsDate = new Date();
-        
-        // Populate initial categories
         updateCategoryDropdown();
         
-        // Add listener for type change
         transactionTypeInput.addEventListener('change', updateCategoryDropdown);
+        categoryInput.addEventListener('change', toggleInvestmentUI);
 
-        // --- UPDATED: 'submit' handles the "Log Transaction" button ---
         logForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            await handleLogSubmission(true); // true = redirect
+            await handleLogSubmission(true);
         });
 
-        // --- NEW: 'click' handles the "Log and Add New" button ---
         logNewBtn.addEventListener('click', async () => {
-            await handleLogSubmission(false); // false = clear form
+            await handleLogSubmission(false);
         });
     }
 });

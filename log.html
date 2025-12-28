@@ -76,6 +76,25 @@
                     </select>
                 </div>
 
+                <div id="investment-fields" style="display: none; background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0;">
+                    <h4 style="margin-top: 0; color: #1e293b; font-size: 0.95rem; margin-bottom: 10px;">
+                        <i class="fas fa-chart-line"></i> Investment Details
+                    </h4>
+                    <div class="form-group">
+                        <label for="share-symbol">Ticker (e.g., NSE:VEDL)</label>
+                        <input type="text" id="share-symbol" placeholder="NSE:SYMBOL">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label for="share-units">Units (Qty)</label>
+                            <input type="number" id="share-units" step="0.01" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="share-buy-price">Price per Unit (₹)</label>
+                            <input type="number" id="share-buy-price" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="payment-mode">Payment Mode</label>
                     <select id="payment-mode" required>
@@ -94,7 +113,6 @@
                 </div>
                 <div class="log-actions">
                     <button type="button" id="log-new-btn">Log and Add New</button>
-
                     <button type="submit" id="log-btn">Log Transaction</button>
                 </div>
             </form>
