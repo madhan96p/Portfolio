@@ -84,6 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Handles the logging logic and API communication.
      */
+    /**
+     * Handles the logging logic and API communication.
+     * Includes automated Sub-Category mapping to match the 9-column schema.
+     */
     const handleLogSubmission = async (redirectOnSuccess) => {
         const amount = parseFloat(amountInput.value);
         const type = transactionTypeInput.value;
@@ -94,6 +98,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
         if (!transactionDate) { alert('Select valid date'); return; }
+
+        // --- NEW: Automated Sub-Category Mapping Logic ---
+        let subCategory = 'Misc';
+        const n = notes.toLowerCase();
+        
+        if (n.includes('metro') || n.includes('bus') || n.includes('train')) {
+            subCategory = 'Transport';
+        } else if (n.includes('food') || n.includes('zomato') || n.includes('snack') || n.includes('chocolate') || n.includes('cookies')) {
+            subCategory = 'Food & Dining';
+        } else if (n.includes('recharge') || n.includes('electricity') || n.includes('water')) {
+            subCategory = 'Utilities';
+        } else if (n.includes('milk') || n.includes('vegetable') || n.includes('market') || n.includes('grossories')) {
+            subCategory = 'Groceries';
+        } else if (category === 'Share Investment') {
+            subCategory = 'Equity';
+        } else if (category.includes('Family')) {
+            subCategory = 'P2P';
+        }
 
         // Capture Investment Data if applicable
         const investment = (category === 'Share Investment') ? {
@@ -111,10 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const logBtnOriginalText = logBtn.textContent;
         logBtn.textContent = 'Logging...';
 
+        // Updated Payload with Sub-Category
         const payload = { 
-            amount, type, category, notes, transactionDate, paymentMode, 
-            entity, // For P2P Tracer
-            investment // For Portfolio Ledger
+            amount, 
+            type, 
+            category, 
+            subCategory, // Matches new schema
+            notes, 
+            transactionDate, 
+            paymentMode, 
+            entity, 
+            investment 
         };
 
         const result = await callApi('logTransaction', payload);
