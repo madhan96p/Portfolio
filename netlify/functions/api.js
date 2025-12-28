@@ -6,233 +6,166 @@ const CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
 
 /**
- * Helper function to authenticate and load the Google Sheet.
+ * Helper to authenticate with Google Sheets
  */
 async function getAuthenticatedDoc() {
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-    await doc.useServiceAccountAuth({
-        client_email: CLIENT_EMAIL,
-        private_key: PRIVATE_KEY,
-    });
+    await doc.useServiceAccountAuth({ client_email: CLIENT_EMAIL, private_key: PRIVATE_KEY });
     await doc.loadInfo();
     return doc;
 }
 
 /**
- * Helper function to read the 'Config' tab (1 row).
+ * Helper to fetch the current configuration (Rollover & Start Date)
  */
 async function getConfig(doc) {
-    const configSheet = doc.sheetsByTitle['Config'];
-    if (!configSheet) throw new Error("Sheet 'Config' not found.");
-    const configRows = await configSheet.getRows();
-    return configRows.length > 0 ? configRows[0] : null;
+    const sheet = doc.sheetsByTitle['Config'];
+    const rows = await sheet.getRows();
+    return rows.length > 0 ? rows[0] : null;
 }
 
 /**
- * Gets all transactions from the start date to today and calculates totals.
+ * Core Logic: Processes the 'Transactions' sheet to calculate cycle totals
  */
-async function getCurrentCycleTransactions(doc, cycleStartDate) {
-    if (!cycleStartDate) {
-        return { transactions: [], totals: { family: 0, shares: 0, savings: 0, personal: 0, household: 0, salary: 0, otherIncome: 0, p2pIncoming: 0, p2pOutgoing: 0 } };
-    }
-
-    const transactionsSheet = doc.sheetsByTitle['Transactions'];
-    if (!transactionsSheet) throw new Error("Sheet 'Transactions' not found.");
-
-    const rows = await transactionsSheet.getRows();
+async function getCurrentCycleTotals(doc, cycleStartDate) {
+    const sheet = doc.sheetsByTitle['Transactions'];
+    const rows = await sheet.getRows();
     const startDate = new Date(cycleStartDate);
     
-    // Logic: Expanded totals to include P2P Tracer logic for "From Me / From Them"
-    const totals = { family: 0, shares: 0, savings: 0, personal: 0, household: 0, salary: 0, otherIncome: 0, p2pIncoming: 0, p2pOutgoing: 0 };
+    const totals = { 
+        family: 0, shares: 0, savings: 0, personal: 0, household: 0, 
+        salary: 0, otherIncome: 0, p2pIn: 0, p2pOut: 0 
+    };
 
     for (const row of rows) {
-        const txDate = new Date(row.Date);
-        if (txDate >= startDate) {
-            const debit = parseFloat(row.Amount_DR || 0);
-            const credit = parseFloat(row.Amount_CR || 0);
+        if (new Date(row.Date) >= startDate) {
+            const dr = parseFloat(row.Amount_DR || 0);
+            const cr = parseFloat(row.Amount_CR || 0);
 
             switch (row.Category) {
-                case 'Family Transfer':
-                    totals.family += debit;
-                    totals.p2pOutgoing += debit; // Log for Tracer
-                    break;
-                case 'Share Investment':
-                    totals.shares += debit;
-                    break;
-                case 'Savings Transfer':
-                    totals.savings += debit;
-                    break;
-                case 'Personal Spending':
-                    totals.personal += debit;
-                    break;
-                case 'Household Spending':
-                    totals.household += debit;
-                    break;
-                case 'Salary':
-                    totals.salary += credit;
-                    break;
-                case 'Family Support':
-                    totals.p2pIncoming += credit; // Log for Tracer
-                    totals.otherIncome += credit;
-                    break;
-                case 'Gift / From Friend':
-                case 'Other Income':
-                    totals.otherIncome += credit;
-                    break;
+                case 'Salary': totals.salary += cr; break;
+                case 'Family Support': totals.p2pIn += cr; totals.otherIncome += cr; break;
+                case 'Family Transfer': totals.family += dr; totals.p2pOut += dr; break;
+                case 'Share Investment': totals.shares += dr; break;
+                case 'Savings Transfer': totals.savings += dr; break;
+                case 'Personal Spending': totals.personal += dr; break;
+                case 'Household Spending': totals.household += dr; break;
+                case 'Other Income': totals.otherIncome += cr; break;
             }
         }
     }
-    return { totals };
+    return totals;
 }
 
-exports.handler = async function (event, context) {
-    if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
-    }
-
-    let action, data;
-    try {
-        const body = JSON.parse(event.body);
-        action = body.action;
-        data = body.data;
-    } catch (error) {
-        return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) };
-    }
+exports.handler = async function (event) {
+    if (event.httpMethod !== 'POST') return { statusCode: 405 };
+    
+    const { action, data } = JSON.parse(event.body);
+    const doc = await getAuthenticatedDoc();
+    let responseData = { success: true };
 
     try {
-        const doc = await getAuthenticatedDoc();
-        let responseData = {};
-
         switch (action) {
             case 'getTrackerData': {
                 const config = await getConfig(doc);
-                if (config === null) {
-                    responseData = { success: false, error: 'Config not found.' };
-                } else {
-                    const { totals } = await getCurrentCycleTransactions(doc, config.Cycle_Start_Date);
-                    
-                    // Logic: Use actual Salary Received from the sheet as the base
-                    const salaryBase = totals.salary > 0 ? totals.salary : 0;
-                    const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
+                const totals = await getCurrentCycleTotals(doc, config.Cycle_Start_Date);
+                
+                const salaryBase = totals.salary;
+                const openingBal = parseFloat(config.Current_Opening_Balance || 0);
+                
+                // 1. Calculate Goals (60/40 Rule)
+                const goalFamily = salaryBase * 0.60;
+                const pool = (salaryBase * 0.40) + openingBal;
+                
+                const walletGoal = pool * 0.50; // 20% Personal Wallet
+                const walletSpent = totals.personal + totals.household;
+                const p2pNet = totals.p2pIn - totals.p2pOut; // Social Tracer Logic
 
-                    // 60-40 Budget Allocation Logic
-                    const goalFamily = salaryBase * 0.60;
-                    const pool = (salaryBase * 0.40) + openingBalance;
-                    const goalShares = pool * 0.25;
-                    const goalSavings = pool * 0.25;
-                    const goalExpenses = pool * 0.50; // 20% Wallet
+                // 2. Determine Pending Amounts for Bank Balance Calculation
+                const pendingFamily = Math.max(0, goalFamily - totals.family);
+                const pendingShares = Math.max(0, (pool * 0.25) - totals.shares);
+                const pendingSavings = Math.max(0, (pool * 0.25) - totals.savings);
 
-                    const totalWalletSpent = totals.personal + totals.household;
-                    const p2pNet = totals.p2pIncoming - totals.p2pOutgoing; // The "Perfect Tracer"
-
-                    const wallet = {
-                        balance: goalExpenses - totalWalletSpent,
-                        totalAvailable: goalExpenses,
-                        totalSpent: totalWalletSpent
-                    };
-
-                    const pendingFamily = Math.max(0, goalFamily - totals.family);
-                    const pendingShares = Math.max(0, goalShares - totals.shares);
-                    const pendingSavings = Math.max(0, goalSavings - totals.savings);
-                    
-                    // Logic: Bank balance adjusted for "held" P2P money and pending goals
-                    wallet.approxBankBalance = wallet.balance + pendingFamily + pendingShares + pendingSavings + p2pNet;
-
-                    responseData = { 
-                        success: true, 
-                        data: { 
-                            config: { Cycle_Start_Date: config.Cycle_Start_Date, Emp_Name: config.Emp_Name },
-                            goals: { goalFamily, goalShares, goalSavings, goalExpenses },
-                            actuals: { ...totals, openingBalance, p2pNet },
-                            wallet
-                        } 
-                    };
-                }
+                responseData.data = {
+                    config: { startDate: config.Cycle_Start_Date, openingBal },
+                    goals: { 
+                        family: goalFamily, 
+                        shares: pool * 0.25, 
+                        savings: pool * 0.25, 
+                        wallet: walletGoal 
+                    },
+                    actuals: { ...totals, p2pNet },
+                    wallet: { 
+                        balance: walletGoal - walletSpent,
+                        totalSpent: walletSpent,
+                        // Bank balance includes remaining wallet + all pending goal money + held P2P funds
+                        approxBankBalance: (walletGoal - walletSpent) + pendingFamily + pendingShares + pendingSavings + p2pNet
+                    }
+                };
                 break;
             }
 
             case 'logTransaction': {
-                const { amount, type, category, notes, transactionDate, paymentMode, entity, investment } = data;
-                
-                // 1. Log to Transactions Sheet (Cash Flow Record)
                 const txSheet = doc.sheetsByTitle['Transactions'];
                 await txSheet.addRow({
-                    Date: transactionDate,
-                    Category: category,
-                    Amount_DR: type === 'debit' ? amount : '0',
-                    Amount_CR: type === 'credit' ? amount : '0',
-                    Notes: notes,
-                    Payment_Mode: paymentMode,
-                    Entity: entity || 'None', // Person or Share Ticker
+                    Date: data.transactionDate,
+                    Category: data.category,
+                    Amount_DR: data.type === 'debit' ? data.amount : 0,
+                    Amount_CR: data.type === 'credit' ? data.amount : 0,
+                    Entity: data.entity || 'None',
+                    Notes: data.notes,
+                    Payment_Mode: data.paymentMode,
+                    Cycle_ID: data.transactionDate.substring(0, 7), // Auto-tags cycle (YYYY-MM)
                     Time_stamp: new Date().toISOString()
                 });
 
-                // 2. Log to Portfolio Sheet (Wealth Building Record)
-                if (category === 'Share Investment' && investment) {
+                // NEW: Mirror Share Investments to Sheet 2
+                if (data.category === 'Share Investment' && data.investment) {
                     const portSheet = doc.sheetsByTitle['Portfolio'];
-                    if (portSheet) {
-                        await portSheet.addRow({
-                            'Date Invested': transactionDate,
-                            'Share Symbol': investment.symbol,
-                            'Units': investment.units,
-                            'Avg. Buy Price': investment.buyPrice
-                        });
-                    }
+                    await portSheet.addRow({
+                        'Date Invested': data.transactionDate,
+                        'Share Symbol': data.investment.symbol,
+                        'Units': data.investment.units,
+                        'Avg. Buy Price': data.investment.buyPrice
+                    });
                 }
-                responseData = { success: true };
+                break;
+            }
+
+            case 'runMonthEnd': {
+                const currentConfig = await getConfig(doc);
+                const finalTotals = await getCurrentCycleTotals(doc, currentConfig.Cycle_Start_Date);
+                
+                const poolFinal = (finalTotals.salary * 0.40) + parseFloat(currentConfig.Current_Opening_Balance);
+                const closingBal = (poolFinal * 0.50) - (finalTotals.personal + finalTotals.household);
+
+                // Archive data to Sheet 3
+                const archiveSheet = doc.sheetsByTitle['Monthly_Archive'];
+                await archiveSheet.addRow({
+                    Month_Year: currentConfig.Cycle_Start_Date.substring(0, 7),
+                    Opening_Balance: currentConfig.Current_Opening_Balance,
+                    Total_Salary_Received: finalTotals.salary,
+                    Closing_Balance: closingBal.toFixed(2)
+                });
+
+                // Update Config for new month rollover
+                currentConfig.Current_Opening_Balance = closingBal.toFixed(2);
+                currentConfig.Cycle_Start_Date = new Date().toISOString().split('T')[0];
+                await currentConfig.save();
                 break;
             }
 
             case 'getHistoryAnalysis': {
-                const { filter } = data;
                 const txSheet = doc.sheetsByTitle['Transactions'];
                 const rows = await txSheet.getRows();
-                
-                // Filtering Logic based on Date
-                const now = new Date();
-                let filterStartDate = new Date(0);
-                if (filter === '1D') filterStartDate = new Date(now.setDate(now.getDate() - 1));
-                else if (filter === '1W') filterStartDate = new Date(now.setDate(now.getDate() - 7));
-                else if (filter === '1M') {
-                    const config = await getConfig(doc);
-                    filterStartDate = config ? new Date(config.Cycle_Start_Date) : new Date(now.setDate(now.getDate() - 30));
-                }
-
-                const transactions = [];
-                const debitSummary = {};
-                let totalDebits = 0;
-
-                for (const row of rows) {
-                    const txDate = new Date(row.Date);
-                    if (txDate >= filterStartDate) {
-                        const debit = parseFloat(row.Amount_DR || 0);
-                        transactions.push({ date: row.Date, category: row.Category, debit: row.Amount_DR, credit: row.Amount_CR, notes: row.Notes, mode: row.Payment_Mode });
-                        if (debit > 0) {
-                            totalDebits += debit;
-                            debitSummary[row.Category] = (debitSummary[row.Category] || 0) + debit;
-                        }
-                    }
-                }
-                transactions.reverse();
-                responseData = { success: true, data: { transactions, debitChartData: { labels: Object.keys(debitSummary), values: Object.values(debitSummary), total: totalDebits } } };
+                responseData.data = rows.map(r => ({
+                    date: r.Date, category: r.Category, dr: r.Amount_DR, cr: r.Amount_CR, notes: r.Notes
+                })).reverse();
                 break;
             }
-
-            case 'getDocumentData': {
-                const docSheet = doc.sheetsByTitle['Documents'];
-                const rows = await docSheet.getRows();
-                responseData = { success: true, data: rows.map(r => ({ fullName: r.Full_Name, docType: r.Document_Type, docNumber: r.Document_Number, link: r.Drive_Link })) };
-                break;
-            }
-
-            default:
-                responseData = { success: false, error: 'Invalid action.' };
-                break;
         }
-
         return { statusCode: 200, body: JSON.stringify(responseData) };
-    } catch (error) {
-        console.error('API Error:', error);
-        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    } catch (err) {
+        return { statusCode: 500, body: JSON.stringify({ success: false, error: err.message }) };
     }
 };
