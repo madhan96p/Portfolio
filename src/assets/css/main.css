@@ -1,0 +1,32 @@
+:root {
+    --bg-dark: #0f172a;
+    --debt-red: #ef4444;      /* For Family Liability */
+    --equity-blue: #3b82f6;   /* For Personal Spending */
+    --growth-green: #10b981;  /* For Portfolio P&L */
+    --text-white: #f8fafc;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+.card.liability { border-left: 5px solid var(--debt-red); }
+.card.equity { border-left: 5px solid var(--equity-blue); }
+
+.progress-container {
+    width: 100%;
+    height: 12px;
+    background: #334155;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--growth-green);
+    width: 0%; /* Updated by JS */
+    transition: width 0.5s ease-in-out;
+}
