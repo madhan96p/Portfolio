@@ -1,0 +1,25 @@
+personal-upi-analyzer-v2/
+├── netlify/
+│   └── functions/              
+│       ├── api.js              <-- Your GSheet Auth & GET/POST Logic lives here
+│       └── engine.js           <-- The "Brain": Calculates 60/40, Shortfalls, and Rollovers
+├── src/                        <-- Keep your frontend source organized
+│   ├── assets/
+│   │   ├── css/
+│   │   │   ├── variables.css   <-- Store your Debt-Red and Growth-Green colors
+│   │   │   └── dashboard.css
+│   │   └── js/
+│   │       ├── ui-render.js    <-- Updates the DOM based on GSheet data
+│   │       └── utils.js        <-- Currency formatters (₹)
+│   ├── components/             <-- Modular UI
+│   │   ├── header.html
+│   │   ├── sidebar.html
+│   │   └── mobile-nav.html
+│   └── pages/                  <-- High-Level Views
+│       ├── dashboard.html      <-- Main Engine view
+│       ├── portfolio.html      <-- Share/Stock view
+│       └── log.html            <-- Input form
+├── .env                        <-- LOCAL ONLY: Store your IDs and Private Keys here
+├── netlify.toml                <-- Tells Netlify where the functions are
+├── package.json                <-- Your dependencies (google-spreadsheet, axios)
+└── index.html                  <-- Entry point (Redirects to Dashboard)

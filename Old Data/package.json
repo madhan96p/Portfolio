@@ -1,0 +1,24 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "**Data Analyst | Aspiring Data Scientist**",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madhan96p/Portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/madhan96p/Portfolio/issues"
+  },
+  "homepage": "https://github.com/madhan96p/Portfolio#readme",
+  "dependencies": {
+    "google-spreadsheet": "^3.3.0"
+  }
+}
