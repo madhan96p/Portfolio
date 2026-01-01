@@ -1,0 +1,26 @@
+.portfolio-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.p-card {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stock-card {
+    display: flex;
+    justify-content: space-between;
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-right: 4px solid transparent;
+}
+
+.gain { color: #10b981; } /* Growth-Green */
+.loss { color: #ef4444; } /* Debt-Red */
