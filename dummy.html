@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal UPI Analyzer v2.0 | System Logic</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            height: 300px;
+            max-height: 350px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- Chosen Palette: Slate & Emerald (Professional Finance) -->
+    <!-- Application Structure Plan: 
+         1. Hero Section: Core Vision & Concept.
+         2. Architecture Grid: Interactive cards explaining the 4 sheets.
+         3. The Math Engine: Interactive Calculator for the 60/40 split.
+         4. Debt Logic Simulator: A "Game" to test the backwards-moving progress bar.
+         5. Workflow Timeline: Vertical flow of data.
+         This structure moves from abstract concept to concrete data structure, then to math rules, and finally to operational flow.
+    -->
+    <!-- Visualization & Content Choices:
+         - Salary Split -> Goal: Visualize Proportion -> Pie Chart -> Interaction: Input Salary -> Chart.js
+         - Architecture -> Goal: Organize Info -> Grid of Cards -> Interaction: Hover effects -> HTML/Tailwind
+         - Debt Logic -> Goal: Demonstrate Unique Logic -> Progress Bar Simulator -> Interaction: Buttons -> JS + CSS Width
+    -->
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📊</span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">UPI Analyzer <span class="text-emerald-600">v2.0</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#vision" class="hover:text-emerald-600 transition">Core Vision</a>
+                    <a href="#ecosystem" class="hover:text-emerald-600 transition">4-Sheet Ecosystem</a>
+                    <a href="#math-engine" class="hover:text-emerald-600 transition">60/40 Engine</a>
+                    <a href="#debt-logic" class="hover:text-emerald-600 transition">Debt Logic</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="vision" class="pt-20 pb-16 px-4 text-center max-w-5xl mx-auto">
+        <div class="mb-6 inline-block px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-100">
+            Commitment-Based Budgeting System
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+            The <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">High-Integrity</span> Financial Engine
+        </h1>
+        <p class="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            Most trackers are passive; they tell you where money went. This engine is <span class="font-bold text-slate-800">active</span>. 
+            It calculates where money <span class="underline decoration-emerald-400 decoration-2 underline-offset-2">must go</span> based on non-negotiable commitments to family and wealth building.
+        </p>
+    </section>
+
+    <!-- 4-Sheet Ecosystem -->
+    <section id="ecosystem" class="py-16 bg-white border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900">The 4-Sheet Data Ecosystem</h2>
+                <p class="mt-4 text-slate-600">The biological components of the system.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Config Card -->
+                <div class="interactive-card bg-slate-50 p-6 rounded-xl border border-slate-200 transition-all duration-300">
+                    <div class="text-4xl mb-4">🧠</div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Sheet 1: Config</h3>
+                    <p class="text-sm font-semibold text-emerald-600 mb-3">The Nervous System</p>
+                    <p class="text-slate-600 text-sm mb-4">Stores the "State". Tracks the cycle start date and the critical <span class="font-mono bg-slate-200 px-1 rounded">Family_Debt_Rollover</span> variable.</p>
+                    <div class="text-xs text-slate-500 bg-white p-3 rounded border border-slate-100">
+                        Fields: Start Date, Opening Bal, Debt Rollover
+                    </div>
+                </div>
+
+                <!-- Transactions Card -->
+                <div class="interactive-card bg-slate-50 p-6 rounded-xl border border-slate-200 transition-all duration-300">
+                    <div class="text-4xl mb-4">🩸</div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Sheet 2: Transactions</h3>
+                    <p class="text-sm font-semibold text-rose-600 mb-3">The Bloodstream</p>
+                    <p class="text-slate-600 text-sm mb-4">Master ledger. Uses a 9-column schema including <span class="font-mono bg-slate-200 px-1 rounded">Cycle_ID</span> and <span class="font-mono bg-slate-200 px-1 rounded">Entity</span> for smart tagging.</p>
+                    <div class="text-xs text-slate-500 bg-white p-3 rounded border border-slate-100">
+                        Includes: Sub-Category, DR/CR Logic
+                    </div>
+                </div>
+
+                <!-- Portfolio Card -->
+                <div class="interactive-card bg-slate-50 p-6 rounded-xl border border-slate-200 transition-all duration-300">
+                    <div class="text-4xl mb-4">🌱</div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Sheet 3: Portfolio</h3>
+                    <p class="text-sm font-semibold text-green-600 mb-3">The Vitality</p>
+                    <p class="text-slate-600 text-sm mb-4">Tracks asset value, not just cost. Uses <span class="font-mono bg-slate-200 px-1 rounded">=GOOGLEFINANCE</span> for real-time P&L updates.</p>
+                    <div class="text-xs text-slate-500 bg-white p-3 rounded border border-slate-100">
+                        Tracks: Units, Live Price, Total Value
+                    </div>
+                </div>
+
+                <!-- Archive Card -->
+                <div class="interactive-card bg-slate-50 p-6 rounded-xl border border-slate-200 transition-all duration-300">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Sheet 4: Archive</h3>
+                    <p class="text-sm font-semibold text-blue-600 mb-3">The Memory</p>
+                    <p class="text-slate-600 text-sm mb-4">A historical repository. Captures snapshots of totals and debt status before the monthly reset.</p>
+                    <div class="text-xs text-slate-500 bg-white p-3 rounded border border-slate-100">
+                        Stores: Month Year, Closing Balances
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Math Engine (Interactive) -->
+    <section id="math-engine" class="py-16 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Controls Side -->
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">The 60/40 Math Engine</h2>
+                    <p class="text-slate-600 mb-8">
+                        Enter a salary to see how the system automatically carves it into logical buckets. This happens instantly when a "Salary" category is logged.
+                    </p>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Input Monthly Salary (₹)</label>
+                        <div class="flex gap-4">
+                            <input type="number" id="salaryInput" value="20000" class="flex-1 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition" placeholder="e.g. 20000">
+                            <button onclick="calculateSplit()" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition shadow-sm">Calculate</button>
+                        </div>
+                        
+                        <div class="mt-6 space-y-4">
+                            <div class="flex justify-between items-center p-3 bg-rose-50 rounded-lg border border-rose-100">
+                                <div>
+                                    <span class="block text-sm font-bold text-rose-800">Family Commitment (60%)</span>
+                                    <span class="text-xs text-rose-600">Non-negotiable Debt</span>
+                                </div>
+                                <span id="val-family" class="text-lg font-bold text-rose-700">₹12,000</span>
+                            </div>
+                            
+                            <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">The Pool (40%) Breakdown</p>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Shares (10%)</span>
+                                        <span id="val-shares" class="font-mono font-medium">₹2,000</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Savings (10%)</span>
+                                        <span id="val-savings" class="font-mono font-medium">₹2,000</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600 font-bold">Personal Wallet (20%)</span>
+                                        <span id="val-wallet" class="font-mono font-bold text-emerald-600">₹4,000</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualization Side -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100 flex flex-col items-center justify-center">
+                    <h3 class="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wide">Allocation Visualization</h3>
+                    <div class="chart-container">
+                        <canvas id="splitChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-400 mt-4">Graph dynamically updates with input</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Debt Logic Simulator -->
+    <section id="debt-logic" class="py-16 bg-white border-t border-slate-200">
+        <div class="max-w-5xl mx-auto px-4">
+            <div class="text-center mb-10">
+                <div class="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded text-xs font-bold mb-3">UNIQUE FEATURE</div>
+                <h2 class="text-3xl font-bold text-slate-900">The "Backwards-Moving" Debt Logic</h2>
+                <p class="mt-4 text-slate-600">
+                    Money from parents isn't income. It's <span class="font-bold text-rose-600">Negative Spending</span>. 
+                    Simulate how borrowing affects your progress bar.
+                </p>
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl p-8 shadow-2xl text-white relative overflow-hidden">
+                <!-- Background Decoration -->
+                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-emerald-500 opacity-10 rounded-full blur-3xl"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Simulator Controls -->
+                    <div class="space-y-6 z-10">
+                        <div>
+                            <p class="text-slate-400 text-sm mb-1">Current Goal (Commitment)</p>
+                            <div class="text-3xl font-bold font-mono">₹10,000</div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <button onclick="simTransaction(2000)" class="w-full flex items-center justify-between bg-emerald-600 hover:bg-emerald-500 p-4 rounded-lg transition group">
+                                <span class="font-medium">Send to Family</span>
+                                <span class="font-mono bg-emerald-700 px-2 py-1 rounded text-sm group-hover:bg-emerald-600">+ ₹2,000</span>
+                            </button>
+                            
+                            <button onclick="simTransaction(-2000)" class="w-full flex items-center justify-between bg-rose-600 hover:bg-rose-500 p-4 rounded-lg transition group">
+                                <span class="font-medium">Borrow from Mom</span>
+                                <span class="font-mono bg-rose-700 px-2 py-1 rounded text-sm group-hover:bg-rose-600">- ₹2,000</span>
+                            </button>
+                            
+                            <button onclick="resetSim()" class="w-full text-center text-sm text-slate-400 hover:text-white mt-2">Reset Simulation</button>
+                        </div>
+                    </div>
+
+                    <!-- Visual Output -->
+                    <div class="flex flex-col justify-center z-10">
+                        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-medium text-slate-300">Progress to Goal</span>
+                                <span id="sim-status-text" class="text-sm font-mono text-emerald-400">0 / 10,000</span>
+                            </div>
+                            
+                            <!-- Progress Bar Container -->
+                            <div class="w-full bg-slate-700 rounded-full h-4 mb-4 relative overflow-hidden">
+                                <!-- The Bar -->
+                                <div id="sim-progress-bar" class="bg-emerald-500 h-4 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                            </div>
+
+                            <p id="sim-explanation" class="text-sm text-slate-400 leading-relaxed italic">
+                                "Start by sending money. Then try borrowing to see the progress bar retreat!"
+                            </p>
+                        </div>
+                        
+                        <div class="mt-4 flex gap-2 text-xs text-slate-500">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 mt-0.5"></span>
+                            <span>Normal payment moves bar right. Borrowing moves bar left (increasing net debt).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Operational Workflow -->
+    <section class="py-16 bg-slate-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-slate-900 mb-12 text-center">Operational Workflow</h2>
+            
+            <div class="relative border-l-4 border-emerald-200 ml-4 md:ml-0 space-y-12">
+                <!-- Step 1 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[10px] top-0 w-6 h-6 bg-emerald-500 rounded-full border-4 border-white shadow"></div>
+                    <h3 class="text-xl font-bold text-slate-900">1. Logging</h3>
+                    <p class="text-slate-600 mt-2">User inputs transaction via <span class="font-mono bg-white px-1 border rounded">log.html</span>.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[10px] top-0 w-6 h-6 bg-slate-300 rounded-full border-4 border-white shadow"></div>
+                    <h3 class="text-xl font-bold text-slate-900">2. Parsing (The Brain)</h3>
+                    <p class="text-slate-600 mt-2"><span class="font-mono bg-white px-1 border rounded">log.js</span> identifies keywords (e.g., "bus" → "Transport") and extracts entities (e.g., "From Dad" → "Dad").</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[10px] top-0 w-6 h-6 bg-slate-300 rounded-full border-4 border-white shadow"></div>
+                    <h3 class="text-xl font-bold text-slate-900">3. Re-Calculation</h3>
+                    <p class="text-slate-600 mt-2"><span class="font-mono bg-white px-1 border rounded">getEngineMetrics</span> runs, pulling the <span class="font-bold text-emerald-600">Family_Debt_Rollover</span> from Sheet 1 and applying the cumulative debt math.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[10px] top-0 w-6 h-6 bg-blue-500 rounded-full border-4 border-white shadow"></div>
+                    <h3 class="text-xl font-bold text-slate-900">4. Archiving</h3>
+                    <p class="text-slate-600 mt-2">At month-end, <span class="font-mono bg-white px-1 border rounded">runMonthEnd</span> settles the shortfall, saves it to Sheet 1 as the new rollover, and logs performance in Sheet 4.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-slate-500 text-sm">
+        <p>Personal UPI Analyzer v2.0 &copy; 2026</p>
+        <p class="mt-2">Architect: Pragadeesh Srinivasan</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. Chart.js Initialization for Salary Split ---
+        let splitChart;
+
+        function initCharts() {
+            const ctx = document.getElementById('splitChart').getContext('2d');
+            
+            // Custom plugin to draw text in center of donut
+            const centerTextPlugin = {
+                id: 'centerText',
+                beforeDraw: function(chart) {
+                    const width = chart.width, height = chart.height, ctx = chart.ctx;
+                    ctx.restore();
+                    const fontSize = (height / 114).toFixed(2);
+                    ctx.font = "bold " + fontSize + "em sans-serif";
+                    ctx.textBaseline = "middle";
+                    ctx.fillStyle = "#334155";
+                    
+                    // Sum of data to verify total
+                    const salary = document.getElementById('salaryInput').value;
+                    const text = "₹" + parseInt(salary).toLocaleString();
+                    const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                    const textY = height / 2;
+                    ctx.fillText(text, textX, textY);
+                    ctx.save();
+                }
+            };
+
+            splitChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Family (60%)', 'Shares (10%)', 'Savings (10%)', 'Wallet (20%)'],
+                    datasets: [{
+                        data: [12000, 2000, 2000, 4000],
+                        backgroundColor: [
+                            '#f43f5e', // Rose (Family - Debt)
+                            '#3b82f6', // Blue (Shares)
+                            '#8b5cf6', // Purple (Savings)
+                            '#10b981'  // Emerald (Wallet)
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ₹' + context.raw.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [centerTextPlugin]
+            });
+        }
+
+        // --- 2. Math Engine Calculator ---
+        function calculateSplit() {
+            const salary = parseFloat(document.getElementById('salaryInput').value) || 0;
+            
+            const family = salary * 0.60;
+            const shares = salary * 0.10; // 25% of 40% Pool = 10% total
+            const savings = salary * 0.10; // 25% of 40% Pool = 10% total
+            const wallet = salary * 0.20;  // 50% of 40% Pool = 20% total
+
+            // Update Text
+            document.getElementById('val-family').textContent = '₹' + family.toLocaleString();
+            document.getElementById('val-shares').textContent = '₹' + shares.toLocaleString();
+            document.getElementById('val-savings').textContent = '₹' + savings.toLocaleString();
+            document.getElementById('val-wallet').textContent = '₹' + wallet.toLocaleString();
+
+            // Update Chart
+            splitChart.data.datasets[0].data = [family, shares, savings, wallet];
+            splitChart.update();
+        }
+
+        // --- 3. Debt Logic Simulator ---
+        let simGoal = 10000;
+        let simCurrent = 0;
+
+        function simTransaction(amount) {
+            simCurrent += amount;
+            updateSimUI();
+        }
+
+        function resetSim() {
+            simCurrent = 0;
+            updateSimUI();
+        }
+
+        function updateSimUI() {
+            const progressBar = document.getElementById('sim-progress-bar');
+            const statusText = document.getElementById('sim-status-text');
+            const explanation = document.getElementById('sim-explanation');
+
+            // Calculate width %
+            let percent = (simCurrent / simGoal) * 100;
+            
+            // Visual clamping for the bar
+            let visualPercent = Math.max(0, Math.min(100, percent));
+            
+            progressBar.style.width = visualPercent + '%';
+            
+            // Logic for colors and explanation
+            if (simCurrent < 0) {
+                // Negative (Debt increased)
+                progressBar.classList.remove('bg-emerald-500');
+                progressBar.classList.add('bg-rose-500');
+                explanation.textContent = "⚠️ Negative Progress! You borrowed money. The net amount you owe to the family goal has INCREASED. The bar retreats.";
+                // For visual effect of 'negative', we might show 0 width or a different color bar. 
+                // Here we show 0 width to indicate "Backwards".
+                progressBar.style.width = '5%'; // Small sliver to show existence
+            } else {
+                progressBar.classList.add('bg-emerald-500');
+                progressBar.classList.remove('bg-rose-500');
+                
+                if (simCurrent === 0) {
+                    explanation.textContent = "Start by sending money. Then try borrowing to see the progress bar retreat!";
+                } else if (simCurrent < simGoal) {
+                    explanation.textContent = "Good progress. You are paying down your commitment.";
+                } else {
+                    explanation.textContent = "🎉 Goal Cleared! Any extra is a credit for next month.";
+                }
+            }
+
+            statusText.textContent = `${simCurrent.toLocaleString()} / ${simGoal.toLocaleString()}`;
+        }
+
+        // Initialize on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            calculateSplit(); // Run once with default
+        });
+
+    </script>
+</body>
+</html>
