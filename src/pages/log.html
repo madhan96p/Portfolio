@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/log.css">
+    <title>Engine v2.0 | Log Transaction</title>
+</head>
+<body>
+    <header id="header-component"></header>
+
+    <main class="log-container">
+        <form id="transaction-form" class="engine-form">
+            <div class="input-group">
+                <label>Amount (₹)</label>
+                <input type="number" id="amount" step="0.01" required placeholder="0.00">
+            </div>
+
+            <div class="input-group">
+                <label>Notes / Entity</label>
+                <input type="text" id="notes" required placeholder="e.g., Dinner with Jegan or From Mom">
+                <small id="logic-preview">Auto-detecting logic...</small>
+            </div>
+
+            <div class="grid-inputs">
+                <div class="input-group">
+                    <label>Category</label>
+                    <select id="category">
+                        <option value="Personal Spending">Personal Spending</option>
+                        <option value="Household Spending">Household Spending</option>
+                        <option value="Family Support">Family Support</option>
+                        <option value="Share Investment">Share Investment</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Mode</label>
+                    <select id="payment-mode">
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn">Authorize Transaction</button>
+        </form>
+    </main>
+
+    <nav id="mobile-nav-component"></nav>
+
+    <script src="../assets/js/ui-render.js"></script>
+    <script src="../assets/js/log-logic.js"></script>
+</body>
+</html>
