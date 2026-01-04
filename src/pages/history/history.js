@@ -1,103 +1,101 @@
 import { API } from "../../core/api-client.js";
 
 let allTransactions = [];
-let chartInstance = null;
-let currentState = { filter: "All", search: "" };
+let filteredTransactions = []; // Store filtered result globally
+let doughnutChart = null;
+let trendChart = null;
 
-// 🎨 ICON MAPPING (The FAS Magic)
+// State
+let state = {
+  filter: "All",
+  search: "",
+  timeFrame: "ALL", // 1D, 1W, 1M, ALL
+  page: 1,
+  limit: 10, // Show 10 items initially to prevent crash
+};
+
 const getIcon = (category, entity) => {
   const text = (category + entity).toLowerCase();
-  if (
-    text.includes("food") ||
-    text.includes("zomato") ||
-    text.includes("swiggy")
-  )
+  if (text.includes("food") || text.includes("zomato"))
     return "fa-utensils text-orange-400";
-  if (text.includes("uber") || text.includes("ola") || text.includes("fuel"))
+  if (text.includes("uber") || text.includes("fuel"))
     return "fa-car text-blue-400";
   if (text.includes("family")) return "fa-home text-pink-400";
-  if (text.includes("share") || text.includes("invest"))
+  if (text.includes("share") || text.includes("sip"))
     return "fa-arrow-trend-up text-emerald-400";
-  if (text.includes("bill") || text.includes("recharge"))
-    return "fa-bolt text-yellow-400";
-  if (text.includes("hospital") || text.includes("med"))
-    return "fa-heart-pulse text-red-400";
-  return "fa-wallet text-slate-400"; // Default
+  return "fa-wallet text-slate-400";
 };
 
 async function loadLedger() {
   try {
-    // Mock Data for Demo (Replace with your actual fetch)
-    const response = await fetch('/api/get-transactions');
+    // Fetch Real Data (Replace with API call)
+    const response = await fetch("/api/get-transactions");
     allTransactions = await response.json();
 
-    updateUI();
+    // Initial Render
+    applyFilters();
   } catch (err) {
     console.error("Load Failed", err);
   }
 }
 
-// 🧠 CORE LOGIC: Filter -> Sort -> Group
-function updateUI() {
-  // 1. Filter Data
-  const filtered = allTransactions.filter((t) => {
-    const matchesCat =
-      currentState.filter === "All" || t.category === currentState.filter;
-    const searchStr = (t.entity + t.notes + t.amountDR).toLowerCase();
-    const matchesSearch = searchStr.includes(currentState.search);
-    return matchesCat && matchesSearch;
+// 🧠 FILTER & TIME LOGIC
+function applyFilters() {
+  // 1. Time Filter Logic
+  const now = new Date();
+  const timeLimit = new Date();
+
+  if (state.timeFrame === "1D") timeLimit.setDate(now.getDate() - 1);
+  if (state.timeFrame === "1W") timeLimit.setDate(now.getDate() - 7);
+  if (state.timeFrame === "1M") timeLimit.setDate(now.getDate() - 30);
+  if (state.timeFrame === "ALL") timeLimit.setFullYear(2000); // Way back
+
+  // 2. Filter Array
+  filteredTransactions = allTransactions.filter((t) => {
+    const tDate = new Date(t.date);
+    const inTime = tDate >= timeLimit;
+
+    const matchesCat = state.filter === "All" || t.category === state.filter;
+    const searchStr = (t.entity + t.notes).toLowerCase();
+    const matchesSearch = searchStr.includes(state.search);
+
+    return inTime && matchesCat && matchesSearch;
   });
 
-  // 2. Update Stats
-  updateSummary(filtered);
+  // 3. Reset Pagination on Filter Change
+  state.page = 1;
 
-  // 3. Render Chart (Only if 'All' is selected to show breakdown)
-  if (currentState.filter === "All" && !currentState.search) {
-    renderChart(filtered);
-  }
-
-  // 4. Render Timeline List
-  renderTimeline(filtered);
+  // 4. Update UI Components
+  renderCharts(filteredTransactions);
+  renderTotalExpense(filteredTransactions);
+  renderList(true); // true = reset list
 }
 
-function updateSummary(txns) {
-  const income = txns.reduce((sum, t) => sum + (t.amountCR || 0), 0);
-  const expense = txns.reduce((sum, t) => sum + (t.amountDR || 0), 0);
-  const net = income - expense;
-
-  document.getElementById("net-position").innerHTML = `
-        <span class="${
-          net >= 0 ? "text-emerald-400" : "text-rose-400"
-        } font-bold">
-            ${net >= 0 ? "+" : "-"}₹${Math.abs(net).toLocaleString("en-IN")}
-        </span>
-    `;
+// 💰 TOTAL EXPENSE DISPLAY
+function renderTotalExpense(txns) {
+  const totalExp = txns.reduce((sum, t) => sum + (t.amountDR || 0), 0);
+  document.getElementById(
+    "chart-total-expense"
+  ).innerText = `₹${totalExp.toLocaleString("en-IN")}`;
 }
 
-// 📊 CHART LOGIC (Interactive)
-function renderChart(txns) {
-  const ctx = document.getElementById("expenseChart").getContext("2d");
-
-  // Group Expenses by Category
+// 📊 DUAL CHART RENDERER
+function renderCharts(txns) {
+  // --- Chart 1: Category Breakdown (Doughnut) ---
   const catTotals = {};
   txns.forEach((t) => {
-    if (t.amountDR > 0) {
+    if (t.amountDR > 0)
       catTotals[t.category] = (catTotals[t.category] || 0) + t.amountDR;
-    }
   });
 
-  const labels = Object.keys(catTotals);
-  const data = Object.values(catTotals);
-
-  if (chartInstance) chartInstance.destroy(); // Prevent memory leaks
-
-  chartInstance = new Chart(ctx, {
+  if (doughnutChart) doughnutChart.destroy();
+  doughnutChart = new Chart(document.getElementById("expenseChart"), {
     type: "doughnut",
     data: {
-      labels: labels,
+      labels: Object.keys(catTotals),
       datasets: [
         {
-          data: data,
+          data: Object.values(catTotals),
           backgroundColor: [
             "#3b82f6",
             "#ec4899",
@@ -106,42 +104,86 @@ function renderChart(txns) {
             "#6366f1",
           ],
           borderWidth: 0,
-          hoverOffset: 10,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "right",
-          labels: { color: "#94a3b8", boxWidth: 10, font: { size: 10 } },
+      plugins: { legend: { display: false } },
+    },
+  });
+
+  // --- Chart 2: Time Trend (Line) ---
+  const dateTotals = {};
+  txns.forEach((t) => {
+    if (t.amountDR > 0) {
+      // Group by Date (YYYY-MM-DD)
+      const d = t.date.split("T")[0];
+      dateTotals[d] = (dateTotals[d] || 0) + t.amountDR;
+    }
+  });
+
+  // Sort dates
+  const sortedDates = Object.keys(dateTotals).sort();
+  const trendData = sortedDates.map((d) => dateTotals[d]);
+
+  if (trendChart) trendChart.destroy();
+  trendChart = new Chart(document.getElementById("trendChart"), {
+    type: "line",
+    data: {
+      labels: sortedDates.map((d) =>
+        new Date(d).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+        })
+      ),
+      datasets: [
+        {
+          label: "Expense",
+          data: trendData,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59, 130, 246, 0.1)",
+          fill: true,
+          tension: 0.4,
+          pointRadius: 2,
         },
-      },
-      onClick: (e, elements) => {
-        if (elements.length > 0) {
-          const index = elements[0].index;
-          const selectedCategory = labels[index];
-          // ✨ INTERACTIVE: Click Chart -> Filter List
-          triggerFilter(selectedCategory);
-        }
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: false },
+        y: { display: false }, // Minimal look
       },
     },
   });
 }
 
-// 📜 TIMELINE RENDERER
-function renderTimeline(txns) {
+// 📜 LIST RENDERER (With Pagination)
+function renderList(reset = false) {
   const list = document.getElementById("ledger-list");
-  if (txns.length === 0) {
-    list.innerHTML = `<div class="p-10 text-center text-slate-500 italic">No transactions found.</div>`;
+  const loadBtn = document.getElementById("load-more-btn");
+
+  if (reset) list.innerHTML = "";
+
+  // Slice Data for Pagination
+  const start = 0;
+  const end = state.page * state.limit;
+  const visibleTxns = filteredTransactions.slice(start, end);
+
+  // Render Logic (Same as before but using visibleTxns)
+  if (visibleTxns.length === 0) {
+    list.innerHTML = `<div class="text-center text-slate-500 py-10">No transactions found</div>`;
+    loadBtn.classList.add("hidden");
     return;
   }
 
-  // Group by Date
-  const grouped = txns.reduce((acc, t) => {
-    const date = t.date;
+  // Grouping Logic
+  const grouped = visibleTxns.reduce((acc, t) => {
+    const date = t.date.split("T")[0]; // Simple date key
     if (!acc[date]) acc[date] = [];
     acc[date].push(t);
     return acc;
@@ -152,7 +194,6 @@ function renderTimeline(txns) {
       const dayTxns = grouped[date];
       const dayTotal = dayTxns.reduce((sum, t) => sum + (t.amountDR || 0), 0);
 
-      // Header
       let html = `
             <div class="sticky top-[72px] bg-slate-950/90 backdrop-blur z-10 py-2 px-2 flex justify-between items-end border-b border-slate-900 mb-2">
                 <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${new Date(
@@ -164,96 +205,100 @@ function renderTimeline(txns) {
             </div>
         `;
 
-      // Items
       html += dayTxns
         .map((t) => {
           const isDebit = t.amountDR > 0;
           const amount = isDebit ? t.amountDR : t.amountCR;
           const colorClass = isDebit ? "text-rose-400" : "text-emerald-400";
-          const iconClass = getIcon(t.category, t.entity);
 
           return `
-                <div class="group relative flex items-center gap-3 p-3 mb-2 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800 transition-all">
-                    <div class="w-10 h-10 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0 shadow-inner">
-                        <i class="fas ${iconClass} text-sm"></i>
+                <div class="flex items-center gap-3 p-3 mb-2 bg-slate-900 border border-slate-800 rounded-xl">
+                    <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0">
+                        <i class="fas ${getIcon(
+                          t.category,
+                          t.entity
+                        )} text-xs"></i>
                     </div>
-
                     <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-baseline mb-0.5">
-                            <h3 class="text-sm font-bold text-slate-200 truncate pr-2">${
+                        <div class="flex justify-between">
+                            <h3 class="text-xs font-bold text-slate-200 truncate">${
                               t.entity
                             }</h3>
-                            <span class="font-black ${colorClass} text-sm whitespace-nowrap">
-                                ${isDebit ? "-" : "+"}₹${amount.toLocaleString(
-            "en-IN"
-          )}
-                            </span>
+                            <span class="${colorClass} text-xs font-bold">${
+            isDebit ? "-" : "+"
+          }₹${amount}</span>
                         </div>
-                        <div class="flex justify-between items-center text-[11px] text-slate-500">
-                            <span class="truncate pr-2">${
-                              t.notes || t.category
-                            }</span>
-                            <span class="font-mono bg-slate-950 px-1.5 py-0.5 rounded text-[9px] border border-slate-800">${
-                              t.mode
-                            }</span>
-                        </div>
+                        <div class="text-[10px] text-slate-500 truncate">${
+                          t.notes || t.category
+                        }</div>
                     </div>
                 </div>
             `;
         })
         .join("");
-
-      return `<div class="mb-6">${html}</div>`;
+      return `<div class="mb-4">${html}</div>`;
     })
     .join("");
+
+  // Handle Load More Button Visibility
+  if (end < filteredTransactions.length) {
+    loadBtn.classList.remove("hidden");
+    loadBtn.innerText = `Load More (${
+      filteredTransactions.length - end
+    } remaining)`;
+  } else {
+    loadBtn.classList.add("hidden");
+  }
 }
 
-// 🎮 EVENTS
+// 🎮 EVENT LISTENERS
 function initListeners() {
-  // Search
+  // 1. Search
   document.getElementById("ledger-search").addEventListener("input", (e) => {
-    currentState.search = e.target.value.toLowerCase();
-    updateUI();
+    state.search = e.target.value.toLowerCase();
+    applyFilters();
   });
 
-  // Filters
+  // 2. Filters (Category)
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      triggerFilter(e.target.dataset.filter, e.target);
+      // Visual Update
+      document.querySelectorAll(".filter-btn").forEach((b) => {
+        b.classList.remove("bg-blue-600", "text-slate-50", "active");
+        b.classList.add("bg-slate-900", "text-slate-400");
+      });
+      e.target.classList.remove("bg-slate-900", "text-slate-400");
+      e.target.classList.add("bg-blue-600", "text-slate-50", "active");
+
+      // Logic
+      state.filter = e.target.dataset.filter;
+      applyFilters();
     });
   });
-}
 
-// Helper to switch active filter programmatically
-function triggerFilter(filterName, btnElement = null) {
-  currentState.filter = filterName;
+  // 3. Time Filters (1D, 1W...)
+  document.querySelectorAll(".time-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      // Visual Update
+      document.querySelectorAll(".time-btn").forEach((b) => {
+        b.classList.remove("bg-blue-600", "text-white");
+        b.classList.add("text-slate-400");
+      });
+      e.target.classList.remove("text-slate-400");
+      e.target.classList.add("bg-blue-600", "text-white", "rounded");
 
-  // Update UI Buttons
-  document.querySelectorAll(".filter-btn").forEach((b) => {
-    b.classList.remove("active", "bg-blue-600", "text-slate-50");
-    b.classList.add("bg-slate-900", "text-slate-400");
-    if (b.dataset.filter === filterName) {
-      b.classList.add("active", "bg-blue-600", "text-slate-50");
-      b.classList.remove("bg-slate-900", "text-slate-400");
-    }
+      // Logic
+      state.timeFrame = e.target.dataset.time;
+      applyFilters();
+    });
   });
 
-  // If triggered from chart (no button click), we might need to find the button manually
-  if (!btnElement) {
-    const targetBtn = document.querySelector(
-      `.filter-btn[data-filter="${filterName}"]`
-    );
-    if (targetBtn) {
-      targetBtn.classList.remove("bg-slate-900", "text-slate-400");
-      targetBtn.classList.add("active", "bg-blue-600", "text-slate-50");
-    }
-  }
-
-  updateUI();
+  // 4. Load More
+  document.getElementById("load-more-btn").addEventListener("click", () => {
+    state.page++;
+    renderList(false); // false = append, don't clear
+  });
 }
-
-// Expose reset to global scope for the HTML button
-window.resetFilters = () => triggerFilter("All");
 
 document.addEventListener("DOMContentLoaded", () => {
   loadLedger();
