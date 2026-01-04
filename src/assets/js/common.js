@@ -4,17 +4,17 @@ tailwind.config = {
     theme: {
         extend: {
             colors: {
-                // Map custom names to our CSS variables
+                // Map custom names to our CSS variables with Opacity Support
                 app: {
-                    bg: 'var(--bg-main)',
-                    card: 'var(--bg-card)',
-                    input: 'var(--bg-input)',
-                    border: 'var(--border-main)',
-                    borderSub: 'var(--border-sub)',
-                    text: 'var(--text-main)',
-                    sub: 'var(--text-sub)',
-                    muted: 'var(--text-muted)',
-                    accent: 'var(--accent-blue)',
+                    bg: 'rgb(var(--bg-main) / <alpha-value>)',
+                    card: 'rgb(var(--bg-card) / <alpha-value>)',
+                    input: 'rgb(var(--bg-input) / <alpha-value>)',
+                    border: 'rgb(var(--border-main) / <alpha-value>)',
+                    borderSub: 'rgb(var(--border-sub) / <alpha-value>)',
+                    text: 'rgb(var(--text-main) / <alpha-value>)',
+                    sub: 'rgb(var(--text-sub) / <alpha-value>)',
+                    muted: 'rgb(var(--text-muted) / <alpha-value>)',
+                    accent: 'rgb(var(--accent-blue) / <alpha-value>)',
                 }
             }
         }
