@@ -1,7 +1,7 @@
 import { API } from "../../core/api-client.js";
 
 let allTransactions = [];
-let filteredTransactions = []; // Store filtered result globally
+let filteredTransactions = [];
 let doughnutChart = null;
 let trendChart = null;
 
@@ -11,7 +11,7 @@ let state = {
   search: "",
   timeFrame: "ALL", // 1D, 1W, 1M, ALL
   page: 1,
-  limit: 10, // Show 10 items initially to prevent crash
+  limit: 10,
 };
 
 const getIcon = (category, entity) => {
@@ -28,7 +28,7 @@ const getIcon = (category, entity) => {
 
 async function loadLedger() {
   try {
-    // Fetch Real Data (Replace with API call)
+    // Replace this with your actual API call
     const response = await fetch("/api/get-transactions");
     allTransactions = await response.json();
 
@@ -36,21 +36,22 @@ async function loadLedger() {
     applyFilters();
   } catch (err) {
     console.error("Load Failed", err);
+    document.getElementById("net-position").innerText = "Error";
   }
 }
 
-// 🧠 FILTER & TIME LOGIC
+// 🧠 CORE LOGIC
 function applyFilters() {
-  // 1. Time Filter Logic
+  // 1. Time Filter
   const now = new Date();
   const timeLimit = new Date();
 
   if (state.timeFrame === "1D") timeLimit.setDate(now.getDate() - 1);
   if (state.timeFrame === "1W") timeLimit.setDate(now.getDate() - 7);
   if (state.timeFrame === "1M") timeLimit.setDate(now.getDate() - 30);
-  if (state.timeFrame === "ALL") timeLimit.setFullYear(2000); // Way back
+  if (state.timeFrame === "ALL") timeLimit.setFullYear(2000);
 
-  // 2. Filter Array
+  // 2. Filter Logic
   filteredTransactions = allTransactions.filter((t) => {
     const tDate = new Date(t.date);
     const inTime = tDate >= timeLimit;
@@ -62,16 +63,32 @@ function applyFilters() {
     return inTime && matchesCat && matchesSearch;
   });
 
-  // 3. Reset Pagination on Filter Change
-  state.page = 1;
+  state.page = 1; // Reset pagination
 
-  // 4. Update UI Components
+  // 3. Update ALL UI Components
   renderCharts(filteredTransactions);
   renderTotalExpense(filteredTransactions);
-  renderList(true); // true = reset list
+  renderNetPosition(filteredTransactions); // <--- ADDED THIS
+  renderList(true);
 }
 
-// 💰 TOTAL EXPENSE DISPLAY
+// 💰 1. UPDATE HEADER NET POSITION (The Fix)
+function renderNetPosition(txns) {
+  const income = txns.reduce((sum, t) => sum + (t.amountCR || 0), 0);
+  const expense = txns.reduce((sum, t) => sum + (t.amountDR || 0), 0);
+  const net = income - expense;
+
+  const el = document.getElementById("net-position");
+  const colorClass = net >= 0 ? "text-emerald-400" : "text-rose-400";
+  const sign = net >= 0 ? "+" : "-";
+
+  // Render HTML inside the span
+  el.innerHTML = `<span class="${colorClass} font-bold">${sign}₹${Math.abs(
+    net
+  ).toLocaleString("en-IN")}</span>`;
+}
+
+// 💰 2. UPDATE CHART CARD TOTAL
 function renderTotalExpense(txns) {
   const totalExp = txns.reduce((sum, t) => sum + (t.amountDR || 0), 0);
   document.getElementById(
@@ -79,9 +96,9 @@ function renderTotalExpense(txns) {
   ).innerText = `₹${totalExp.toLocaleString("en-IN")}`;
 }
 
-// 📊 DUAL CHART RENDERER
+// 📊 3. RENDER CHARTS
 function renderCharts(txns) {
-  // --- Chart 1: Category Breakdown (Doughnut) ---
+  // Doughnut Data
   const catTotals = {};
   txns.forEach((t) => {
     if (t.amountDR > 0)
@@ -114,17 +131,15 @@ function renderCharts(txns) {
     },
   });
 
-  // --- Chart 2: Time Trend (Line) ---
+  // Trend Data
   const dateTotals = {};
   txns.forEach((t) => {
     if (t.amountDR > 0) {
-      // Group by Date (YYYY-MM-DD)
       const d = t.date.split("T")[0];
       dateTotals[d] = (dateTotals[d] || 0) + t.amountDR;
     }
   });
 
-  // Sort dates
   const sortedDates = Object.keys(dateTotals).sort();
   const trendData = sortedDates.map((d) => dateTotals[d]);
 
@@ -140,7 +155,6 @@ function renderCharts(txns) {
       ),
       datasets: [
         {
-          label: "Expense",
           data: trendData,
           borderColor: "#3b82f6",
           backgroundColor: "rgba(59, 130, 246, 0.1)",
@@ -154,36 +168,30 @@ function renderCharts(txns) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: {
-        x: { display: false },
-        y: { display: false }, // Minimal look
-      },
+      scales: { x: { display: false }, y: { display: false } },
     },
   });
 }
 
-// 📜 LIST RENDERER (With Pagination)
+// 📜 4. RENDER LIST
 function renderList(reset = false) {
   const list = document.getElementById("ledger-list");
   const loadBtn = document.getElementById("load-more-btn");
 
   if (reset) list.innerHTML = "";
 
-  // Slice Data for Pagination
   const start = 0;
   const end = state.page * state.limit;
   const visibleTxns = filteredTransactions.slice(start, end);
 
-  // Render Logic (Same as before but using visibleTxns)
   if (visibleTxns.length === 0) {
     list.innerHTML = `<div class="text-center text-slate-500 py-10">No transactions found</div>`;
     loadBtn.classList.add("hidden");
     return;
   }
 
-  // Grouping Logic
   const grouped = visibleTxns.reduce((acc, t) => {
-    const date = t.date.split("T")[0]; // Simple date key
+    const date = t.date.split("T")[0];
     if (!acc[date]) acc[date] = [];
     acc[date].push(t);
     return acc;
@@ -210,6 +218,7 @@ function renderList(reset = false) {
           const isDebit = t.amountDR > 0;
           const amount = isDebit ? t.amountDR : t.amountCR;
           const colorClass = isDebit ? "text-rose-400" : "text-emerald-400";
+          const prefix = isDebit ? "-" : "+";
 
           return `
                 <div class="flex items-center gap-3 p-3 mb-2 bg-slate-900 border border-slate-800 rounded-xl">
@@ -224,9 +233,9 @@ function renderList(reset = false) {
                             <h3 class="text-xs font-bold text-slate-200 truncate">${
                               t.entity
                             }</h3>
-                            <span class="${colorClass} text-xs font-bold">${
-            isDebit ? "-" : "+"
-          }₹${amount}</span>
+                            <span class="${colorClass} text-xs font-bold">${prefix}₹${amount.toLocaleString(
+            "en-IN"
+          )}</span>
                         </div>
                         <div class="text-[10px] text-slate-500 truncate">${
                           t.notes || t.category
@@ -240,7 +249,6 @@ function renderList(reset = false) {
     })
     .join("");
 
-  // Handle Load More Button Visibility
   if (end < filteredTransactions.length) {
     loadBtn.classList.remove("hidden");
     loadBtn.innerText = `Load More (${
@@ -251,52 +259,42 @@ function renderList(reset = false) {
   }
 }
 
-// 🎮 EVENT LISTENERS
+// 🎮 EVENTS
 function initListeners() {
-  // 1. Search
   document.getElementById("ledger-search").addEventListener("input", (e) => {
     state.search = e.target.value.toLowerCase();
     applyFilters();
   });
 
-  // 2. Filters (Category)
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      // Visual Update
       document.querySelectorAll(".filter-btn").forEach((b) => {
         b.classList.remove("bg-blue-600", "text-slate-50", "active");
         b.classList.add("bg-slate-900", "text-slate-400");
       });
       e.target.classList.remove("bg-slate-900", "text-slate-400");
       e.target.classList.add("bg-blue-600", "text-slate-50", "active");
-
-      // Logic
       state.filter = e.target.dataset.filter;
       applyFilters();
     });
   });
 
-  // 3. Time Filters (1D, 1W...)
   document.querySelectorAll(".time-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      // Visual Update
       document.querySelectorAll(".time-btn").forEach((b) => {
         b.classList.remove("bg-blue-600", "text-white");
         b.classList.add("text-slate-400");
       });
       e.target.classList.remove("text-slate-400");
       e.target.classList.add("bg-blue-600", "text-white", "rounded");
-
-      // Logic
       state.timeFrame = e.target.dataset.time;
       applyFilters();
     });
   });
 
-  // 4. Load More
   document.getElementById("load-more-btn").addEventListener("click", () => {
     state.page++;
-    renderList(false); // false = append, don't clear
+    renderList(false);
   });
 }
 
