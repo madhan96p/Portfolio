@@ -6,47 +6,71 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Ledger | UPI Analyzer v2.0</title>
-    <script>
-      tailwind.config = {
-        darkMode: "class", // Critical: Enables manual toggle support
-        theme: {
-          extend: {
-            colors: {
-              // Define your core slate/blue palette if needed
-            },
-          },
-        },
-      };
-    </script>
+    <title>Ledger | Smart Analytics</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="pb-24">
+  <body class="pb-24 select-none">
     <header
       class="p-4 border-b border-slate-800 bg-slate-900/80 sticky top-0 backdrop-blur-md z-50"
     >
       <div class="flex justify-between items-center mb-4">
-        <h1 class="text-lg font-black tracking-tighter italic">
-          LEDGER_HISTORY
+        <h1 class="text-lg font-black tracking-tighter italic text-slate-200">
+          <i class="fas fa-chart-pie mr-2 text-blue-500"></i>LEDGER_AI
         </h1>
         <span
-          id="tx-count"
+          id="net-position"
           class="text-[10px] bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono text-slate-400"
-          >0 TXNS</span
         >
+          Loading...
+        </span>
       </div>
-      <input
-        type="text"
-        id="ledger-search"
-        placeholder="Search Entity or Note..."
-        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-      />
+
+      <div class="relative">
+        <i
+          class="fas fa-search absolute left-3 top-3.5 text-slate-500 text-xs"
+        ></i>
+        <input
+          type="text"
+          id="ledger-search"
+          placeholder="Search Entity, Notes or Amount..."
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-slate-600"
+        />
+      </div>
     </header>
 
-    <main class="p-4">
-      <div class="flex space-x-2 overflow-x-auto pb-4 no-scrollbar">
+    <main class="p-4 space-y-6">
+      <div
+        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg"
+      >
+        <div class="flex justify-between items-center mb-2">
+          <h2
+            class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+          >
+            Expense Breakdown
+          </h2>
+          <button
+            onclick="resetFilters()"
+            class="text-[10px] text-blue-500 hover:text-blue-400"
+          >
+            Reset View
+          </button>
+        </div>
+        <div class="relative h-48 w-full flex justify-center">
+          <canvas id="expenseChart"></canvas>
+        </div>
+      </div>
+
+      <div class="flex space-x-2 overflow-x-auto pb-1 no-scrollbar">
         <button
-          class="filter-btn bg-blue-600 text-slate-50 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
+          class="filter-btn active bg-blue-600 text-slate-50 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
           data-filter="All"
         >
           All
@@ -58,43 +82,42 @@
           Lifestyle
         </button>
         <button
-          class="filter-btn bg-slate-900 border border-slate-800 text-xs font-bold px-4 py-2 rounded-full text-slate-400 whitespace-nowrap"
+          class="filter-btn bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
           data-filter="Family Support"
         >
           Family
         </button>
         <button
-          class="filter-btn bg-slate-900 border border-slate-800 text-xs font-bold px-4 py-2 rounded-full text-slate-400 whitespace-nowrap"
+          class="filter-btn bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
           data-filter="Share Investment"
         >
           Assets
         </button>
       </div>
 
-      <div id="ledger-list" class="space-y-3">
-        <div class="p-10 text-center text-slate-500 animate-pulse">
-          Initializing Ledger...
-        </div>
-      </div>
+      <div id="ledger-list" class="space-y-1"></div>
     </main>
 
     <nav
-      class="fixed bottom-0 w-full bg-slate-900/90 border-t border-slate-800 backdrop-blur-lg flex justify-around p-4 z-50"
+      class="fixed bottom-0 w-full bg-slate-900/95 border-t border-slate-800 backdrop-blur-lg flex justify-around p-4 z-50"
     >
       <a
         href="../dashboard/index.html"
-        class="flex flex-col items-center text-slate-500"
+        class="flex flex-col items-center text-slate-500 hover:text-blue-400 transition"
       >
-        <span class="text-xs font-bold">Dash</span>
+        <i class="fas fa-th-large text-lg mb-1"></i>
+        <span class="text-[10px] font-bold">Dash</span>
       </a>
       <a href="#" class="flex flex-col items-center text-blue-500">
-        <span class="text-xs font-bold">Ledger</span>
+        <i class="fas fa-list-ul text-lg mb-1"></i>
+        <span class="text-[10px] font-bold">Ledger</span>
       </a>
       <a
         href="../portfolio/index.html"
-        class="flex flex-col items-center text-slate-500"
+        class="flex flex-col items-center text-slate-500 hover:text-blue-400 transition"
       >
-        <span class="text-xs font-bold">Wealth</span>
+        <i class="fas fa-chart-line text-lg mb-1"></i>
+        <span class="text-[10px] font-bold">Wealth</span>
       </a>
     </nav>
 
