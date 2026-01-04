@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-950 text-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CFO Cockpit | v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../assets/css/components.css">
+</head>
+<body class="pb-24"> <header class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 sticky top-0 backdrop-blur-md z-50">
+        <div>
+            <h1 class="text-xs uppercase tracking-widest text-slate-400 font-bold">Financial Integrity</h1>
+            <p class="text-xl font-mono" id="current-cycle">JAN-2026</p>
+        </div>
+        <div class="text-right">
+            <span id="integrity-status" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-red-500/20 text-red-400 border border-red-500/50">
+                Integrity Alert
+            </span>
+        </div>
+    </header>
+
+    <main class="p-4 space-y-6">
+        
+        <section class="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center shadow-2xl relative overflow-hidden">
+            <div id="pool-bleed-overlay" class="absolute inset-0 bg-red-600/10 hidden animate-pulse"></div>
+            <h2 class="text-slate-400 text-sm mb-2">Safe-to-Spend (Wallet)</h2>
+            <div class="text-5xl font-black tracking-tighter mb-1" id="wallet-remaining">₹0</div>
+            <div class="text-xs text-slate-500 uppercase font-mono" id="wallet-status">Calculating Pool...</div>
+            
+            <div class="w-full bg-slate-800 h-2 rounded-full mt-6 overflow-hidden">
+                <div id="wallet-progress-bar" class="bg-emerald-500 h-full transition-all duration-1000" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+                <p class="text-[10px] uppercase text-slate-500 font-bold">Family Progress</p>
+                <p class="text-xl font-bold mt-1" id="family-actual">₹0</p>
+                <div class="text-[10px] text-slate-400 mt-2">Goal: <span id="family-goal">₹0</span></div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-2">
+                    <div id="family-progress-bar" class="bg-blue-500 h-full transition-all duration-700" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+                <p class="text-[10px] uppercase text-slate-500 font-bold">Wealth-to-Debt</p>
+                <p class="text-xl font-bold mt-1" id="wealth-ratio">0.00</p>
+                <p class="text-[10px] text-slate-400 mt-2">Net Assets: <span id="portfolio-val">₹0</span></p>
+            </div>
+        </div>
+
+        <section class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500">Recent Pulse</h3>
+                <a href="../history/index.html" class="text-xs text-blue-400 font-bold">View Ledger →</a>
+            </div>
+            <div id="recent-transactions" class="space-y-2">
+                <div class="animate-pulse flex space-x-4 bg-slate-900 p-4 rounded-xl">
+                    <div class="flex-1 space-y-2 py-1">
+                        <div class="h-2 bg-slate-800 rounded"></div>
+                        <div class="h-2 bg-slate-800 rounded w-5/6"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <button onclick="window.location.href='../add-transaction/index.html'" class="fixed bottom-28 right-6 w-14 h-14 bg-blue-600 rounded-full shadow-lg shadow-blue-500/40 flex items-center justify-center text-2xl active:scale-95 transition-transform z-40">
+        +
+    </button>
+
+    <nav class="fixed bottom-0 w-full bg-slate-900/90 border-t border-slate-800 backdrop-blur-lg flex justify-around p-4 z-50">
+        <a href="#" class="flex flex-col items-center text-blue-500">
+            <span class="text-xs font-bold">Dash</span>
+        </a>
+        <a href="../history/index.html" class="flex flex-col items-center text-slate-500">
+            <span class="text-xs font-bold">Ledger</span>
+        </a>
+        <a href="../portfolio/index.html" class="flex flex-col items-center text-slate-500">
+            <span class="text-xs font-bold">Wealth</span>
+        </a>
+    </nav>
+
+    <script src="dashboard.js" type="module"></script>
+</body>
+</html>

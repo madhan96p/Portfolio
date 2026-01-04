@@ -1,25 +1,36 @@
-personal-upi-analyzer-v2/
-├── netlify/
-│   └── functions/              
-│       ├── api.js              <-- Your GSheet Auth & GET/POST Logic lives here
-│       └── engine.js           <-- The "Brain": Calculates 60/40, Shortfalls, and Rollovers
-├── src/                        <-- Keep your frontend source organized
-│   ├── assets/
+upi-analyzer-v2/
+├── netlify/                     # BACKEND (Serverless)
+│   └── functions/
+│       ├── get-dashboard.js     # Engine: Aggregates Config + Monthly Stats
+│       ├── get-transactions.js  # Ledger: Fetches & filters transaction history
+│       ├── post-transaction.js  # Action: Adds new row + Dual-write logic
+│       ├── utils/
+│       │   ├── google-auth.js   # Shared: Google Sheets Auth
+│       │   └── math-engine.js   # Shared: 60/40 & Debt Logic (The "Brain")
+├── src/                         # FRONTEND (Source)
+│   ├── assets/                  # Static Files
 │   │   ├── css/
-│   │   │   ├── variables.css   <-- Store your Debt-Red and Growth-Green colors
-│   │   │   └── dashboard.css
-│   │   └── js/
-│   │       ├── ui-render.js    <-- Updates the DOM based on GSheet data
-│   │       └── utils.js        <-- Currency formatters (₹)
-│   ├── components/             <-- Modular UI
-│   │   ├── header.html
-│   │   ├── sidebar.html
-│   │   └── mobile-nav.html
-│   └── pages/                  <-- High-Level Views
-│       ├── dashboard.html      <-- Main Engine view
-│       ├── portfolio.html      <-- Share/Stock view
-│       └── log.html            <-- Input form
-├── .env                        <-- LOCAL ONLY: Store your IDs and Private Keys here
-├── netlify.toml                <-- Tells Netlify where the functions are
-├── package.json                <-- Your dependencies (google-spreadsheet, axios)
-└── index.html                  <-- Entry point (Redirects to Dashboard)
+│   │   │   ├── tailwind.css     # Base Tailwind styles
+│   │   │   └── components.css   # Custom Gauge & Progress Bar styles
+│   │   └── img/                 # Icons and Logos
+│   ├── components/              # Reusable UI Snippets
+│   │   ├── nav-bar.js           # Bottom navigation for mobile
+│   │   ├── stat-card.js         # Reusable cards for Salary/Debt/Pool
+│   │   └── transaction-item.js  # Individual transaction row template
+│   ├── core/                    # Logic & Services
+│   │   ├── api-client.js        # Axios/Fetch wrapper for Netlify calls
+│   │   └── state-manager.js     # Global state (e.g., Current Cycle ID)
+│   └── pages/                   # Views
+│       ├── dashboard/           # Main HUD (Heads-up Display)
+│       │   ├── index.html
+│       │   └── dashboard.js
+│       ├── history/             # Detailed Ledger & Search
+│       │   ├── index.html
+│       │   └── history.js
+│       └── portfolio/           # Live Assets & P&L
+│           ├── index.html
+│           └── portfolio.js
+├── .env                         # Secrets (Sheet ID, Private Keys)
+├── .gitignore                   # Ignore node_modules & .env
+├── netlify.toml                 # Redirect rules & Build settings
+└── package.json                 # Project Manifest

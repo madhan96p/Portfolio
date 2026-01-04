@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-950 text-slate-50">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>New Transaction | v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="p-6">
+    <header class="flex justify-between items-center mb-8">
+      <button onclick="history.back()" class="text-slate-400 text-sm">
+        ← Cancel
+      </button>
+      <h1 class="text-lg font-bold">New Entry</h1>
+      <div class="w-10"></div>
+    </header>
+
+    <form id="tx-form" class="space-y-6">
+      <div class="text-center">
+        <p class="text-[10px] uppercase text-slate-500 font-bold mb-2">
+          Transaction Amount
+        </p>
+        <input
+          type="number"
+          id="amount"
+          placeholder="0.00"
+          step="0.01"
+          required
+          class="bg-transparent text-5xl font-black text-center w-full focus:outline-none text-blue-500"
+        />
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-[10px] uppercase text-slate-500 font-bold"
+            >Category</label
+          >
+          <select
+            id="category"
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 mt-1 appearance-none"
+          >
+            <option value="Personal Spending">
+              Personal Spending (Lifestyle)
+            </option>
+            <option value="Household Spending">Household Spending</option>
+            <option value="Family Support">Family Support (60% Debt)</option>
+            <option value="Share Investment">Share Investment (Asset)</option>
+            <option value="Savings Transfer">Savings Transfer</option>
+            <option value="Salary">Salary Credit</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-[10px] uppercase text-slate-500 font-bold"
+            >Entity (Who/Where)</label
+          >
+          <input
+            type="text"
+            id="entity"
+            list="entity-list"
+            required
+            placeholder="Search or type new..."
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 mt-1 focus:border-blue-500 outline-none"
+          />
+
+          <datalist id="entity-list"></datalist>
+        </div>
+
+        <div
+          id="share-fields"
+          class="hidden space-y-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl"
+        >
+          <p class="text-xs text-blue-400 font-bold">Portfolio Details</p>
+          <input
+            type="text"
+            id="symbol"
+            placeholder="NSE:SYMBOL"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3"
+          />
+          <input
+            type="number"
+            id="units"
+            placeholder="Units (e.g. 1)"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3"
+          />
+        </div>
+
+        <div>
+          <label class="text-[10px] uppercase text-slate-500 font-bold"
+            >Notes</label
+          >
+          <input
+            type="text"
+            id="notes"
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 mt-1"
+          />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        id="submit-btn"
+        class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/20 transition-all"
+      >
+        Record Transaction
+      </button>
+    </form>
+
+    <script src="add.js" type="module"></script>
+  </body>
+</html>

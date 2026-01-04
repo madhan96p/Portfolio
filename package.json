@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/madhan96p/Portfolio#readme",
   "dependencies": {
+    "dotenv": "^17.2.3",
     "google-spreadsheet": "^3.3.0"
   }
 }

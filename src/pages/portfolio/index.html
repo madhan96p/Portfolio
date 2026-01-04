@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-950 text-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wealth Vault | v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="pb-24">
+
+    <header class="p-6 border-b border-slate-800 bg-slate-900/50 sticky top-0 backdrop-blur-md z-50">
+        <h1 class="text-xs uppercase tracking-[0.2em] text-slate-500 font-bold">Asset Integrity</h1>
+        <p class="text-2xl font-black italic">PORTFOLIO_CORE</p>
+    </header>
+
+    <main class="p-4 space-y-6">
+        <section class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 shadow-2xl">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">Wealth-to-Debt Ratio</p>
+                    <div class="text-4xl font-black text-amber-500" id="ratio-display">0.00</div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">Total Assets</p>
+                    <p class="text-xl font-bold" id="total-assets">₹0</p>
+                </div>
+            </div>
+            <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+                <div id="ratio-progress" class="bg-amber-500 h-full transition-all duration-1000" style="width: 0%"></div>
+            </div>
+            <p class="text-[9px] text-slate-500 mt-3 uppercase font-mono">Status: <span id="ratio-status" class="text-slate-300">Evaluating...</span></p>
+        </section>
+
+        <div class="space-y-4">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-slate-500 px-1">Active Holdings</h2>
+            <div id="portfolio-list" class="space-y-3">
+                <div class="animate-pulse bg-slate-900 h-20 rounded-2xl border border-slate-800"></div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-slate-900/90 border-t border-slate-800 backdrop-blur-lg flex justify-around p-4 z-50">
+        <a href="../dashboard/index.html" class="flex flex-col items-center text-slate-500">
+            <span class="text-xs font-bold">Dash</span>
+        </a>
+        <a href="../history/index.html" class="flex flex-col items-center text-slate-500">
+            <span class="text-xs font-bold">Ledger</span>
+        </a>
+        <a href="#" class="flex flex-col items-center text-amber-500">
+            <span class="text-xs font-bold">Wealth</span>
+        </a>
+    </nav>
+
+    <script src="portfolio.js" type="module"></script>
+</body>
+</html>

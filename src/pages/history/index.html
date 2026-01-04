@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-950 text-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ledger | UPI Analyzer v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="pb-24">
+
+    <header class="p-4 border-b border-slate-800 bg-slate-900/80 sticky top-0 backdrop-blur-md z-50">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-lg font-black tracking-tighter italic">LEDGER_HISTORY</h1>
+            <span id="tx-count" class="text-[10px] bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono text-slate-400">0 TXNS</span>
+        </div>
+        <input type="text" id="ledger-search" placeholder="Search Entity or Note..." 
+               class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors">
+    </header>
+
+    <main class="p-4">
+        <div class="flex space-x-2 overflow-x-auto pb-4 no-scrollbar">
+            <button class="filter-btn active bg-blue-600 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap" data-filter="All">All</button>
+            <button class="filter-btn bg-slate-900 border border-slate-800 text-xs font-bold px-4 py-2 rounded-full text-slate-400 whitespace-nowrap" data-filter="Personal Spending">Lifestyle</button>
+            <button class="filter-btn bg-slate-900 border border-slate-800 text-xs font-bold px-4 py-2 rounded-full text-slate-400 whitespace-nowrap" data-filter="Family Support">Family</button>
+            <button class="filter-btn bg-slate-900 border border-slate-800 text-xs font-bold px-4 py-2 rounded-full text-slate-400 whitespace-nowrap" data-filter="Share Investment">Assets</button>
+        </div>
+
+        <div id="ledger-list" class="space-y-3">
+            <div class="p-10 text-center text-slate-500 animate-pulse">Initializing Ledger...</div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-slate-900/90 border-t border-slate-800 backdrop-blur-lg flex justify-around p-4 z-50">
+        <a href="../dashboard/index.html" class="flex flex-col items-center text-slate-500">
+            <span class="text-xs font-bold">Dash</span>
+        </a>
+        <a href="#" class="flex flex-col items-center text-blue-500">
+            <span class="text-xs font-bold">Ledger</span>
+        </a>
+        <a href="../portfolio/index.html" class="flex flex-col items-center text-slate-500">
+            <span class="text-xs font-bold">Wealth</span>
+        </a>
+    </nav>
+
+    <script src="history.js" type="module"></script>
+</body>
+</html>

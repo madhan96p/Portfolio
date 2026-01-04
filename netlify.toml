@@ -1,3 +1,12 @@
 [build]
-  publish = "src"
   functions = "netlify/functions"
+  publish = "."
+
+[dev]
+  port = 8888
+  publish = "."
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
