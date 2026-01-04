@@ -7,23 +7,13 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Precision Entry | v2.0</title>
-    <script>
-      tailwind.config = {
-        darkMode: "class", // Critical: Enables manual toggle support
-        theme: {
-          extend: {
-            colors: {
-              // Define your core slate/blue palette if needed
-            },
-          },
-        },
-      };
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+    <link rel="stylesheet" href="../../assets/css/common.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../assets/js/common.js"></script>
     <style>
       /* Custom date picker styling for dark mode */
       input[type="date"]::-webkit-calendar-picker-indicator {
@@ -34,7 +24,7 @@
       }
     </style>
   </head>
-  <body class="p-4 max-w-md mx-auto">
+  <body class="p-4 max-w-md mx-auto bg-app-bg text-app-text">
     <header class="flex justify-between items-center mb-6">
       <button onclick="history.back()" class="text-slate-500 font-bold text-sm">
         CANCEL
@@ -162,6 +152,11 @@
       </button>
     </form>
 
+    <div id="nav-container"></div>
+    <script type="module">
+      import { NavBar } from "../../components/nav-bar.js";
+      document.addEventListener("DOMContentLoaded", NavBar.init);
+    </script>
     <script src="add.js" type="module"></script>
   </body>
 </html>

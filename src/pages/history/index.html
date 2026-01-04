@@ -12,7 +12,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <link rel="stylesheet" href="../../assets/css/common.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../../assets/js/common.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -162,28 +165,11 @@
       </button>
     </main>
 
-    <nav
-      class="fixed bottom-0 w-full bg-app-card/95 border-t border-app-border backdrop-blur-lg flex justify-around p-4 z-50"
-    >
-      <a
-        href="../dashboard/index.html"
-        class="flex flex-col items-center text-app-muted hover:text-app-accent transition"
-      >
-        <i class="fas fa-th-large text-lg mb-1"></i>
-        <span class="text-[10px] font-bold">Dash</span>
-      </a>
-      <a href="#" class="flex flex-col items-center text-app-accent">
-        <i class="fas fa-list-ul text-lg mb-1"></i>
-        <span class="text-[10px] font-bold">Ledger</span>
-      </a>
-      <a
-        href="../portfolio/index.html"
-        class="flex flex-col items-center text-app-muted hover:text-app-accent transition"
-      >
-        <i class="fas fa-chart-line text-lg mb-1"></i>
-        <span class="text-[10px] font-bold">Wealth</span>
-      </a>
-    </nav>
+    <div id="nav-container"></div>
+    <script type="module">
+      import { NavBar } from "../../components/nav-bar.js";
+      document.addEventListener("DOMContentLoaded", NavBar.init);
+    </script>
 
     <script src="history.js" type="module"></script>
   </body>
