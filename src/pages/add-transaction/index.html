@@ -1,85 +1,163 @@
 <!DOCTYPE html>
 <html lang="en" class="bg-slate-950 text-slate-50">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Precision Entry | v2.0</title>
+    <script>
+      tailwind.config = {
+        darkMode: "class", // Critical: Enables manual toggle support
+        theme: {
+          extend: {
+            colors: {
+              // Define your core slate/blue palette if needed
+            },
+          },
+        },
+      };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom date picker styling for dark mode */
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+      /* Custom date picker styling for dark mode */
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
     </style>
-</head>
-<body class="p-4 max-w-md mx-auto">
+  </head>
+  <body class="p-4 max-w-md mx-auto">
     <header class="flex justify-between items-center mb-6">
-        <button onclick="history.back()" class="text-slate-500 font-bold text-sm">CANCEL</button>
-        <div class="relative">
-            <input type="date" id="date" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono focus:outline-none focus:border-blue-500">
-        </div>
+      <button onclick="history.back()" class="text-slate-500 font-bold text-sm">
+        CANCEL
+      </button>
+      <div class="relative">
+        <input
+          type="date"
+          id="date"
+          class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono focus:outline-none focus:border-blue-500"
+        />
+      </div>
     </header>
 
     <form id="tx-form" class="space-y-5">
-        <div class="text-center py-2">
-            <input type="number" id="amount" placeholder="₹0.00" step="0.01" required
-                   class="bg-transparent text-6xl font-black text-center w-full focus:outline-none text-blue-500 placeholder-slate-800">
-        </div>
+      <div class="text-center py-2">
+        <input
+          type="number"
+          id="amount"
+          placeholder="₹0.00"
+          step="0.01"
+          required
+          class="bg-transparent text-6xl font-black text-center w-full focus:outline-none text-blue-500 placeholder-slate-800"
+        />
+      </div>
 
-        <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1">
-                <label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Category</label>
-                <select id="category" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none">
-                    <option value="Personal Spending">Lifestyle</option>
-                    <option value="Household Spending">Household</option>
-                    <option value="Family Support">Family (60%)</option>
-                    <option value="Share Investment">Assets</option>
-                    <option value="Salary">Salary Credit</option>
-                </select>
-            </div>
-            <div class="space-y-1">
-                <label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Sub-Category</label>
-                <select id="sub-category" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none">
-                    </select>
-            </div>
-        </div>
-
+      <div class="grid grid-cols-2 gap-3">
         <div class="space-y-1">
-            <label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Entity / Payee</label>
-            <input type="text" id="entity" list="entity-list" required placeholder="Search Payee..."
-                   class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm focus:border-blue-500 outline-none">
-            <datalist id="entity-list"></datalist>
+          <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
+            >Category</label
+          >
+          <select
+            id="category"
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none"
+          >
+            <option value="Personal Spending">Lifestyle</option>
+            <option value="Household Spending">Household</option>
+            <option value="Family Support">Family (60%)</option>
+            <option value="Share Investment">Assets</option>
+            <option value="Salary">Salary Credit</option>
+          </select>
         </div>
-
-        <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1">
-                <label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Payment Mode</label>
-                <select id="mode" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none">
-                    <option value="UPI">UPI</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Card">Bank/Card</option>
-                </select>
-            </div>
-            <div id="share-units-box" class="space-y-1 hidden">
-                <label class="text-[10px] uppercase text-blue-500 font-bold ml-1">Units</label>
-                <input type="number" id="units" placeholder="0" class="w-full bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-sm">
-            </div>
-        </div>
-
-        <div id="share-symbol-box" class="space-y-1 hidden">
-            <label class="text-[10px] uppercase text-blue-500 font-bold ml-1">Share Symbol</label>
-            <input type="text" id="symbol" placeholder="NSE:SYMBOL" class="w-full bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-sm">
-        </div>
-
         <div class="space-y-1">
-            <label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Transaction Notes</label>
-            <input type="text" id="notes" placeholder="Add context..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm">
+          <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
+            >Sub-Category</label
+          >
+          <select
+            id="sub-category"
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none"
+          ></select>
         </div>
+      </div>
 
-        <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 shadow-lg shadow-blue-500/20">
-            SECURE LOG
-        </button>
+      <div class="space-y-1">
+        <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
+          >Entity / Payee</label
+        >
+        <input
+          type="text"
+          id="entity"
+          list="entity-list"
+          required
+          placeholder="Search Payee..."
+          class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm focus:border-blue-500 outline-none"
+        />
+        <datalist id="entity-list"></datalist>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1">
+          <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
+            >Payment Mode</label
+          >
+          <select
+            id="mode"
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none"
+          >
+            <option value="UPI">UPI</option>
+            <option value="Cash">Cash</option>
+            <option value="Card">Bank/Card</option>
+          </select>
+        </div>
+        <div id="share-units-box" class="space-y-1 hidden">
+          <label class="text-[10px] uppercase text-blue-500 font-bold ml-1"
+            >Units</label
+          >
+          <input
+            type="number"
+            id="units"
+            placeholder="0"
+            class="w-full bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-sm"
+          />
+        </div>
+      </div>
+
+      <div id="share-symbol-box" class="space-y-1 hidden">
+        <label class="text-[10px] uppercase text-blue-500 font-bold ml-1"
+          >Share Symbol</label
+        >
+        <input
+          type="text"
+          id="symbol"
+          placeholder="NSE:SYMBOL"
+          class="w-full bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-sm"
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
+          >Transaction Notes</label
+        >
+        <input
+          type="text"
+          id="notes"
+          placeholder="Add context..."
+          class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm"
+        />
+      </div>
+
+      <button
+        type="submit"
+        id="submit-btn"
+        class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+      >
+        SECURE LOG
+      </button>
     </form>
 
     <script src="add.js" type="module"></script>
-</body>
+  </body>
 </html>
