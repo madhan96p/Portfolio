@@ -1,144 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>CFO Cockpit | v2.0</title>
-    
-    <script type="module">
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/css/common.css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        slate: {
-                            950: '#020617'
-                        }
-                    }
-                }
-            }
-        };
-    </script>
-    <link rel="stylesheet" href="../../assets/css/components.css" />
-</head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300 pb-24 font-sans">
+    <script src="../../assets/js/common.js"></script>
+  </head>
+  <body
+    class="bg-app-bg text-app-text transition-colors duration-300 pb-24 font-sans"
+  >
+    <header
+      class="p-6 border-b border-app-border flex justify-between items-center bg-app-card/80 sticky top-0 backdrop-blur-md z-50"
+    >
+      <div>
+        <h1 class="text-[10px] uppercase tracking-widest text-app-sub font-bold">
+          Financial Integrity
+        </h1>
+        <p class="text-xl font-mono" id="current-cycle">JAN-2026</p>
+      </div>
 
-    <header class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-white/80 dark:bg-slate-900/50 sticky top-0 backdrop-blur-md z-50">
-        <div>
-            <h1 class="text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold">
-                Financial Integrity
-            </h1>
-            <p class="text-xl font-mono" id="current-cycle">JAN-2026</p>
-        </div>
-        
-        <div class="flex items-center space-x-3">
-            <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all active:scale-90">
-                <span class="dark:hidden">🌙</span>
-                <span class="hidden dark:inline">☀️</span>
-            </button>
-            
-            <span id="integrity-status" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-emerald-500/10 text-emerald-600 dark:bg-red-500/20 dark:text-red-400 border border-emerald-200 dark:border-red-500/50">
-                SECURE
-            </span>
-        </div>
+      <div class="flex items-center space-x-3">
+        <div class="relative h-0 w-0"></div>
+        <!-- Anchor for theme toggle button -->
+        <span
+          id="integrity-status"
+          class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-emerald-500/10 text-emerald-600 dark:bg-red-500/20 dark:text-red-400 border border-emerald-200 dark:border-red-500/50"
+        >
+          SECURE
+        </span>
+      </div>
     </header>
 
     <main class="p-4 space-y-6">
-        <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 text-center shadow-sm dark:shadow-2xl relative overflow-hidden">
-            <div id="pool-bleed-overlay" class="absolute inset-0 bg-red-600/5 hidden animate-pulse"></div>
-            
-            <h2 class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wide mb-2">Safe-to-Spend (Wallet)</h2>
-            <div class="text-6xl font-black tracking-tighter mb-1" id="wallet-remaining">₹0</div>
-            <div class="text-[10px] text-slate-400 uppercase font-mono tracking-widest" id="wallet-status">
-                Analyzing Burn Rate...
-            </div>
+      <section
+        class="bg-app-card border border-app-border rounded-3xl p-6 text-center shadow-sm relative overflow-hidden"
+      >
+        <div
+          id="pool-bleed-overlay"
+          class="absolute inset-0 bg-red-600/5 hidden animate-pulse"
+        ></div>
 
-            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-6 overflow-hidden">
-                <div id="wallet-progress-bar" class="bg-emerald-500 h-full transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.5)]" style="width: 0%"></div>
-            </div>
-        </section>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
-                <p class="text-[10px] uppercase text-slate-500 font-bold tracking-tight">Family Progress</p>
-                <p class="text-xl font-bold mt-1" id="family-actual">₹0</p>
-                <div class="text-[9px] text-slate-400 mt-2 font-medium uppercase">
-                    Goal: <span id="family-goal" class="font-mono">₹0</span>
-                </div>
-                <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                    <div id="family-progress-bar" class="bg-blue-500 h-full transition-all duration-700" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
-                <p class="text-[10px] uppercase text-slate-500 font-bold tracking-tight">Wealth Index</p>
-                <p class="text-xl font-bold mt-1 text-amber-600 dark:text-amber-500" id="wealth-ratio">0.00</p>
-                <p class="text-[9px] text-slate-400 mt-2 font-medium uppercase">
-                    Assets: <span id="portfolio-val" class="font-mono">₹0</span>
-                </p>
-            </div>
+        <h2 class="text-app-sub text-xs font-bold uppercase tracking-wide mb-2">
+          Safe-to-Spend (Wallet)
+        </h2>
+        <div class="text-6xl font-black tracking-tighter mb-1" id="wallet-remaining">
+          ₹0
+        </div>
+        <div
+          class="text-[10px] text-app-muted uppercase font-mono tracking-widest"
+          id="wallet-status"
+        >
+          Analyzing Burn Rate...
         </div>
 
-        <section class="space-y-4">
-            <div class="flex justify-between items-center px-1">
-                <h3 class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
-                    Recent Pulse
-                </h3>
-                <a href="../history/index.html" class="text-[11px] text-blue-600 dark:text-blue-400 font-black uppercase tracking-tighter">
-                    Full Ledger →
-                </a>
+        <div class="w-full bg-app-bg h-2.5 rounded-full mt-6 overflow-hidden">
+          <div
+            id="wallet-progress-bar"
+            class="bg-emerald-500 h-full transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+            style="width: 0%"
+          ></div>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-app-card border border-app-border p-4 rounded-2xl shadow-sm">
+          <p class="text-[10px] uppercase text-app-sub font-bold tracking-tight">
+            Family Progress
+          </p>
+          <p class="text-xl font-bold mt-1" id="family-actual">₹0</p>
+          <div class="text-[9px] text-app-muted mt-2 font-medium uppercase">
+            Goal: <span id="family-goal" class="font-mono">₹0</span>
+          </div>
+          <div class="w-full bg-app-bg h-1.5 rounded-full mt-2 overflow-hidden">
+            <div
+              id="family-progress-bar"
+              class="bg-app-accent h-full transition-all duration-700"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+
+        <div class="bg-app-card border border-app-border p-4 rounded-2xl shadow-sm">
+          <p class="text-[10px] uppercase text-app-sub font-bold tracking-tight">
+            Wealth Index
+          </p>
+          <p
+            class="text-xl font-bold mt-1 text-amber-600 dark:text-amber-500"
+            id="wealth-ratio"
+          >
+            0.00
+          </p>
+          <p class="text-[9px] text-app-muted mt-2 font-medium uppercase">
+            Assets: <span id="portfolio-val" class="font-mono">₹0</span>
+          </p>
+        </div>
+      </div>
+
+      <section class="space-y-4">
+        <div class="flex justify-between items-center px-1">
+          <h3 class="text-[11px] font-black uppercase tracking-[0.2em] text-app-muted">
+            Recent Pulse
+          </h3>
+          <a
+            href="../history/index.html"
+            class="text-[11px] text-app-accent font-black uppercase tracking-tighter"
+          >
+            Full Ledger →
+          </a>
+        </div>
+
+        <div id="recent-transactions" class="space-y-2">
+          <div
+            class="animate-pulse flex space-x-4 bg-app-card border border-app-border p-4 rounded-xl"
+          >
+            <div class="flex-1 space-y-2 py-1">
+              <div class="h-2 bg-app-bg rounded w-1/4"></div>
+              <div class="h-2 bg-app-bg rounded w-3/4"></div>
             </div>
-            
-            <div id="recent-transactions" class="space-y-2">
-                <div class="animate-pulse flex space-x-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl">
-                    <div class="flex-1 space-y-2 py-1">
-                        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded w-1/4"></div>
-                        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded w-3/4"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <button onclick="window.location.href='../add-transaction/index.html'" 
-            class="fixed bottom-28 right-6 w-14 h-14 bg-blue-600 dark:bg-blue-600 rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center text-white text-2xl active:scale-90 transition-all z-40 border-4 border-white dark:border-slate-950">
-        <span class="mb-1">+</span>
+    <button
+      onclick="window.location.href='../add-transaction/index.html'"
+      class="fixed bottom-28 right-6 w-14 h-14 bg-app-accent rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center text-white text-2xl active:scale-90 transition-all z-40 border-4 border-app-bg"
+    >
+      <span class="mb-1">+</span>
     </button>
 
-    <nav class="fixed bottom-0 w-full bg-white/90 dark:bg-slate-900/90 border-t border-slate-200 dark:border-slate-800 backdrop-blur-lg flex justify-around p-4 z-50">
-        <a href="#" class="flex flex-col items-center text-blue-600 dark:text-blue-500">
-            <span class="text-[10px] font-black uppercase tracking-widest">Dash</span>
-        </a>
-        <a href="../history/index.html" class="flex flex-col items-center text-slate-400 dark:text-slate-500">
-            <span class="text-[10px] font-black uppercase tracking-widest">Ledger</span>
-        </a>
-        <a href="../portfolio/index.html" class="flex flex-col items-center text-slate-400 dark:text-slate-500">
-            <span class="text-[10px] font-black uppercase tracking-widest">Wealth</span>
-        </a>
+    <nav
+      class="fixed bottom-0 w-full bg-app-card/90 border-t border-app-border backdrop-blur-lg flex justify-around p-4 z-50"
+    >
+      <a href="#" class="flex flex-col items-center text-app-accent">
+        <span class="text-[10px] font-black uppercase tracking-widest">Dash</span>
+      </a>
+      <a
+        href="../history/index.html"
+        class="flex flex-col items-center text-app-muted"
+      >
+        <span class="text-[10px] font-black uppercase tracking-widest"
+          >Ledger</span
+        >
+      </a>
+      <a
+        href="../portfolio/index.html"
+        class="flex flex-col items-center text-app-muted"
+      >
+        <span class="text-[10px] font-black uppercase tracking-widest"
+          >Wealth</span
+        >
+      </a>
     </nav>
 
-    <script type="module">
-        // Theme Toggle Logic
-        const btn = document.getElementById('theme-toggle');
-        btn.onclick = () => {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
-        };
-    </script>
     <script src="dashboard.js" type="module"></script>
-</body>
+  </body>
 </html>

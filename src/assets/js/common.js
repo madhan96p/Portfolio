@@ -35,11 +35,15 @@ const ThemeManager = {
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('theme', next);
         this.updateIcon(next);
+
+        // Dispatch a global event so other components (like charts) can react
+        window.dispatchEvent(new Event('theme-changed'));
     },
 
-    // 3. AUTO-INJECT TOGGLE BUTTON (Finds the header and adds the button)
+    // 3. AUTO-INJECT TOGGLE BUTTON
+    // Finds an element with class `.relative` inside the header to use as an anchor.
     renderToggle() {
-        const header = document.querySelector('header .relative'); // Finds the Search bar container
+        const header = document.querySelector('header .relative'); // Finds an anchor container
         if (!header) return;
 
         // Create Button

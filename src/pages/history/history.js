@@ -23,7 +23,22 @@ const getIcon = (category, entity) => {
   if (text.includes("family")) return "fa-home text-pink-400";
   if (text.includes("share") || text.includes("sip"))
     return "fa-arrow-trend-up text-emerald-400";
-  return "fa-wallet text-slate-400";
+  return "fa-wallet text-app-sub";
+};
+
+const getThemeColors = () => {
+  const styles = getComputedStyle(document.documentElement);
+  return {
+    accent: styles.getPropertyValue("--accent-blue").trim(),
+    text: styles.getPropertyValue("--text-main").trim(),
+    sub: styles.getPropertyValue("--text-sub").trim(),
+    border: styles.getPropertyValue("--border-main").trim(),
+  };
+};
+
+const hexToRgba = (hex, alpha = 1) => {
+  const [r, g, b] = hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+  return `rgba(${r},${g},${b},${alpha})`;
 };
 
 async function loadLedger() {
@@ -98,6 +113,8 @@ function renderTotalExpense(txns) {
 
 // 📊 3. RENDER CHARTS
 function renderCharts(txns) {
+  const themeColors = getThemeColors();
+
   // Doughnut Data
   const catTotals = {};
   txns.forEach((t) => {
@@ -114,7 +131,7 @@ function renderCharts(txns) {
         {
           data: Object.values(catTotals),
           backgroundColor: [
-            "#3b82f6",
+            themeColors.accent,
             "#ec4899",
             "#10b981",
             "#f59e0b",
@@ -128,6 +145,7 @@ function renderCharts(txns) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
+      cutout: "70%",
     },
   });
 
@@ -156,11 +174,12 @@ function renderCharts(txns) {
       datasets: [
         {
           data: trendData,
-          borderColor: "#3b82f6",
-          backgroundColor: "rgba(59, 130, 246, 0.1)",
+          borderColor: themeColors.accent,
+          backgroundColor: hexToRgba(themeColors.accent, 0.1),
           fill: true,
           tension: 0.4,
           pointRadius: 2,
+          pointBackgroundColor: themeColors.accent,
         },
       ],
     },
@@ -168,7 +187,10 @@ function renderCharts(txns) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: { x: { display: false }, y: { display: false } },
+      scales: {
+        x: { display: false, grid: { color: themeColors.border } },
+        y: { display: false, grid: { color: themeColors.border } },
+      },
     },
   });
 }
@@ -301,4 +323,9 @@ function initListeners() {
 document.addEventListener("DOMContentLoaded", () => {
   loadLedger();
   initListeners();
+
+  window.addEventListener("theme-changed", () => {
+    // Re-render charts with current data to apply new theme colors
+    renderCharts(filteredTransactions);
+  });
 });
