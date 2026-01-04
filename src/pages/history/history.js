@@ -28,58 +28,8 @@ const getIcon = (category, entity) => {
 async function loadLedger() {
   try {
     // Mock Data for Demo (Replace with your actual fetch)
-    // const response = await fetch('/api/get-transactions');
-    // allTransactions = await response.json();
-
-    // --- REMOVE THIS MOCK BLOCK IN PRODUCTION ---
-    allTransactions = [
-      {
-        date: "2023-10-25",
-        category: "Personal Spending",
-        entity: "Zomato",
-        notes: "Lunch",
-        amountDR: 450,
-        amountCR: 0,
-        mode: "UPI",
-      },
-      {
-        date: "2023-10-25",
-        category: "Transport",
-        entity: "Uber",
-        notes: "Office",
-        amountDR: 200,
-        amountCR: 0,
-        mode: "UPI",
-      },
-      {
-        date: "2023-10-24",
-        category: "Family Support",
-        entity: "Dad",
-        notes: "Medical",
-        amountDR: 5000,
-        amountCR: 0,
-        mode: "UPI",
-      },
-      {
-        date: "2023-10-23",
-        category: "Share Investment",
-        entity: "Zerodha",
-        notes: "SIP",
-        amountDR: 10000,
-        amountCR: 0,
-        mode: "UPI",
-      },
-      {
-        date: "2023-10-23",
-        category: "Income",
-        entity: "Salary",
-        notes: "Oct",
-        amountDR: 0,
-        amountCR: 85000,
-        mode: "BANK",
-      },
-    ];
-    // -------------------------------------------
+    const response = await fetch('/api/get-transactions');
+    allTransactions = await response.json();
 
     updateUI();
   } catch (err) {
