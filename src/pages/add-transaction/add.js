@@ -1,57 +1,69 @@
 import { API } from '../../core/api-client.js';
 
-// 1. Fetch existing entities on load to populate the dropdown
-async function populateEntityDropdown() {
-    try {
-        const response = await fetch('/api/get-transactions');
-        const transactions = await response.json();
-        
-        // Get unique entity names, filtered and sorted
-        const uniqueEntities = [...new Set(transactions.map(t => t.entity))]
-            .filter(name => name && name.trim() !== "")
-            .sort();
+const SUB_CATS = {
+    "Personal Spending": ["Food & Dining", "Transport", "Utilities", "Entertainment", "Medical", "Shopping"],
+    "Household Spending": ["Groceries", "Rent", "Maintenance", "Supplies"],
+    "Family Support": ["Debt Repayment", "Parental Support", "P2P Outflow"],
+    "Share Investment": ["Equity", "Mutual Funds", "Gold"],
+    "Salary": ["Primary Salary", "Freelance", "Bonus"]
+};
 
-        const datalist = document.getElementById('entity-list');
-        datalist.innerHTML = uniqueEntities
-            .map(entity => `<option value="${entity}">`)
-            .join('');
-            
-        console.log(`System: Loaded ${uniqueEntities.length} unique entities.`);
-    } catch (err) {
-        console.warn("Entity Sync Failed: Operating in manual mode.");
-    }
-}
-
-// 2. Handle Category UI changes
-document.getElementById('category').addEventListener('change', (e) => {
-    const shareFields = document.getElementById('share-fields');
-    shareFields.classList.toggle('hidden', e.target.value !== 'Share Investment');
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Default Date to Today
+    document.getElementById('date').valueAsDate = new Date();
     
-    // Auto-prefix for Family to trigger "Backwards-Progress" logic if needed
-    if (e.target.value === 'Family Support') {
-        const entityInput = document.getElementById('entity');
-        if (!entityInput.value) entityInput.placeholder = "Try 'Mom' or 'Dad'...";
-    }
+    // 2. Initialize Sub-Categories
+    updateSubCategories();
+    populateCleanEntities();
 });
 
-// 3. Handle Form Submission
+// Logic: Map Category to Sub-Category
+document.getElementById('category').addEventListener('change', () => {
+    updateSubCategories();
+    const isShare = document.getElementById('category').value === 'Share Investment';
+    document.getElementById('share-units-box').classList.toggle('hidden', !isShare);
+    document.getElementById('share-symbol-box').classList.toggle('hidden', !isShare);
+});
+
+function updateSubCategories() {
+    const cat = document.getElementById('category').value;
+    const subSelect = document.getElementById('sub-category');
+    subSelect.innerHTML = SUB_CATS[cat].map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+async function populateCleanEntities() {
+    try {
+        const txns = await (await fetch('/api/get-transactions')).json();
+        
+        // Data Fatigue Fix: Count frequency and take top 15 unique
+        const counts = txns.reduce((acc, t) => {
+            acc[t.entity] = (acc[t.entity] || 0) + 1;
+            return acc;
+        }, {});
+
+        const topEntities = Object.keys(counts)
+            .sort((a, b) => counts[b] - counts[a])
+            .slice(0, 15);
+
+        document.getElementById('entity-list').innerHTML = topEntities
+            .map(e => `<option value="${e}">`).join('');
+    } catch (e) { console.error("Entity Sync Failed"); }
+}
+
 document.getElementById('tx-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('submit-btn');
-    btn.innerText = "Securing Transaction...";
+    btn.innerText = "VERIFYING...";
     btn.disabled = true;
 
-    const category = document.getElementById('category').value;
-    const entity = document.getElementById('entity').value;
-
     const payload = {
+        date: document.getElementById('date').value,
+        category: document.getElementById('category').value,
+        subCategory: document.getElementById('sub-category').value,
         amount: parseFloat(document.getElementById('amount').value),
-        category: category,
-        entity: entity,
+        entity: document.getElementById('entity').value,
+        mode: document.getElementById('mode').value,
         notes: document.getElementById('notes').value,
-        // LOGIC: If Category is Family and Entity is Mom/Dad, it's a Credit (Borrowing)
-        // Otherwise, if Category is Salary, it's a Credit. All else are Debits.
-        isCredit: category === 'Salary' || (category === 'Family Support' && (entity.includes('Mom') || entity.includes('Dad'))),
         symbol: document.getElementById('symbol').value,
         units: parseFloat(document.getElementById('units').value || 0)
     };
@@ -61,15 +73,9 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
             method: 'POST',
             body: JSON.stringify(payload)
         });
-        if (res.ok) {
-            window.location.href = '../dashboard/index.html';
-        }
+        if (res.ok) window.location.href = '../dashboard/index.html';
     } catch (err) {
-        alert("Integrity Failure: Check Network");
-        btn.innerText = "Record Transaction";
+        btn.innerText = "ERROR - RETRY";
         btn.disabled = false;
     }
 });
-
-// Initialize
-document.addEventListener('DOMContentLoaded', populateEntityDropdown);
