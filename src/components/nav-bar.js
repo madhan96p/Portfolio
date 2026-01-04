@@ -1,97 +1,47 @@
-// 1. CONFIGURE TAILWIND (Maps CSS Variables to Utility Classes)
-tailwind.config = {
-  darkMode: "class",
-  theme: {
-    extend: {
-      colors: {
-        // Map custom names to our CSS variables
-        app: {
-          bg: "var(--bg-main)",
-          card: "var(--bg-card)",
-          input: "var(--bg-input)",
-          border: "var(--border-main)",
-          borderSub: "var(--border-sub)",
-          text: "var(--text-main)",
-          sub: "var(--text-sub)",
-          muted: "var(--text-muted)",
-          accent: "var(--accent-blue)",
-        },
-      },
-    },
-  },
-};
-
-// 2. THEME MANAGER
-const ThemeManager = {
+export const NavBar = {
   init() {
-    const savedTheme = localStorage.getItem("theme") || "dark";
+    const navContainer = document.getElementById("nav-container");
+    if (!navContainer) return;
 
-    // Set Attribute
-    document.documentElement.setAttribute("data-theme", savedTheme);
+    // Detect current page
+    const path = window.location.pathname;
+    const isDashboard = path.includes("dashboard");
+    const isHistory = path.includes("history");
+    const isPortfolio = path.includes("portfolio");
+    const isAdd = path.includes("add-transaction");
 
-    // Set Class
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    // HTML Template
+    navContainer.innerHTML = `
+      <nav class="fixed bottom-0 w-full bg-app-card/90 border-t border-app-border backdrop-blur-lg flex justify-around p-4 z-50">
+        <a href="../dashboard/index.html" class="flex flex-col items-center ${
+          isDashboard ? "text-amber-500" : "text-app-muted"
+        } transition-colors">
+            <i class="fas fa-chart-pie text-xl mb-1"></i>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Dash</span>
+        </a>
+        
+        <a href="../add-transaction/index.html" class="flex flex-col items-center ${
+          isAdd ? "text-amber-500" : "text-app-muted"
+        } transition-colors">
+            <div class="bg-app-accent/10 p-2 rounded-full -mt-6 border border-app-accent/50 shadow-lg shadow-app-accent/20">
+                <i class="fas fa-plus text-app-accent text-xl"></i>
+            </div>
+        </a>
 
-    this.renderToggle();
-  },
+        <a href="../history/index.html" class="flex flex-col items-center ${
+          isHistory ? "text-amber-500" : "text-app-muted"
+        } transition-colors">
+             <i class="fas fa-list text-xl mb-1"></i>
+            <span class="text-[10px] font-bold uppercase tracking-wide">History</span>
+        </a>
 
-  toggle() {
-    const current = document.documentElement.getAttribute("data-theme");
-    const next = current === "dark" ? "light" : "dark";
-
-    // Update Attribute for CSS Variables
-    document.documentElement.setAttribute("data-theme", next);
-
-    // Update Class for Tailwind Dark Mode
-    if (next === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
-    localStorage.setItem("theme", next);
-    this.updateIcon(next);
-
-    // Dispatch a global event so other components (like charts) can react
-    window.dispatchEvent(new Event("theme-changed"));
-  },
-
-  // 3. AUTO-INJECT TOGGLE BUTTON
-  // Finds an element with class `.relative` inside the header to use as an anchor.
-  renderToggle() {
-    const header = document.querySelector("header .relative"); // Finds an anchor container
-    if (!header) return;
-
-    // Create Button
-    const btn = document.createElement("button");
-    btn.className =
-      "absolute right-0 top-3.5 mr-[-40px] text-app-sub hover:text-app-accent transition-colors";
-    btn.onclick = () => this.toggle();
-    btn.id = "theme-toggle-btn";
-
-    // Initial Icon
-    const current = localStorage.getItem("theme") || "dark";
-    btn.innerHTML =
-      current === "dark"
-        ? '<i class="fas fa-sun"></i>'
-        : '<i class="fas fa-moon"></i>';
-
-    header.parentElement.appendChild(btn); // Add to header
-  },
-
-  updateIcon(theme) {
-    const btn = document.getElementById("theme-toggle-btn");
-    if (btn)
-      btn.innerHTML =
-        theme === "dark"
-          ? '<i class="fas fa-sun"></i>'
-          : '<i class="fas fa-moon"></i>';
+        <a href="../portfolio/index.html" class="flex flex-col items-center ${
+          isPortfolio ? "text-amber-500" : "text-app-muted"
+        } transition-colors">
+            <i class="fas fa-wallet text-xl mb-1"></i>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Wealth</span>
+        </a>
+      </nav>
+    `;
   },
 };
-
-// Run immediately
-ThemeManager.init();
