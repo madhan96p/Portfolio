@@ -203,11 +203,11 @@ function renderList(reset = false) {
       const dayTotal = dayTxns.reduce((sum, t) => sum + (t.amountDR || 0), 0);
 
       let html = `
-            <div class="sticky top-[72px] bg-slate-950/90 backdrop-blur z-10 py-2 px-2 flex justify-between items-end border-b border-slate-900 mb-2">
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${new Date(
+            <div class="sticky top-[72px] bg-app-bg/90 backdrop-blur z-10 py-2 px-2 flex justify-between items-end border-b border-app-border mb-2">
+                <span class="text-[11px] font-bold text-app-sub uppercase tracking-widest">${new Date(
                   date
                 ).toDateString()}</span>
-                <span class="text-[10px] text-slate-500 font-mono">Total: -₹${dayTotal.toLocaleString(
+                <span class="text-[10px] text-app-muted font-mono">Total: -₹${dayTotal.toLocaleString(
                   "en-IN"
                 )}</span>
             </div>
@@ -221,8 +221,8 @@ function renderList(reset = false) {
           const prefix = isDebit ? "-" : "+";
 
           return `
-                <div class="flex items-center gap-3 p-3 mb-2 bg-slate-900 border border-slate-800 rounded-xl">
-                    <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0">
+                <div class="flex items-center gap-3 p-3 mb-2 bg-app-card border border-app-border rounded-xl">
+                    <div class="w-8 h-8 rounded-full bg-app-input border border-app-border flex items-center justify-center shrink-0">
                         <i class="fas ${getIcon(
                           t.category,
                           t.entity
@@ -230,14 +230,14 @@ function renderList(reset = false) {
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between">
-                            <h3 class="text-xs font-bold text-slate-200 truncate">${
+                            <h3 class="text-xs font-bold text-app-text truncate">${
                               t.entity
                             }</h3>
                             <span class="${colorClass} text-xs font-bold">${prefix}₹${amount.toLocaleString(
             "en-IN"
           )}</span>
                         </div>
-                        <div class="text-[10px] text-slate-500 truncate">${
+                        <div class="text-[10px] text-app-muted truncate">${
                           t.notes || t.category
                         }</div>
                     </div>
@@ -269,11 +269,11 @@ function initListeners() {
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       document.querySelectorAll(".filter-btn").forEach((b) => {
-        b.classList.remove("bg-blue-600", "text-slate-50", "active");
-        b.classList.add("bg-slate-900", "text-slate-400");
+        b.classList.remove("bg-app-accent", "text-app-text", "active");
+        b.classList.add("bg-app-card", "text-app-sub");
       });
-      e.target.classList.remove("bg-slate-900", "text-slate-400");
-      e.target.classList.add("bg-blue-600", "text-slate-50", "active");
+      e.target.classList.remove("bg-app-card", "text-app-sub");
+      e.target.classList.add("bg-app-accent", "text-app-text", "active");
       state.filter = e.target.dataset.filter;
       applyFilters();
     });
@@ -282,11 +282,11 @@ function initListeners() {
   document.querySelectorAll(".time-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       document.querySelectorAll(".time-btn").forEach((b) => {
-        b.classList.remove("bg-blue-600", "text-white");
-        b.classList.add("text-slate-400");
+        b.classList.remove("bg-app-accent", "text-app-text");
+        b.classList.add("text-app-sub");
       });
-      e.target.classList.remove("text-slate-400");
-      e.target.classList.add("bg-blue-600", "text-white", "rounded");
+      e.target.classList.remove("text-app-sub");
+      e.target.classList.add("bg-app-accent", "text-app-text", "rounded");
       state.timeFrame = e.target.dataset.time;
       applyFilters();
     });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-slate-950 text-slate-50">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -11,91 +11,82 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../../assets/css/common.css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      /* Hide scrollbar for Chrome, Safari and Opera */
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      /* Hide scrollbar for IE, Edge and Firefox */
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-    </style>
+    <script src="../../assets/js/common.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
-  <body class="pb-24 select-none touch-pan-y">
+  <body class="pb-24 select-none touch-pan-y bg-app-bg text-app-text">
     <header
-      class="p-4 border-b border-slate-800 bg-slate-900/80 sticky top-0 backdrop-blur-md z-50"
+      class="p-4 border-b border-app-border bg-app-card/80 sticky top-0 backdrop-blur-md z-50"
     >
       <div class="flex justify-between items-center mb-4">
-        <h1 class="text-lg font-black tracking-tighter italic text-slate-200">
-          <i class="fas fa-chart-pie mr-2 text-blue-500"></i>LEDGER_AI
+        <h1 class="text-lg font-black tracking-tighter italic text-app-text">
+          <i class="fas fa-chart-pie mr-2 text-app-accent"></i>LEDGER_AI
         </h1>
         <span
           id="net-position"
-          class="text-[10px] bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono text-slate-400"
+          class="text-[10px] bg-app-card px-2 py-1 rounded border border-app-borderSub font-mono text-app-sub"
           >Loading...</span
         >
       </div>
 
       <div class="relative">
         <i
-          class="fas fa-search absolute left-3 top-3.5 text-slate-500 text-xs"
+          class="fas fa-search absolute left-3 top-3.5 text-app-muted text-xs"
         ></i>
         <input
           type="text"
           id="ledger-search"
           placeholder="Search Entity..."
-          class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-slate-600"
+          class="w-full bg-app-input border border-app-border rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-app-accent transition-colors placeholder-app-muted"
         />
       </div>
     </header>
 
     <main class="p-4 space-y-6">
       <div
-        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg overflow-hidden"
+        class="bg-app-card border border-app-border rounded-2xl p-4 shadow-lg overflow-hidden"
       >
         <div
-          class="flex justify-between items-end mb-4 border-b border-slate-800 pb-2"
+          class="flex justify-between items-end mb-4 border-b border-app-border pb-2"
         >
           <div>
             <h2
-              class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+              class="text-[10px] font-bold text-app-sub uppercase tracking-widest mb-1"
             >
               Total Expense
             </h2>
             <div
               id="chart-total-expense"
-              class="text-xl font-black text-slate-100"
+              class="text-xl font-black text-app-text"
             >
               ₹0
             </div>
           </div>
           <div
-            class="flex bg-slate-950 rounded-lg p-0.5 border border-slate-800"
+            class="flex bg-app-input rounded-lg p-0.5 border border-app-border"
           >
             <button
-              class="time-btn active px-2 py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white"
+              class="time-btn active px-2 py-1 text-[9px] font-bold rounded text-app-sub hover:text-app-text"
               data-time="1D"
             >
               1D
             </button>
             <button
-              class="time-btn px-2 py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white"
+              class="time-btn px-2 py-1 text-[9px] font-bold rounded text-app-sub hover:text-app-text"
               data-time="1W"
             >
               1W
             </button>
             <button
-              class="time-btn px-2 py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white"
+              class="time-btn px-2 py-1 text-[9px] font-bold rounded text-app-sub hover:text-app-text"
               data-time="1M"
             >
               1M
             </button>
             <button
-              class="time-btn px-2 py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white"
+              class="time-btn px-2 py-1 text-[9px] font-bold rounded text-app-sub hover:text-app-text"
               data-time="ALL"
             >
               ALL
@@ -111,7 +102,7 @@
               <canvas id="expenseChart"></canvas>
             </div>
             <span
-              class="text-[9px] text-slate-500 mt-2 uppercase tracking-widest"
+              class="text-[9px] text-app-muted mt-2 uppercase tracking-widest"
               >● Category Breakdown</span
             >
           </div>
@@ -121,39 +112,39 @@
               <canvas id="trendChart"></canvas>
             </div>
             <span
-              class="text-[9px] text-slate-500 mt-2 uppercase tracking-widest"
+              class="text-[9px] text-app-muted mt-2 uppercase tracking-widest"
               >● Expense Trend</span
             >
           </div>
         </div>
 
         <div class="flex justify-center gap-1 mt-1">
-          <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-          <div class="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-app-accent"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-app-borderSub"></div>
         </div>
       </div>
 
       <div class="flex space-x-2 overflow-x-auto pb-1 no-scrollbar">
         <button
-          class="filter-btn active bg-blue-600 text-slate-50 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
+          class="filter-btn active bg-app-accent text-app-text text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
           data-filter="All"
         >
           All
         </button>
         <button
-          class="filter-btn bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
+          class="filter-btn bg-app-card border border-app-border text-app-sub text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
           data-filter="Personal Spending"
         >
           Lifestyle
         </button>
         <button
-          class="filter-btn bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
+          class="filter-btn bg-app-card border border-app-border text-app-sub text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
           data-filter="Family Support"
         >
           Family
         </button>
         <button
-          class="filter-btn bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
+          class="filter-btn bg-app-card border border-app-border text-app-sub text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all"
           data-filter="Share Investment"
         >
           Assets
@@ -164,29 +155,29 @@
 
       <button
         id="load-more-btn"
-        class="w-full py-3 bg-slate-900 border border-slate-800 text-blue-400 font-bold text-xs rounded-xl hover:bg-slate-800 transition hidden"
+        class="w-full py-3 bg-app-card border border-app-border text-app-accent font-bold text-xs rounded-xl hover:bg-app-border transition hidden"
       >
         Load More Transactions
       </button>
     </main>
 
     <nav
-      class="fixed bottom-0 w-full bg-slate-900/95 border-t border-slate-800 backdrop-blur-lg flex justify-around p-4 z-50"
+      class="fixed bottom-0 w-full bg-app-card/95 border-t border-app-border backdrop-blur-lg flex justify-around p-4 z-50"
     >
       <a
         href="../dashboard/index.html"
-        class="flex flex-col items-center text-slate-500 hover:text-blue-400 transition"
+        class="flex flex-col items-center text-app-muted hover:text-app-accent transition"
       >
         <i class="fas fa-th-large text-lg mb-1"></i>
         <span class="text-[10px] font-bold">Dash</span>
       </a>
-      <a href="#" class="flex flex-col items-center text-blue-500">
+      <a href="#" class="flex flex-col items-center text-app-accent">
         <i class="fas fa-list-ul text-lg mb-1"></i>
         <span class="text-[10px] font-bold">Ledger</span>
       </a>
       <a
         href="../portfolio/index.html"
-        class="flex flex-col items-center text-slate-500 hover:text-blue-400 transition"
+        class="flex flex-col items-center text-app-muted hover:text-app-accent transition"
       >
         <i class="fas fa-chart-line text-lg mb-1"></i>
         <span class="text-[10px] font-bold">Wealth</span>
