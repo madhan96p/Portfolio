@@ -146,38 +146,11 @@
       </section>
     </main>
 
-    <button
-      onclick="window.location.href='../add-transaction/index.html'"
-      class="fixed bottom-28 right-6 w-14 h-14 bg-app-accent rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center text-white text-2xl active:scale-90 transition-all z-40 border-4 border-app-bg"
-    >
-      <span class="mb-1">+</span>
-    </button>
-
-    <nav
-      class="fixed bottom-0 w-full bg-app-card/90 border-t border-app-border backdrop-blur-lg flex justify-around p-4 z-50"
-    >
-      <a href="#" class="flex flex-col items-center text-app-accent">
-        <span class="text-[10px] font-black uppercase tracking-widest"
-          >Dash</span
-        >
-      </a>
-      <a
-        href="../history/index.html"
-        class="flex flex-col items-center text-app-muted"
-      >
-        <span class="text-[10px] font-black uppercase tracking-widest"
-          >Ledger</span
-        >
-      </a>
-      <a
-        href="../portfolio/index.html"
-        class="flex flex-col items-center text-app-muted"
-      >
-        <span class="text-[10px] font-black uppercase tracking-widest"
-          >Wealth</span
-        >
-      </a>
-    </nav>
+    <div id="nav-container"></div>
+    <script type="module">
+        import { NavBar } from '../../components/nav-bar.js';
+        document.addEventListener('DOMContentLoaded', NavBar.init);
+    </script>
 
     <script src="dashboard.js" type="module"></script>
   </body>

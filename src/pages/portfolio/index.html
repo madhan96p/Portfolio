@@ -81,25 +81,11 @@
       </div>
     </main>
 
-    <nav
-      class="fixed bottom-0 w-full bg-app-card/90 border-t border-app-border backdrop-blur-lg flex justify-around p-4 z-50"
-    >
-      <a
-        href="../dashboard/index.html"
-        class="flex flex-col items-center text-app-muted"
-      >
-        <span class="text-xs font-bold">Dash</span>
-      </a>
-      <a
-        href="../history/index.html"
-        class="flex flex-col items-center text-app-muted"
-      >
-        <span class="text-xs font-bold">Ledger</span>
-      </a>
-      <a href="#" class="flex flex-col items-center text-amber-500">
-        <span class="text-xs font-bold">Wealth</span>
-      </a>
-    </nav>
+    <div id="nav-container"></div>
+    <script type="module">
+        import { NavBar } from '../../components/nav-bar.js';
+        document.addEventListener('DOMContentLoaded', NavBar.init);
+    </script>
 
     <script src="portfolio.js" type="module"></script>
   </body>

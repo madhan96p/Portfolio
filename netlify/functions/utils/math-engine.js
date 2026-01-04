@@ -40,8 +40,8 @@ const calculateFinancials = (config, transactions, portfolio) => {
 
     // 4. Portfolio Integrity
     const totalPortfolioValue = portfolio.reduce((sum, p) => {
-        const price = parseFloat(p['Current Price']) || parseFloat(p['Avg. Buy Price']) || 0;
-        return sum + (parseFloat(p.Units) * price);
+        const price = parseFloat(p.currentPrice) || parseFloat(p.buyPrice) || 0;
+        return sum + (parseFloat(p.units) * price);
     }, 0);
 
     return {

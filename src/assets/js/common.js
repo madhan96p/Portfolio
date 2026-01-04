@@ -25,14 +25,34 @@ tailwind.config = {
 const ThemeManager = {
     init() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
+
+        // Set Attribute
         document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Set Class
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         this.renderToggle();
     },
 
     toggle() {
         const current = document.documentElement.getAttribute('data-theme');
         const next = current === 'dark' ? 'light' : 'dark';
+
+        // Update Attribute for CSS Variables
         document.documentElement.setAttribute('data-theme', next);
+
+        // Update Class for Tailwind Dark Mode
+        if (next === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         localStorage.setItem('theme', next);
         this.updateIcon(next);
 
