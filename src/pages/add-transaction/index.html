@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-slate-950 text-slate-50">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Precision Entry | v2.0</title>
+    <title>Precision Entry | CFO Cockpit</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -18,137 +18,212 @@
       /* Custom date picker styling for dark mode */
       input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(1);
+        cursor: pointer;
+      }
+      [data-theme="light"]
+        input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: none;
       }
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
     </style>
   </head>
-  <body class="p-4 max-w-md mx-auto bg-app-bg text-app-text">
-    <header class="flex justify-between items-center mb-6">
-      <button onclick="history.back()" class="text-slate-500 font-bold text-sm">
-        CANCEL
+  <body class="p-4 max-w-md mx-auto bg-app-bg text-app-text min-h-screen pb-24">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8 pt-2">
+      <button
+        onclick="history.back()"
+        class="text-app-muted hover:text-app-text font-bold text-xs uppercase tracking-widest transition-colors flex items-center gap-2"
+      >
+        <i class="fas fa-arrow-left"></i> Cancel
       </button>
-      <div class="relative">
+      <h1 class="text-sm font-black uppercase tracking-[0.2em] text-app-sub">
+        New Entry
+      </h1>
+      <div class="relative group">
         <input
           type="date"
           id="date"
-          class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono focus:outline-none focus:border-blue-500"
+          class="bg-app-card border border-app-border rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-app-accent focus:ring-1 focus:ring-app-accent transition-all cursor-pointer shadow-sm group-hover:border-app-sub"
         />
       </div>
     </header>
 
-    <form id="tx-form" class="space-y-5">
-      <div class="text-center py-2">
-        <input
-          type="number"
-          id="amount"
-          placeholder="₹0.00"
-          step="0.01"
-          required
-          class="bg-transparent text-6xl font-black text-center w-full focus:outline-none text-blue-500 placeholder-slate-800"
-        />
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <div class="space-y-1">
-          <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
-            >Category</label
-          >
-          <select
-            id="category"
-            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none"
-          >
-            <option value="Personal Spending">Lifestyle</option>
-            <option value="Household Spending">Household</option>
-            <option value="Family Support">Family (60%)</option>
-            <option value="Share Investment">Assets</option>
-            <option value="Salary">Salary Credit</option>
-          </select>
-        </div>
-        <div class="space-y-1">
-          <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
-            >Sub-Category</label
-          >
-          <select
-            id="sub-category"
-            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none"
-          ></select>
-        </div>
-      </div>
-
-      <div class="space-y-1">
-        <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
-          >Entity / Payee</label
+    <form id="tx-form" class="space-y-6">
+      <!-- Amount Display (Hero Input) -->
+      <div
+        class="text-center py-6 bg-gradient-to-b from-app-card to-app-bg rounded-3xl border border-app-border shadow-lg relative overflow-hidden group"
+      >
+        <div
+          class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-app-accent to-transparent opacity-50"
+        ></div>
+        <label
+          for="amount"
+          class="block text-[10px] uppercase font-bold text-app-sub tracking-widest mb-2"
+          >Transaction Amount</label
         >
-        <input
-          type="text"
-          id="entity"
-          list="entity-list"
-          required
-          placeholder="Search Payee..."
-          class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm focus:border-blue-500 outline-none"
-        />
-        <datalist id="entity-list"></datalist>
+        <div class="relative inline-block">
+          <span
+            class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full text-2xl font-bold text-app-muted opacity-50 pr-2"
+            >₹</span
+          >
+          <input
+            type="number"
+            id="amount"
+            placeholder="0.00"
+            step="0.01"
+            required
+            class="bg-transparent text-5xl font-black text-center w-48 focus:outline-none text-app-accent placeholder-app-borderSub focus:w-64 transition-all duration-300"
+          />
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
-        <div class="space-y-1">
-          <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
-            >Payment Mode</label
+      <!-- Main Input Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Category -->
+        <div class="space-y-1.5">
+          <label
+            class="text-[10px] uppercase text-app-sub font-bold ml-1 tracking-wider"
+            ><i class="fas fa-layer-group mr-1 opacity-70"></i> Category</label
           >
-          <select
-            id="mode"
-            class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm appearance-none"
-          >
-            <option value="UPI">UPI</option>
-            <option value="Cash">Cash</option>
-            <option value="Card">Bank/Card</option>
-          </select>
+          <div class="relative">
+            <select
+              id="category"
+              class="w-full bg-app-card border border-app-border rounded-xl px-4 py-3.5 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none shadow-sm transition-all text-app-text"
+            >
+              <option value="Personal Spending">Lifestyle</option>
+              <option value="Household Spending">Household</option>
+              <option value="Family Support">Family (60%)</option>
+              <option value="Share Investment">Assets</option>
+              <option value="Salary">Salary Credit</option>
+            </select>
+            <i
+              class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"
+            ></i>
+          </div>
         </div>
-        <div id="share-units-box" class="space-y-1 hidden">
-          <label class="text-[10px] uppercase text-blue-500 font-bold ml-1"
+
+        <!-- Sub-Category -->
+        <div class="space-y-1.5">
+          <label
+            class="text-[10px] uppercase text-app-sub font-bold ml-1 tracking-wider"
+            ><i class="fas fa-tags mr-1 opacity-70"></i> Type</label
+          >
+          <div class="relative">
+            <select
+              id="sub-category"
+              class="w-full bg-app-card border border-app-border rounded-xl px-4 py-3.5 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none shadow-sm transition-all text-app-text"
+            ></select>
+            <i
+              class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"
+            ></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entity Input -->
+      <div class="space-y-1.5">
+        <label
+          class="text-[10px] uppercase text-app-sub font-bold ml-1 tracking-wider"
+          ><i class="fas fa-store mr-1 opacity-70"></i> Payee / Entity</label
+        >
+        <div class="relative">
+          <i
+            class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-app-muted text-sm"
+          ></i>
+          <input
+            type="text"
+            id="entity"
+            list="entity-list"
+            required
+            placeholder="Search or enter name..."
+            class="w-full bg-app-card border border-app-border rounded-xl pl-10 pr-4 py-3.5 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none shadow-sm transition-all text-app-text placeholder-app-muted"
+          />
+          <datalist id="entity-list"></datalist>
+        </div>
+      </div>
+
+      <!-- Mode & Dynamic Fields -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="space-y-1.5">
+          <label
+            class="text-[10px] uppercase text-app-sub font-bold ml-1 tracking-wider"
+            ><i class="fas fa-credit-card mr-1 opacity-70"></i> Mode</label
+          >
+          <div class="relative">
+            <select
+              id="mode"
+              class="w-full bg-app-card border border-app-border rounded-xl px-4 py-3.5 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none shadow-sm transition-all text-app-text"
+            >
+              <option value="UPI">UPI</option>
+              <option value="Cash">Cash</option>
+              <option value="Card">Bank/Card</option>
+            </select>
+            <i
+              class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"
+            ></i>
+          </div>
+        </div>
+
+        <!-- Hidden Units Field -->
+        <div id="share-units-box" class="space-y-1.5 hidden animate-fade-in-up">
+          <label
+            class="text-[10px] uppercase text-app-accent font-bold ml-1 tracking-wider"
             >Units</label
           >
           <input
             type="number"
             id="units"
             placeholder="0"
-            class="w-full bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-sm"
+            class="w-full bg-app-accent/10 border border-app-accent/30 rounded-xl px-4 py-3.5 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none shadow-sm transition-all text-app-text placeholder-app-accent/50"
           />
         </div>
       </div>
 
-      <div id="share-symbol-box" class="space-y-1 hidden">
-        <label class="text-[10px] uppercase text-blue-500 font-bold ml-1"
+      <!-- Hidden Symbol Field -->
+      <div id="share-symbol-box" class="space-y-1.5 hidden animate-fade-in-up">
+        <label
+          class="text-[10px] uppercase text-app-accent font-bold ml-1 tracking-wider"
           >Share Symbol</label
         >
-        <input
-          type="text"
-          id="symbol"
-          placeholder="NSE:SYMBOL"
-          class="w-full bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-sm"
-        />
+        <div class="relative">
+          <i
+            class="fas fa-chart-line absolute left-4 top-1/2 -translate-y-1/2 text-app-accent/70 text-sm"
+          ></i>
+          <input
+            type="text"
+            id="symbol"
+            placeholder="NSE:SYMBOL"
+            class="w-full bg-app-accent/10 border border-app-accent/30 rounded-xl pl-10 pr-4 py-3.5 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none shadow-sm transition-all text-app-text placeholder-app-accent/50 font-mono uppercase"
+          />
+        </div>
       </div>
 
-      <div class="space-y-1">
-        <label class="text-[10px] uppercase text-slate-500 font-bold ml-1"
-          >Transaction Notes</label
+      <!-- Notes -->
+      <div class="space-y-1.5">
+        <label
+          class="text-[10px] uppercase text-app-sub font-bold ml-1 tracking-wider"
+          ><i class="fas fa-align-left mr-1 opacity-70"></i> Notes</label
         >
         <input
           type="text"
           id="notes"
-          placeholder="Add context..."
-          class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm"
+          placeholder="Add optional details..."
+          class="w-full bg-app-card border border-app-border rounded-xl px-4 py-3.5 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none shadow-sm transition-all text-app-text placeholder-app-muted"
         />
       </div>
 
+      <!-- Submit Button -->
       <button
         type="submit"
         id="submit-btn"
-        class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+        class="w-full bg-app-accent hover:opacity-90 py-4 rounded-2xl font-bold text-base text-white shadow-lg shadow-app-accent/25 transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-2 group"
       >
-        SECURE LOG
+        <span>SECURE LOG</span>
+        <i
+          class="fas fa-lock text-xs opacity-70 group-hover:opacity-100 transition-opacity"
+        ></i>
       </button>
     </form>
 
@@ -158,5 +233,22 @@
       document.addEventListener("DOMContentLoaded", NavBar.init);
     </script>
     <script src="add.js" type="module"></script>
+
+    <!-- Animation Utility -->
+    <style>
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-up {
+        animation: fadeInUp 0.3s ease-out forwards;
+      }
+    </style>
   </body>
 </html>

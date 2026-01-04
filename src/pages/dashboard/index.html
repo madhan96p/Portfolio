@@ -118,34 +118,227 @@
         </div>
       </div>
 
-      <section class="space-y-4">
-        <div class="flex justify-between items-center px-1">
+      <section class="space-y-6 pt-2">
+        <div
+          class="bg-app-card border border-app-border rounded-3xl p-5 shadow-sm"
+        >
           <h3
-            class="text-[11px] font-black uppercase tracking-[0.2em] text-app-muted"
+            class="text-[11px] font-black uppercase tracking-widest text-app-sub mb-4"
           >
-            Recent Pulse
+            Your Monthly Story
           </h3>
-          <a
-            href="../history/index.html"
-            class="text-[11px] text-app-accent font-black uppercase tracking-tighter"
-          >
-            Full Ledger →
-          </a>
-        </div>
-
-        <div id="recent-transactions" class="space-y-2">
-          <div
-            class="animate-pulse flex space-x-4 bg-app-card border border-app-border p-4 rounded-xl"
-          >
-            <div class="flex-1 space-y-2 py-1">
-              <div class="h-2 bg-app-bg rounded w-1/4"></div>
-              <div class="h-2 bg-app-bg rounded w-3/4"></div>
+          <div class="grid grid-cols-3 gap-2">
+            <div
+              class="bg-app-bg/50 p-3 rounded-2xl border border-app-border text-center"
+            >
+              <p class="text-[8px] uppercase text-app-muted font-bold mb-1">
+                Opening
+              </p>
+              <h4 class="text-sm font-black text-app-text" id="opening-balance">
+                ₹0
+              </h4>
+            </div>
+            <div
+              class="bg-app-bg/50 p-3 rounded-2xl border border-app-border text-center"
+            >
+              <p class="text-[8px] uppercase text-app-muted font-bold mb-1">
+                Salary
+              </p>
+              <h4
+                class="text-sm font-black text-emerald-500"
+                id="salary-received"
+              >
+                ₹0
+              </h4>
+            </div>
+            <div
+              class="bg-app-bg/50 p-3 rounded-2xl border border-app-border text-center"
+            >
+              <p class="text-[8px] uppercase text-app-muted font-bold mb-1">
+                Other Inc
+              </p>
+              <h4
+                class="text-sm font-black text-blue-500"
+                id="other-income-received"
+              >
+                ₹0
+              </h4>
             </div>
           </div>
         </div>
-      </section>
-    </main>
 
+        <div class="space-y-3">
+          <h2
+            class="text-[11px] font-black uppercase tracking-widest text-app-sub px-1"
+          >
+            Your 60/40 Plan
+          </h2>
+
+          <div class="bg-app-card border border-app-border p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-home text-app-accent"></i>
+                <span class="text-xs font-bold text-app-text"
+                  >Family (60%)</span
+                >
+              </div>
+              <span
+                id="family-pending"
+                class="text-[10px] font-bold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded"
+                >Pending: ₹0</span
+              >
+            </div>
+            <div class="w-full bg-app-bg h-2 rounded-full overflow-hidden mb-2">
+              <div
+                id="family-progress"
+                class="bg-app-accent h-full transition-all duration-700"
+                style="width: 0%"
+              ></div>
+            </div>
+            <div
+              class="text-[9px] text-app-muted font-medium"
+              id="family-summary"
+            >
+              Sent: ₹0 / Goal: ₹0
+            </div>
+          </div>
+
+          <div class="bg-app-card border border-app-border p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-chart-line text-amber-500"></i>
+                <span class="text-xs font-bold text-app-text"
+                  >Shares (Asset In)</span
+                >
+              </div>
+              <span
+                id="shares-pending"
+                class="text-[10px] font-bold text-app-muted"
+                >Goal: 25%</span
+              >
+            </div>
+            <div class="w-full bg-app-bg h-2 rounded-full overflow-hidden mb-2">
+              <div
+                id="shares-progress"
+                class="bg-amber-500 h-full transition-all duration-700"
+                style="width: 0%"
+              ></div>
+            </div>
+            <div
+              class="text-[9px] text-app-muted font-medium"
+              id="shares-summary"
+            >
+              Invested: ₹0 / Goal: ₹0
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div
+            class="bg-app-card border border-app-border p-4 rounded-2xl shadow-sm"
+          >
+            <p
+              class="text-[9px] uppercase text-app-muted font-bold tracking-tighter"
+            >
+              Wallet Budget
+            </p>
+            <h3 class="text-lg font-black text-app-text" id="total-available">
+              ₹0.00
+            </h3>
+          </div>
+          <div
+            class="bg-app-card border border-app-border p-4 rounded-2xl shadow-sm"
+          >
+            <p
+              class="text-[9px] uppercase text-app-muted font-bold tracking-tighter"
+            >
+              Spent So Far
+            </p>
+            <h3 class="text-lg font-black text-rose-500" id="total-spent">
+              ₹0.00
+            </h3>
+          </div>
+        </div>
+      </section>
+
+      <button
+        id="breakdown-fab"
+        class="fixed bottom-28 left-6 w-12 h-12 bg-app-card border border-app-border rounded-xl flex items-center justify-center text-app-sub shadow-lg active:scale-90 transition-all z-40"
+      >
+        <i class="fas fa-calculator"></i>
+      </button>
+    </main>
+    <div
+      id="breakdown-modal"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300"
+    >
+      <div
+        class="bg-app-card border border-app-border w-full max-w-sm rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-300"
+        id="modal-content"
+      >
+        <h3
+          class="text-lg font-black text-app-text mb-4 flex items-center gap-2"
+        >
+          <i class="fas fa-calculator text-app-accent"></i>
+          Cycle Breakdown
+        </h3>
+
+        <div class="space-y-4 text-sm font-medium">
+          <div class="flex justify-between border-b border-app-border pb-2">
+            <span class="text-app-muted">Cycle Start:</span>
+            <span id="bd-start-date" class="text-app-text font-mono">N/A</span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-app-muted">1. Rollover (Opening):</span>
+              <span id="bd-ob" class="text-app-text">₹0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-app-muted">2. Salary Base:</span>
+              <span id="bd-salary-base" class="text-emerald-500">₹0</span>
+            </div>
+            <div
+              class="flex justify-between font-black text-app-accent pt-2 border-t border-app-border"
+            >
+              <span>Total Pool:</span>
+              <span id="bd-total-money">₹0</span>
+            </div>
+          </div>
+
+          <hr class="border-app-border" />
+
+          <div class="space-y-2 text-xs">
+            <p class="text-app-sub font-bold uppercase tracking-tighter">
+              Allocation Strategy:
+            </p>
+            <div class="flex justify-between italic">
+              <span>Family Goal (60%):</span>
+              <span id="bd-family-goal">₹0</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Shares Goal (10%):</span>
+              <span id="bd-shares-goal">₹0</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Savings Goal (10%):</span>
+              <span id="bd-savings-goal">₹0</span>
+            </div>
+            <div class="flex justify-between font-bold text-app-text">
+              <span>Wallet Budget (20%):</span>
+              <span id="bd-wallet-goal">₹0</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          id="close-breakdown-modal"
+          class="w-full mt-6 bg-app-bg border border-app-border py-3 rounded-2xl text-app-text font-bold active:scale-95 transition-all"
+        >
+          Close Analysis
+        </button>
+      </div>
+    </div>
     <div id="nav-container"></div>
     <script type="module">
       import { NavBar } from "../../components/nav-bar.js";
