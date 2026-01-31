@@ -45,6 +45,14 @@ const calculateFinancials = (config, transactions, portfolio) => {
         t.Category === "Household Spending"
     )
     .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
+    
+  const savingsSpent = transactions
+    .filter((t) => t.Category === "Savings")
+    .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
+
+  const sharesSpent = transactions
+    .filter((t) => t.Category === "Shares")
+    .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
 
   // 4. Portfolio Integrity
   const totalPortfolioValue = portfolio.reduce((sum, p) => {
@@ -75,8 +83,8 @@ const calculateFinancials = (config, transactions, portfolio) => {
         spent: lifestyleSpent,
         remaining: walletGoal - lifestyleSpent,
       },
-      savings: { goal: savingsGoal },
-      shares: { goal: sharesGoal, currentPortfolio: totalPortfolioValue },
+      savings: { goal: savingsGoal, spent: savingsSpent },
+      shares: { goal: sharesGoal, spent: sharesSpent, currentPortfolio: totalPortfolioValue },
     },
   };
 };

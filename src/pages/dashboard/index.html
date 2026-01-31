@@ -231,6 +231,35 @@
               Invested: ₹0 / Goal: ₹0
             </div>
           </div>
+
+          <div class="bg-app-card border border-app-border p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-piggy-bank text-green-500"></i>
+                <span class="text-xs font-bold text-app-text"
+                  >Savings (Liquidity)</span
+                >
+              </div>
+              <span
+                id="savings-pending"
+                class="text-[10px] font-bold text-app-muted"
+                >Goal: 25%</span
+              >
+            </div>
+            <div class="w-full bg-app-bg h-2 rounded-full overflow-hidden mb-2">
+              <div
+                id="savings-progress"
+                class="bg-green-500 h-full transition-all duration-700"
+                style="width: 0%"
+              ></div>
+            </div>
+            <div
+              class="text-[9px] text-app-muted font-medium"
+              id="savings-summary"
+            >
+              Saved: ₹0 / Goal: ₹0
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -317,15 +346,15 @@
               <span id="bd-family-goal">₹0</span>
             </div>
             <div class="flex justify-between">
-              <span>Shares Goal (10%):</span>
+              <span>Shares Goal (25%):</span>
               <span id="bd-shares-goal">₹0</span>
             </div>
             <div class="flex justify-between">
-              <span>Savings Goal (10%):</span>
+              <span>Savings Goal (25%):</span>
               <span id="bd-savings-goal">₹0</span>
             </div>
             <div class="flex justify-between font-bold text-app-text">
-              <span>Wallet Budget (20%):</span>
+              <span>Wallet Budget (50%):</span>
               <span id="bd-wallet-goal">₹0</span>
             </div>
           </div>

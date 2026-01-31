@@ -92,11 +92,38 @@ function renderDashboard(data) {
   if (shrSummaryEl) {
     shrSummaryEl.innerText = `Invested: ₹${shareSpent.toLocaleString()} / Goal: ₹${shareGoal.toLocaleString()}`;
   }
+  
+  const shrPendingEl = document.getElementById("shares-pending");
+  if (shrPendingEl) {
+    shrPendingEl.innerText = `Goal: 25%`;
+  }
 
   const shrProgress = document.getElementById("shares-progress");
   if (shrProgress) {
     shrProgress.style.width = `${Math.min(
       (shareSpent / shareGoal) * 100,
+      100
+    )}%`;
+  }
+  
+  const sav = data.pool?.savings || {};
+  const savingsGoal = sav.goal ?? 1;
+  const savingsSpent = sav.spent ?? 0;
+  
+  const savSummaryEl = document.getElementById("savings-summary");
+  if (savSummaryEl) {
+	savSummaryEl.innerText = `Saved: ₹${savingsSpent.toLocaleString()} / Goal: ₹${savingsGoal.toLocaleString()}`;
+  }
+  
+  const savPendingEl = document.getElementById("savings-pending");
+  if (savPendingEl) {
+	savPendingEl.innerText = `Goal: 25%`;
+  }
+  
+  const savProgress = document.getElementById("savings-progress");
+  if (savProgress) {
+	savProgress.style.width = `${Math.min(
+      (savingsSpent / savingsGoal) * 100,
       100
     )}%`;
   }
