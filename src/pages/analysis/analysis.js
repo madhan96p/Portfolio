@@ -1,40 +1,6 @@
-import { apiClient } from "../../core/api-client.js";
-import { stateManager } from "../../core/state-manager.js";
+import { API } from "../../core/api-client.js";
 
 const spendingChartEl = document.getElementById("spending-chart");
-
-const MOCK_DATA = {
-  labels: [
-    "Equity",
-    "Misc",
-    "Transport",
-    "P2P Inflow",
-    "P2P Outflow",
-    "Food & Dining",
-    "Utilities",
-    "Groceries",
-    "Bank Charges",
-    "Salary",
-  ],
-  datasets: [
-    {
-      label: "Spending",
-      data: [1200, 1900, 300, 500, 200, 3000, 1500, 800, 100, 5000],
-      backgroundColor: [
-        "#FF6384",
-        "#36A2EB",
-        "#FFCE56",
-        "#4BC0C0",
-        "#9966FF",
-        "#FF9F40",
-        "#C9CBCF",
-        "#7C6E_F3",
-        "#00A8E0",
-        "#E0A000",
-      ],
-    },
-  ],
-};
 
 const renderChart = (data) => {
   new Chart(spendingChartEl, {
@@ -57,8 +23,64 @@ const renderChart = (data) => {
   });
 };
 
+const processTransactions = (transactions) => {
+  const spending = {};
+  const incomeCategories = [
+    "Salary",
+    "P2P Inflow",
+    "Gifts",
+    "Rewards",
+    "Refund",
+    "Primary Salary",
+    "Bonus/Transfer",
+    "Savings",
+  ];
+
+  transactions.forEach((transaction) => {
+    if (!incomeCategories.includes(transaction.Category)) {
+      if (spending[transaction.Category]) {
+        spending[transaction.Category] += transaction.Amount;
+      } else {
+        spending[transaction.Category] = transaction.Amount;
+      }
+    }
+  });
+
+  const labels = Object.keys(spending);
+  const data = Object.values(spending);
+
+  // Function to generate random colors
+  const generateColors = (numColors) => {
+    const colors = [];
+    for (let i = 0; i < numColors; i++) {
+      colors.push(`#${Math.floor(Math.random() * 16777215).toString(16)}`);
+    }
+    return colors;
+  };
+
+  const backgroundColors = generateColors(labels.length);
+
+  return {
+    labels: labels,
+    datasets: [
+      {
+        label: "Spending",
+        data: data,
+        backgroundColor: backgroundColors,
+      },
+    ],
+  };
+};
+
 const init = async () => {
-  renderChart(MOCK_DATA);
+  try {
+    const transactions = await API.getTransactions();
+    const chartData = processTransactions(transactions);
+    renderChart(chartData);
+  } catch (error) {
+    console.error("Error fetching or processing transactions:", error);
+    // Optionally, display an error message to the user
+  }
 };
 
 init();
