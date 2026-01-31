@@ -25,112 +25,114 @@
         }
     </style>
 </head>
-<body class="p-4 max-w-md mx-auto text-app-text min-h-screen pb-24">
+<body class="text-app-text min-h-screen pb-24">
 
-    <!-- Header -->
-    <header class="flex justify-between items-center mb-6 pt-2">
-        <button onclick="history.back()" class="text-app-muted hover:text-app-text transition-colors flex items-center gap-2">
-            <i class="fas fa-arrow-left"></i> Back
-        </button>
-        <h1 class="text-lg font-bold text-app-sub">New Transaction</h1>
-    </header>
+    <main class="p-4 max-w-md mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6 pt-2">
+            <button onclick="history.back()" class="text-app-muted hover:text-app-text transition-colors flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <h1 class="text-lg font-bold text-app-sub">New Transaction</h1>
+        </header>
 
-    <form id="tx-form" class="space-y-4">
+        <form id="tx-form" class="space-y-4">
 
-        <!-- Amount Input -->
-        <div class="glass-card p-6 rounded-2xl text-center">
-            <label for="amount" class="block text-sm font-medium text-app-sub mb-2">Amount</label>
-            <div class="relative">
-                <span class="absolute left-1/2 -translate-x-1/2 -top-2 text-2xl font-bold text-app-muted opacity-50">₹</span>
-                <input type="number" id="amount" placeholder="0.00" step="0.01" required
-                       class="bg-transparent text-6xl font-bold text-center w-full focus:outline-none text-app-accent placeholder-app-borderSub" />
-            </div>
-        </div>
-
-        <!-- Details Card -->
-        <div class="glass-card p-6 rounded-2xl space-y-4">
-            
-            <!-- Date -->
-            <div>
-                <label for="date" class="text-sm font-medium text-app-sub">Date</label>
-                <input type="date" id="date" class="mt-1 w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-app-accent focus:ring-1 focus:ring-app-accent">
+            <!-- Amount Input -->
+            <div class="glass-card p-6 rounded-2xl text-center">
+                <label for="amount" class="block text-sm font-medium text-app-sub mb-2">Amount</label>
+                <div class="relative">
+                    <span class="absolute left-1/2 -translate-x-1/2 -top-2 text-2xl font-bold text-app-muted opacity-50">₹</span>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" required
+                           class="bg-transparent text-6xl font-bold text-center w-full focus:outline-none text-app-accent placeholder-app-borderSub" />
+                </div>
             </div>
 
-            <!-- Category & Sub-Category -->
-            <div class="grid grid-cols-2 gap-4">
+            <!-- Details Card -->
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+                
+                <!-- Date -->
                 <div>
-                    <label for="category" class="text-sm font-medium text-app-sub">Category</label>
+                    <label for="date" class="text-sm font-medium text-app-sub">Date</label>
+                    <input type="date" id="date" class="mt-1 w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-app-accent focus:ring-1 focus:ring-app-accent">
+                </div>
+
+                <!-- Category & Sub-Category -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="category" class="text-sm font-medium text-app-sub">Category</label>
+                        <div class="relative mt-1">
+                            <select id="category" class="w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none">
+                                <option value="Personal Spending">Lifestyle</option>
+                                <option value="Household Spending">Household</option>
+                                <option value="Family Support">Family (60%)</option>
+                                <option value="Share Investment">Assets</option>
+                                <option value="Salary">Salary Credit</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="sub-category" class="text-sm font-medium text-app-sub">Type</label>
+                        <div class="relative mt-1">
+                            <select id="sub-category" class="w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none"></select>
+                            <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entity -->
+                <div>
+                    <label for="entity" class="text-sm font-medium text-app-sub">Payee / Entity</label>
                     <div class="relative mt-1">
-                        <select id="category" class="w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none">
-                            <option value="Personal Spending">Lifestyle</option>
-                            <option value="Household Spending">Household</option>
-                            <option value="Family Support">Family (60%)</option>
-                            <option value="Share Investment">Assets</option>
-                            <option value="Salary">Salary Credit</option>
+                        <i class="fas fa-store absolute left-3 top-1/2 -translate-y-1/2 text-app-muted text-sm"></i>
+                        <input type="text" id="entity" list="entity-list" required placeholder="e.g., Zomato, Amazon, etc."
+                               class="w-full bg-app-bg/50 border border-app-border rounded-lg pl-9 pr-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none placeholder-app-muted">
+                        <datalist id="entity-list"></datalist>
+                    </div>
+                </div>
+
+                <!-- Mode -->
+                <div>
+                    <label for="mode" class="text-sm font-medium text-app-sub">Payment Mode</label>
+                    <div class="relative mt-1">
+                        <select id="mode" class="w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none">
+                            <option value="UPI">UPI</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Card">Bank/Card</option>
                         </select>
                         <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"></i>
                     </div>
                 </div>
-                <div>
-                    <label for="sub-category" class="text-sm font-medium text-app-sub">Type</label>
-                    <div class="relative mt-1">
-                        <select id="sub-category" class="w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none"></select>
-                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"></i>
+
+                <!-- Share Investment Fields -->
+                <div id="share-units-box" class="hidden grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="units" class="text-sm font-medium text-app-accent">Units</label>
+                        <input type="number" id="units" placeholder="0" class="mt-1 w-full bg-app-accent/10 border border-app-accent/30 rounded-lg px-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none">
+                    </div>
+                    <div id="share-symbol-box">
+                        <label for="symbol" class="text-sm font-medium text-app-accent">Symbol</label>
+                        <input type="text" id="symbol" placeholder="NSE:SYMBOL" class="mt-1 w-full bg-app-accent/10 border border-app-accent/30 rounded-lg px-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none font-mono uppercase">
                     </div>
                 </div>
-            </div>
-
-            <!-- Entity -->
-            <div>
-                <label for="entity" class="text-sm font-medium text-app-sub">Payee / Entity</label>
-                <div class="relative mt-1">
-                    <i class="fas fa-store absolute left-3 top-1/2 -translate-y-1/2 text-app-muted text-sm"></i>
-                    <input type="text" id="entity" list="entity-list" required placeholder="e.g., Zomato, Amazon, etc."
-                           class="w-full bg-app-bg/50 border border-app-border rounded-lg pl-9 pr-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none placeholder-app-muted">
-                    <datalist id="entity-list"></datalist>
-                </div>
-            </div>
-
-            <!-- Mode -->
-            <div>
-                <label for="mode" class="text-sm font-medium text-app-sub">Payment Mode</label>
-                <div class="relative mt-1">
-                    <select id="mode" class="w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none">
-                        <option value="UPI">UPI</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Card">Bank/Card</option>
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"></i>
-                </div>
-            </div>
-
-            <!-- Share Investment Fields -->
-            <div id="share-units-box" class="hidden grid grid-cols-2 gap-4">
+                
+                <!-- Notes -->
                 <div>
-                    <label for="units" class="text-sm font-medium text-app-accent">Units</label>
-                    <input type="number" id="units" placeholder="0" class="mt-1 w-full bg-app-accent/10 border border-app-accent/30 rounded-lg px-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none">
+                    <label for="notes" class="text-sm font-medium text-app-sub">Notes</label>
+                    <input type="text" id="notes" placeholder="Optional details" class="mt-1 w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none placeholder-app-muted">
                 </div>
-                <div id="share-symbol-box">
-                    <label for="symbol" class="text-sm font-medium text-app-accent">Symbol</label>
-                    <input type="text" id="symbol" placeholder="NSE:SYMBOL" class="mt-1 w-full bg-app-accent/10 border border-app-accent/30 rounded-lg px-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none font-mono uppercase">
-                </div>
-            </div>
-            
-            <!-- Notes -->
-            <div>
-                <label for="notes" class="text-sm font-medium text-app-sub">Notes</label>
-                <input type="text" id="notes" placeholder="Optional details" class="mt-1 w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none placeholder-app-muted">
+
             </div>
 
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" id="submit-btn" class="w-full bg-app-accent hover:opacity-90 py-3 rounded-xl font-bold text-white shadow-lg shadow-app-accent/25 transition-all active:scale-95 flex items-center justify-center gap-2">
-            <i class="fas fa-check"></i>
-            <span>Add Transaction</span>
-        </button>
-    </form>
-
+            <!-- Submit Button -->
+            <button type="submit" id="submit-btn" class="w-full bg-app-accent hover:opacity-90 py-3 rounded-xl font-bold text-white shadow-lg shadow-app-accent/25 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i class="fas fa-check"></i>
+                <span>Add Transaction</span>
+            </button>
+        </form>
+    </main>
+    
     <div id="nav-container"></div>
     <script type="module">
         import { NavBar } from "../../components/nav-bar.js";
