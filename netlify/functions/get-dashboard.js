@@ -38,6 +38,8 @@ exports.handler = async (event) => {
       cleanPortfolio
     );
 
+    analysis.summary.cycleStartDate = configRows[0].Cycle_Start_Date;
+
     // Add the raw holdings for the Wealth page
     analysis.holdings = cleanPortfolio;
 

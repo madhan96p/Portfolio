@@ -55,17 +55,15 @@ function renderDashboard(data) {
 
   // --- 3. THE MONTHLY STORY GRID (Safe Access) ---
   // Note: The keys here must match your API output exactly
-  const summary = data.summary || {};
-
   const setSafeText = (id, value, prefix = "₹") => {
     const el = document.getElementById(id);
     if (el) el.innerText = `${prefix}${(value ?? 0).toLocaleString()}`;
   };
 
   // We use data.summary.openingBalance if it exists, otherwise use 0
-  setSafeText("opening-balance", summary.openingBalance);
-  setSafeText("salary-received", summary.actualSalary);
-  setSafeText("other-income-received", summary.otherInflow);
+  setSafeText("opening-balance", data.summary.netLiquidity);
+  setSafeText("salary-received", data.summary.actualSalary);
+  setSafeText("other-income-received", data.summary.otherInflow);
 
   // --- 4. 60/40 PLAN (Family & Shares) ---
   const fam = data.family || {};
@@ -97,7 +95,7 @@ function renderDashboard(data) {
   
   const shrPendingEl = document.getElementById("shares-pending");
   if (shrPendingEl) {
-    shrPendingEl.innerText = `Goal: 25%`;
+    shrPendingEl.innerText = `Pending: ₹${(shareGoal - shareSpent).toLocaleString()}`;
   }
 
   const shrProgress = document.getElementById("shares-progress");
@@ -119,7 +117,7 @@ function renderDashboard(data) {
   
   const savPendingEl = document.getElementById("savings-pending");
   if (savPendingEl) {
-	savPendingEl.innerText = `Goal: 25%`;
+    savPendingEl.innerText = `Pending: ₹${(savingsGoal - savingsSpent).toLocaleString()}`;
   }
   
   const savProgress = document.getElementById("savings-progress");
@@ -223,8 +221,23 @@ function setupCalculatorLogic(data) {
 }
 
 function populateModalData(data) {
+  function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    const [year, month, day] = dateString.split("-");
+    const date = new Date(year, month - 1, day);
+    return date
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+      .replace(/ /g, "-");
+  }
+
   // Mapping API data to Modal IDs
-  document.getElementById("bd-start-date").innerText = "01-Jan-2026"; // Or from Config
+  document.getElementById("bd-start-date").innerText = formatDate(
+    data.summary.cycleStartDate
+  ); // Or from Config
   document.getElementById(
     "bd-ob"
   ).innerText = `₹${data.summary.openingBalance.toLocaleString()}`;
@@ -232,7 +245,10 @@ function populateModalData(data) {
     "bd-salary-base"
   ).innerText = `₹${data.summary.actualSalary.toLocaleString()}`;
 
-  const totalPool = data.summary.openingBalance + data.summary.actualSalary;
+  const totalPool =
+    data.summary.openingBalance +
+    data.summary.actualSalary +
+    data.summary.otherInflow;
   document.getElementById(
     "bd-total-money"
   ).innerText = `₹${totalPool.toLocaleString()}`;

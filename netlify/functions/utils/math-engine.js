@@ -8,6 +8,10 @@ const calculateFinancials = (config, transactions, portfolio) => {
     .filter((t) => t.Category === "Salary")
     .reduce((sum, t) => sum + parseFloat(t.Amount_CR || 0), 0);
 
+  const otherInflow = transactions
+    .filter((t) => t.Category === "Other Income")
+    .reduce((sum, t) => sum + parseFloat(t.Amount_CR || 0), 0);
+
   // 2. Family Commitment (60%) Logic
   const debtRollover = parseFloat(config.Family_Debt_Rollover || 0);
   const familyGoal = actualSalary * 0.6 + debtRollover;
@@ -32,7 +36,7 @@ const calculateFinancials = (config, transactions, portfolio) => {
 
   // 3. The Pool (40% + Opening Balance)
   const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
-  const poolTotal = actualSalary * 0.4 + openingBalance;
+  const poolTotal = actualSalary * 0.4 + openingBalance + otherInflow;
 
   // Sub-Pools
   const walletGoal = poolTotal * 0.5;
@@ -86,6 +90,8 @@ const calculateFinancials = (config, transactions, portfolio) => {
 
   return {
     summary: {
+      openingBalance,
+      otherInflow,
       actualSalary,
       approxBankBalance,
       wealthToDebtRatio:
