@@ -4,7 +4,8 @@ import { API } from "../../core/api-client.js";
 
 async function initPortfolio() {
   try {
-    const data = await API.getDashboard();
+    const selectedRange = localStorage.getItem('selectedDateRange') || 'all';
+    const data = await API.getDashboard(selectedRange);
     console.log("DEBUG: Assets Received ->", data.holdings); // <-- ADD THIS
     renderStats(data);
     renderHoldings(data.holdings);
@@ -12,6 +13,10 @@ async function initPortfolio() {
     console.error("Wealth Sync Error:", err);
   }
 }
+
+window.addEventListener('dateRangeChanged', (e) => {
+    initPortfolio();
+});
 
 function renderStats(data) {
   const ratio = parseFloat(data.summary.wealthToDebtRatio);

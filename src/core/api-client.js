@@ -1,6 +1,6 @@
 export const API = {
-    async getDashboard() {
-        const response = await fetch('/api/get-dashboard');
+    async getDashboard(range = 'all') {
+        const response = await fetch(`/api/get-dashboard?range=${range}`);
         if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
         return await response.json();
     },

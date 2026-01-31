@@ -11,7 +11,6 @@ let trendChart = null;
 let state = {
   filter: "All",
   search: "",
-  timeFrame: "ALL", // 1D, 1W, 1M, ALL
   page: 1,
   limit: 10,
 };
@@ -62,11 +61,13 @@ function applyFilters() {
   // 1. Time Filter
   const now = new Date();
   const timeLimit = new Date();
+  const selectedRange = localStorage.getItem('selectedDateRange') || 'ALL';
 
-  if (state.timeFrame === "1D") timeLimit.setDate(now.getDate() - 1);
-  if (state.timeFrame === "1W") timeLimit.setDate(now.getDate() - 7);
-  if (state.timeFrame === "1M") timeLimit.setDate(now.getDate() - 30);
-  if (state.timeFrame === "ALL") timeLimit.setFullYear(2000);
+
+  if (selectedRange === "1D") timeLimit.setDate(now.getDate() - 1);
+  if (selectedRange === "1W") timeLimit.setDate(now.getDate() - 7);
+  if (selectedRange === "1M") timeLimit.setDate(now.getDate() - 30);
+  if (selectedRange === "ALL") timeLimit.setFullYear(2000);
 
   // 2. Filter Logic
   filteredTransactions = allTransactions.filter((t) => {

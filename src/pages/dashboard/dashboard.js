@@ -4,7 +4,8 @@ import { API } from "../../core/api-client.js";
 
 async function initDashboard() {
   try {
-    const data = await API.getDashboard();
+    const selectedRange = localStorage.getItem('selectedDateRange') || 'all';
+    const data = await API.getDashboard(selectedRange);
 
     // 1. Render the visual UI
     renderDashboard(data);
@@ -17,6 +18,10 @@ async function initDashboard() {
       "Sync Error - Check Console";
   }
 }
+
+window.addEventListener('dateRangeChanged', (e) => {
+    initDashboard();
+});
 
 function renderDashboard(data) {
   if (!data) {
