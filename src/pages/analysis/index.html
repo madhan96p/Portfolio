@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Analysis | CFO Cockpit v2.0</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/css/common.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body
+    class="bg-app-bg text-app-text transition-colors duration-300 pb-24 font-sans"
+  >
+    <header
+      class="p-6 border-b border-app-border flex justify-between items-center bg-app-card/80 sticky top-0 backdrop-blur-md z-50"
+    >
+      <div>
+        <h1
+          class="text-[10px] uppercase tracking-widest text-app-sub font-bold"
+        >
+          Spending Analysis
+        </h1>
+        <p class="text-xl font-mono" id="current-cycle">JAN-2026</p>
+      </div>
+    </header>
+
+    <main class="p-4 space-y-6">
+      <section
+        class="bg-app-card border border-app-border rounded-3xl p-6 shadow-sm"
+      >
+        <h2 class="text-app-sub text-xs font-bold uppercase tracking-wide mb-4">
+          Spending by Category
+        </h2>
+        <div class="h-64">
+          <canvas id="spending-chart"></canvas>
+        </div>
+      </section>
+    </main>
+
+    <div id="nav-container"></div>
+    <script type="module">
+      import { NavBar } from "../../components/nav-bar.js";
+      document.addEventListener("DOMContentLoaded", NavBar.init);
+    </script>
+
+    <script src="analysis.js" type="module"></script>
+  </body>
+</html>

@@ -6,6 +6,7 @@ export const NavBar = {
     // Detect current page
     const path = window.location.pathname;
     const isDashboard = path.includes("dashboard");
+    const isAnalysis = path.includes("analysis");
     const isHistory = path.includes("history");
     const isPortfolio = path.includes("portfolio");
     const isAdd = path.includes("add-transaction");
@@ -18,6 +19,13 @@ export const NavBar = {
         } transition-colors">
             <i class="fas fa-chart-pie text-xl mb-1"></i>
             <span class="text-[10px] font-bold uppercase tracking-wide">Dash</span>
+        </a>
+
+        <a href="../analysis/index.html" class="flex flex-col items-center ${
+          isAnalysis ? "text-amber-500" : "text-app-muted"
+        } transition-colors">
+            <i class="fas fa-chart-line text-xl mb-1"></i>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Analysis</span>
         </a>
         
         <a href="../add-transaction/index.html" class="flex flex-col items-center ${
