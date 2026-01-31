@@ -35,7 +35,7 @@ function updateSubCategories() {
 
 async function populateCleanEntities() {
     try {
-        const txns = await (await fetch('/api/get-transactions')).json();
+        const txns = await API.getTransactions();
         
         // Data Fatigue Fix: Count frequency and take top 15 unique
         const counts = txns.reduce((acc, t) => {
@@ -71,11 +71,8 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
     };
 
     try {
-        const res = await fetch('/api/post-transaction', {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        });
-        if (res.ok) window.location.href = '../dashboard/index.html';
+        await API.postTransaction(payload);
+        window.location.href = '../dashboard/index.html';
     } catch (err) {
         btn.innerText = "ERROR - RETRY";
         btn.disabled = false;

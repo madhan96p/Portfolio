@@ -247,7 +247,7 @@ function populateModalData(data) {
 
   const totalPool =
     data.summary.openingBalance +
-    data.summary.actualSalary +
+    data.summary.actualSalary * 0.4 + // Deduct 60% family commitment
     data.summary.otherInflow;
   document.getElementById(
     "bd-total-money"
