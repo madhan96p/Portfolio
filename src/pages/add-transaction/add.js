@@ -21,17 +21,15 @@ const ENTITY_TO_SUB_CAT_MAP = {
     'mom': 'Parental Support', 'dad': 'Parental Support',
 };
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Default Date to Today
     document.getElementById('date').valueAsDate = new Date();
-    
-    // 2. Initialize Sub-Categories
     updateSubCategories();
     populateCleanEntities();
+
+    document.getElementById('submit-new-btn').addEventListener('click', () => handleSubmit(false));
+    document.getElementById('submit-close-btn').addEventListener('click', () => handleSubmit(true));
 });
 
-// Logic: Map Category to Sub-Category
 document.getElementById('category').addEventListener('change', () => {
     updateSubCategories();
     const isShare = document.getElementById('category').value === 'Share Investment';
@@ -48,19 +46,12 @@ function updateSubCategories() {
 async function populateCleanEntities() {
     try {
         const txns = await API.getTransactions();
-        
-        // Data Fatigue Fix: Count frequency and take top 15 unique
         const counts = txns.reduce((acc, t) => {
             acc[t.entity] = (acc[t.entity] || 0) + 1;
             return acc;
         }, {});
-
-        const topEntities = Object.keys(counts)
-            .sort((a, b) => counts[b] - counts[a])
-            .slice(0, 15);
-
-        document.getElementById('entity-list').innerHTML = topEntities
-            .map(e => `<option value="${e}">`).join('');
+        const topEntities = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 15);
+        document.getElementById('entity-list').innerHTML = topEntities.map(e => `<option value="${e}"></option>`).join('');
     } catch (e) { console.error("Entity Sync Failed"); }
 }
 
@@ -74,17 +65,23 @@ document.getElementById('entity').addEventListener('input', (e) => {
                     document.getElementById('category').value = category;
                     updateSubCategories();
                     document.getElementById('sub-category').value = subCategory;
-                    return; 
+                    return;
                 }
             }
         }
     }
 });
 
-document.getElementById('tx-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    btn.innerText = "VERIFYING...";
+async function handleSubmit(shouldClose) {
+    const form = document.getElementById('tx-form');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const btn = shouldClose ? document.getElementById('submit-close-btn') : document.getElementById('submit-new-btn');
+    const originalBtnContent = btn.innerHTML;
+    btn.innerHTML = '<span><i class="fas fa-spinner fa-spin"></i> Saving...</span>';
     btn.disabled = true;
 
     const payload = {
@@ -101,9 +98,28 @@ document.getElementById('tx-form').addEventListener('submit', async (e) => {
 
     try {
         await API.postTransaction(payload);
-        window.location.href = '../dashboard/index.html';
+        if (shouldClose) {
+            window.location.href = '../dashboard/index.html';
+        } else {
+            // Reset form but keep date
+            document.getElementById('amount').value = '';
+            document.getElementById('entity').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('symbol').value = '';
+            document.getElementById('units').value = '';
+            document.getElementById('amount').focus();
+
+            btn.innerHTML = '<span><i class="fas fa-check"></i> Saved!</span>';
+            setTimeout(() => {
+                btn.innerHTML = originalBtnContent;
+                btn.disabled = false;
+            }, 1500);
+        }
     } catch (err) {
-        btn.innerText = "ERROR - RETRY";
-        btn.disabled = false;
+        btn.innerHTML = '<span><i class="fas fa-times"></i> Error</span>';
+        setTimeout(() => {
+            btn.innerHTML = originalBtnContent;
+            btn.disabled = false;
+        }, 2000);
     }
-});
+}
