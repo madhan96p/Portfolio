@@ -132,6 +132,22 @@ function renderDashboard(data) {
   setSafeText("total-available", walletGoal);
   setSafeText("total-spent", walletSpent);
 
+  // --- 6. WEALTH & MISC ---
+  setSafeText("approx-bank-balance", data.summary.approxBankBalance);
+  const wealthRatioEl = document.getElementById("wealth-ratio");
+  if (wealthRatioEl) {
+    wealthRatioEl.innerText = data.summary.wealthToDebtRatio;
+  }
+  const portfolioValEl = document.getElementById("portfolio-val");
+  if (portfolioValEl) {
+    portfolioValEl.innerText = `₹${(
+      data.pool.shares.currentPortfolio ?? 0
+    ).toLocaleString()}`;
+  }
+
+  // --- 7. SPENDING BREAKDOWN ---
+  renderSpendingBreakdown(data.spendingBreakdown);
+
   // Update Integrity Status
   const statusEl = document.getElementById("integrity-status");
   if (statusEl) {
@@ -144,6 +160,40 @@ function renderDashboard(data) {
       statusEl.className =
         "px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-500 border border-emerald-500/50";
     }
+  }
+}
+
+function renderSpendingBreakdown(breakdown) {
+  const container = document.getElementById("spending-breakdown-list");
+  if (!container || !breakdown) return;
+
+  container.innerHTML = ""; // Clear old data
+
+  const iconMap = {
+    Personal: "fa-user",
+    Household: "fa-store",
+    Family: "fa-users",
+    Savings: "fa-piggy-bank",
+    Shares: "fa-chart-line",
+    Uncategorized: "fa-question-circle",
+  };
+
+  for (const [category, amount] of Object.entries(breakdown)) {
+    if (amount <= 0) continue; // Don't show empty categories
+
+    const item = document.createElement("div");
+    item.className =
+      "flex justify-between items-center text-xs p-2 rounded-lg bg-app-bg";
+    item.innerHTML = `
+      <div class="flex items-center gap-3">
+        <i class="fas ${
+          iconMap[category] || "fa-dollar-sign"
+        } text-app-muted w-4 text-center"></i>
+        <span class="font-bold">${category}</span>
+      </div>
+      <span class="font-mono text-rose-500 font-semibold">₹${amount.toLocaleString()}</span>
+    `;
+    container.appendChild(item);
   }
 }
 

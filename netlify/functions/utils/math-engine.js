@@ -26,7 +26,9 @@ const calculateFinancials = (config, transactions, portfolio) => {
     .reduce((sum, t) => sum + parseFloat(t.Amount_CR || 0), 0);
 
   const familyNetActual = familySent - familyBorrowed;
-  const familyRemainingDebt = familyGoal - familyNetActual;
+  // New "backwards" goal - it GROWS with debt
+  const newFamilyGoal = familyGoal + familyBorrowed;
+  const familyRemainingDebt = newFamilyGoal - familyNetActual;
 
   // 3. The Pool (40% + Opening Balance)
   const openingBalance = parseFloat(config.Current_Opening_Balance || 0);
@@ -37,32 +39,55 @@ const calculateFinancials = (config, transactions, portfolio) => {
   const savingsGoal = poolTotal * 0.25;
   const sharesGoal = poolTotal * 0.25;
 
-  // Actual Lifestyle Spending
-  const lifestyleSpent = transactions
-    .filter(
-      (t) =>
-        t.Category === "Personal Spending" ||
-        t.Category === "Household Spending"
-    )
+  // Actuals
+  const personalSpent = transactions
+    .filter((t) => t.Category === "Personal Spending")
     .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
-    
+  const householdSpent = transactions
+    .filter((t) => t.Category === "Household Spending")
+    .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
   const savingsSpent = transactions
     .filter((t) => t.Category === "Savings")
     .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
-
   const sharesSpent = transactions
     .filter((t) => t.Category === "Shares")
     .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
+    
+  const lifestyleSpent = personalSpent + householdSpent;
 
-  // 4. Portfolio Integrity
+  // Approx Bank Balance
+  const approxBankBalance =
+    walletGoal -
+    lifestyleSpent +
+    (savingsGoal - savingsSpent) +
+    (sharesGoal - sharesSpent);
+
+  // 4. Portfolio Integrity & Spending Breakdown
   const totalPortfolioValue = portfolio.reduce((sum, p) => {
     const price = parseFloat(p.currentPrice) || parseFloat(p.buyPrice) || 0;
     return sum + parseFloat(p.units) * price;
   }, 0);
+  
+  // Create a map of all spending
+  const spendingBreakdown = new Map();
+  spendingBreakdown.set("Personal", personalSpent);
+  spendingBreakdown.set("Household", householdSpent);
+  spendingBreakdown.set("Family", familySent); // Gross, not net
+  spendingBreakdown.set("Savings", savingsSpent);
+  spendingBreakdown.set("Shares", sharesSpent);
+  
+  // Find any other spending
+  const knownCats = ["Personal Spending", "Household Spending", "Family Support", "Savings", "Shares", "Salary"];
+  const uncategorizedSpent = transactions
+      .filter(t => !knownCats.includes(t.Category) && parseFloat(t.Amount_DR || 0) > 0)
+      .reduce((sum, t) => sum + parseFloat(t.Amount_DR || 0), 0);
+  if(uncategorizedSpent > 0) spendingBreakdown.set("Uncategorized", uncategorizedSpent);
+
 
   return {
     summary: {
       actualSalary,
+      approxBankBalance,
       wealthToDebtRatio:
         debtRollover > 0
           ? (totalPortfolioValue / debtRollover).toFixed(2)
@@ -71,9 +96,9 @@ const calculateFinancials = (config, transactions, portfolio) => {
         openingBalance + actualSalary - (lifestyleSpent + familySent),
     },
     family: {
-      goal: familyGoal,
+      goal: newFamilyGoal, // Use the new goal
       actual: familyNetActual,
-      progress: ((familyNetActual / familyGoal) * 100).toFixed(1),
+      progress: ((familyNetActual / newFamilyGoal) * 100).toFixed(1),
       remaining: familyRemainingDebt,
     },
     pool: {
@@ -84,9 +109,15 @@ const calculateFinancials = (config, transactions, portfolio) => {
         remaining: walletGoal - lifestyleSpent,
       },
       savings: { goal: savingsGoal, spent: savingsSpent },
-      shares: { goal: sharesGoal, spent: sharesSpent, currentPortfolio: totalPortfolioValue },
+      shares: {
+        goal: sharesGoal,
+        spent: sharesSpent,
+        currentPortfolio: totalPortfolioValue,
+      },
     },
+    spendingBreakdown: Object.fromEntries(spendingBreakdown)
   };
 };
 
 module.exports = { calculateFinancials };
+

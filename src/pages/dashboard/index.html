@@ -117,6 +117,13 @@
           </p>
         </div>
       </div>
+      
+      <div class="grid grid-cols-1 gap-4">
+        <div class="bg-app-card border border-app-border p-4 rounded-2xl shadow-sm">
+          <p class="text-[10px] uppercase text-app-sub font-bold tracking-tight">Approx. Bank Balance</p>
+          <p class="text-2xl font-bold mt-1" id="approx-bank-balance">₹0</p>
+        </div>
+      </div>
 
       <section class="space-y-6 pt-2">
         <div
@@ -260,6 +267,13 @@
               Saved: ₹0 / Goal: ₹0
             </div>
           </div>
+        </div>
+
+        <div class="space-y-3">
+            <h2 class="text-[11px] font-black uppercase tracking-widest text-app-sub px-1">Spending Breakdown</h2>
+            <div id="spending-breakdown-list" class="bg-app-card border border-app-border p-4 rounded-2xl space-y-3">
+                <!-- Items will be injected here by JS -->
+            </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
