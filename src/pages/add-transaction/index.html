@@ -36,6 +36,22 @@
             <h1 class="text-lg font-bold text-app-sub">New Transaction</h1>
         </header>
 
+        <div class="space-y-4">
+            <div class="glass-card p-4 rounded-2xl">
+                <div id="tx-type-toggle" class="flex justify-center items-center bg-app-bg/50 rounded-full p-1">
+                    <button id="debit-btn" class="w-1/2 py-2 text-sm font-bold rounded-full bg-app-accent text-white">Expense</button>
+                    <button id="credit-btn" class="w-1/2 py-2 text-sm font-bold rounded-full text-app-muted">Income</button>
+                </div>
+            </div>
+            <div class="hidden glass-card p-4 rounded-2xl">
+                <p class="text-xs text-app-muted">
+                    <b class="text-app-sub">Analysis of your data shows:</b><br>
+                    - You are missing a clear way to mark transactions as <b class="text-red-400">Debit</b> (Expense) vs <b class="text-green-400">Credit</b> (Income).<br>
+                    - Categories like <b>P2P exchanges</b> (friends), <b>Rewards</b>, <b>Share Investments/Returns</b>, and <b>Dividends</b> need better representation.
+                </p>
+            </div>
+        </div>
+
         <form id="tx-form" class="space-y-4">
 
             <!-- Amount Input -->
@@ -63,11 +79,22 @@
                         <label for="category" class="text-sm font-medium text-app-sub">Category</label>
                         <div class="relative mt-1">
                             <select id="category" class="w-full bg-app-bg/50 border border-app-border rounded-lg px-3 py-2 text-sm appearance-none focus:border-app-accent focus:ring-1 focus:ring-app-accent outline-none">
-                                <option value="Personal Spending">Lifestyle</option>
-                                <option value="Household Spending">Household</option>
-                                <option value="Family Support">Family (60%)</option>
-                                <option value="Share Investment">Assets</option>
-                                <option value="Salary">Salary Credit</option>
+                                <optgroup label="Income">
+                                    <option value="Salary">Salary</option>
+                                    <option value="Other Income">Other Income</option>
+                                </optgroup>
+                                <optgroup label="Expenses">
+                                    <option value="Personal Spending">Personal Spending</option>
+                                    <option value="Household Spending">Household Spending</option>
+                                </optgroup>
+                                <optgroup label="Transfers">
+                                    <option value="Family Support">Family Support</option>
+                                    <option value="Family Transfer">Family Transfer</option>
+                                    <option value="Savings Transfer">Self Transfer</option>
+                                </optgroup>
+                                <optgroup label="Investments">
+                                    <option value="Share Investment">Shares & MFs</option>
+                                </optgroup>
                             </select>
                             <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-app-muted pointer-events-none"></i>
                         </div>
