@@ -10,6 +10,18 @@ const SUB_CATS = {
     "Salary": ["Primary Salary", "Freelance", "Bonus"]
 };
 
+const ENTITY_TO_SUB_CAT_MAP = {
+    'zomato': 'Food & Dining', 'swiggy': 'Food & Dining', 'restaurant': 'Food & Dining',
+    'uber': 'Transport', 'ola': 'Transport', 'rapido': 'Transport', 'fuel': 'Transport',
+    'electricity': 'Utilities', 'water': 'Utilities', 'internet': 'Utilities',
+    'movie': 'Entertainment', 'netflix': 'Entertainment', 'spotify': 'Entertainment',
+    'pharmacy': 'Medical', 'hospital': 'Medical', 'doctor': 'Medical',
+    'amazon': 'Shopping', 'flipkart': 'Shopping', 'myntra': 'Shopping', 'groceries': 'Groceries',
+    'rent': 'Rent', 'maintenance': 'Maintenance',
+    'mom': 'Parental Support', 'dad': 'Parental Support',
+};
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Default Date to Today
     document.getElementById('date').valueAsDate = new Date();
@@ -51,6 +63,23 @@ async function populateCleanEntities() {
             .map(e => `<option value="${e}">`).join('');
     } catch (e) { console.error("Entity Sync Failed"); }
 }
+
+document.getElementById('entity').addEventListener('input', (e) => {
+    const entity = e.target.value.toLowerCase();
+    for (const keyword in ENTITY_TO_SUB_CAT_MAP) {
+        if (entity.includes(keyword)) {
+            const subCategory = ENTITY_TO_SUB_CAT_MAP[keyword];
+            for (const category in SUB_CATS) {
+                if (SUB_CATS[category].includes(subCategory)) {
+                    document.getElementById('category').value = category;
+                    updateSubCategories();
+                    document.getElementById('sub-category').value = subCategory;
+                    return; 
+                }
+            }
+        }
+    }
+});
 
 document.getElementById('tx-form').addEventListener('submit', async (e) => {
     e.preventDefault();
