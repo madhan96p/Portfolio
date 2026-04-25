@@ -228,22 +228,30 @@
     </div>
 </section>
 
-   <a href="https://drive.google.com/uc?export=download&id=1e0fpjQTw2hIi370XrKhCR-nqIzvrde0U" 
-   class="resume-fab" 
-   aria-label="View or Download Pragadeesh's Resume" 
-   target="_blank" 
-   rel="noopener noreferrer">
-    
-    <div class="fab-container">
+   <div id="resume-fab" class="collapsed">
         <div class="eye-container">
-            <svg class="eye-svg" viewBox="0 0 30 22" aria-hidden="true">
+            <svg class="eye-svg" viewBox="0 0 30 22">
                 <defs>
                     <radialGradient id="irisGradient" cx="50%" cy="50%" r="50%">
                         <stop offset="0%" style="stop-color:#93c5fd" />
+                        <stop offset="20%" style="stop-color:#60a5fa" />
+                        <stop offset="50%" style="stop-color:#3b82f6" />
+                        <stop offset="80%" style="stop-color:#1e40af" />
                         <stop offset="100%" style="stop-color:#1e3a8a" />
                     </radialGradient>
+                    <linearGradient id="scleraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f7fafc" />
+                        <stop offset="100%" style="stop-color:#e5e7eb" />
+                    </linearGradient>
                 </defs>
                 <path class="eye-closed-line" d="M 4 11 Q 15 9 26 11" />
+                <g class="eye-lashes">
+                    <path d="M 6 10.5 L 5.5 9" />
+                    <path d="M 10 9.8 L 9.8 8.3" />
+                    <path d="M 15 9.5 L 15 8" />
+                    <path d="M 20 9.8 L 20.2 8.3" />
+                    <path d="M 24 10.5 L 24.5 9" />
+                </g>
                 <ellipse class="eye-white" cx="15" cy="11" rx="11" ry="6.5" />
                 <circle class="eye-iris" cx="15" cy="11" r="4.2" />
                 <circle class="eye-pupil" cx="15" cy="11" r="2.4" />
@@ -252,7 +260,6 @@
         </div>
         <span class="fab-text">View Resume</span>
     </div>
-</a>
     <!-- ══════════════════ SERVICES SECTION ══════════════════ -->
     <div class="section-highlight">
         <p id="servicesIntro">
@@ -970,7 +977,7 @@
             <div class="contact-wrapper">
                 <div class="contact-info" data-aos="fade-right">
                     <h3>Let's Connect</h3>
-                    <p>Open to collaborations in full-stack development, RPA consulting, data analytics, finance-tech projects, and digital strategy. Mid-day shift (1–11 PM IST) — best reached async or on weekends.</p>
+                    <p>Open to collaborations in full-stack development, RPA consulting, data analytics, finance-tech projects, and digital strategy. day time (9 AM – 06 PM IST) — best reached async or on weekends.</p>
                     <div class="contact-details">
                         <div class="contact-item">
                             <div class="contact-icon"><i class="fas fa-envelope"></i></div>
