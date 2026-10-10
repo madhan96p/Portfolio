@@ -1114,5 +1114,5 @@
         window.addEventListener("message", (e => { e.origin === host && e.data && e.data.type && "streaming-embed" === e.data.type && ("init" === e.data.action ? (initial = !0, wrapDiv.classList.toggle("show", initial)) : "show" === e.data.action ? (visible = !0, wrapDiv.classList.toggle("expand", visible)) : "hide" === e.data.action && (visible = !1, wrapDiv.classList.toggle("expand", visible))) })), container.appendChild(iframe), wrapDiv.appendChild(stylesheet), wrapDiv.appendChild(container), document.body.appendChild(wrapDiv)
     }(globalThis);
 </script>
-
+ 
 </html>
