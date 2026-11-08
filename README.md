@@ -92,6 +92,6 @@ I specialize in **data analytics, machine learning, and AI-driven automation**, 
 ---
 
 ### **Let's Connect!**  
-📩 **Email:** pragadeesh.s96@gmail.com  
+📩 **Email:** pragadsa08@gmail.com  
 🔗 **LinkedIn:** [linkedin.com/in/praga1482](https://linkedin.com/in/praga1482)  
 💻 **GitHub:** [github.com/madhan96p](https://github.com/madhan96p)  

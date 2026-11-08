@@ -241,174 +241,189 @@ document.addEventListener('DOMContentLoaded', function () {
         window.open(url, '_blank');
     }
     const fab = document.getElementById('resume-fab');
-    const eyeContainer = fab.querySelector('.eye-container');
-    const eyeIris = eyeContainer.querySelector('.eye-iris');
-    const eyePupil = eyeContainer.querySelector('.eye-pupil');
-    const eyeHighlight = eyeContainer.querySelector('.eye-highlight');
-    let isAwake = false;
-    let isAnimating = false;
-    let blinkInterval;
-    let sleepTimeout;
-    let lastMovementTime = 0;
-    const WAKE_DISTANCE = 180;
-    const SLEEP_DELAY = 2500;
-    setTimeout(() => {
-        fab.classList.remove('collapsed');
-    }, 1500);
-    setTimeout(() => {
-        fab.classList.add('collapsed');
-    }, 4000);
-    document.addEventListener('mousemove', (e) => {
-        const rect = fab.getBoundingClientRect();
-        const fabCenterX = rect.left + rect.width / 2;
-        const fabCenterY = rect.top + rect.height / 2;
-        const deltaX = e.clientX - fabCenterX;
-        const deltaY = e.clientY - fabCenterY;
-        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        if (distance < WAKE_DISTANCE) {
-            lastMovementTime = Date.now();
-            wakeUp();
-            trackEye(deltaX, deltaY, distance);
-        }
-        clearTimeout(sleepTimeout);
-        sleepTimeout = setTimeout(() => {
-            if (Date.now() - lastMovementTime > SLEEP_DELAY) {
-                goToSleep();
-            }
-        }, SLEEP_DELAY);
-    });
-    function wakeUp() {
-        if (!isAwake) {
-            isAwake = true;
-            eyeContainer.classList.add('awake');
-            startBlinking();
-        }
-    }
-    function goToSleep() {
-        if (isAwake) {
-            isAwake = false;
-            eyeContainer.classList.remove('awake');
-            stopBlinking();
-            eyeIris.setAttribute('transform', 'translate(0, 0)');
-            eyePupil.setAttribute('transform', 'translate(0, 0)');
-            eyeHighlight.setAttribute('transform', 'translate(1.5, -1.5)');
-        }
-    }
-    function trackEye(deltaX, deltaY, distance) {
-        if (!isAwake) return;
-        const angle = Math.atan2(deltaY, deltaX);
-        const intensity = Math.min(distance / WAKE_DISTANCE, 1);
-        const maxMovement = 3;
-        const irisX = Math.cos(angle) * maxMovement * intensity;
-        const irisY = Math.sin(angle) * maxMovement * intensity * 0.6;
-        const pupilX = Math.cos(angle) * (maxMovement + 0.5) * intensity;
-        const pupilY = Math.sin(angle) * (maxMovement + 0.5) * intensity * 0.6;
-        const highlightX = Math.cos(angle) * (maxMovement - 0.8) * intensity + 1.5;
-        const highlightY = Math.sin(angle) * (maxMovement - 0.8) * intensity * 0.6 - 1.5;
-        eyeIris.setAttribute('transform', `translate(${irisX}, ${irisY})`);
-        eyePupil.setAttribute('transform', `translate(${pupilX}, ${pupilY})`);
-        eyeHighlight.setAttribute('transform', `translate(${highlightX}, ${highlightY})`);
-    }
-    function startBlinking() {
-        if (blinkInterval) clearInterval(blinkInterval);
-        blinkInterval = setInterval(() => {
-            if (isAwake && !eyeContainer.classList.contains('blinking')) {
-                eyeContainer.classList.add('blinking');
-                setTimeout(() => {
-                    eyeContainer.classList.remove('blinking');
-                }, 400);
-            }
-        }, 2500 + Math.random() * 2000);
-    }
-    function stopBlinking() {
-        if (blinkInterval) {
-            clearInterval(blinkInterval);
-            blinkInterval = null;
-        }
-    }
-    fab.addEventListener('mouseenter', () => {
-        if (!isAnimating) {
-            isAnimating = true;
-            fab.classList.remove('collapsed');
+    if (fab) {
+        const eyeContainer = fab.querySelector('.eye-container');
+        if (eyeContainer) {
+            const eyeIris = eyeContainer.querySelector('.eye-iris');
+            const eyePupil = eyeContainer.querySelector('.eye-pupil');
+            const eyeHighlight = eyeContainer.querySelector('.eye-highlight');
+            let isAwake = false;
+            let isAnimating = false;
+            let blinkInterval;
+            let sleepTimeout;
+            let lastMovementTime = 0;
+            const WAKE_DISTANCE = 180;
+            const SLEEP_DELAY = 2500;
             setTimeout(() => {
-                if (isAnimating) {
-                    fab.classList.add('collapsed');
-                    isAnimating = false;
+                fab.classList.remove('collapsed');
+            }, 1500);
+            setTimeout(() => {
+                fab.classList.add('collapsed');
+            }, 4000);
+            document.addEventListener('mousemove', (e) => {
+                const rect = fab.getBoundingClientRect();
+                const fabCenterX = rect.left + rect.width / 2;
+                const fabCenterY = rect.top + rect.height / 2;
+                const deltaX = e.clientX - fabCenterX;
+                const deltaY = e.clientY - fabCenterY;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                if (distance < WAKE_DISTANCE) {
+                    lastMovementTime = Date.now();
+                    wakeUp();
+                    trackEye(deltaX, deltaY, distance);
                 }
-            }, 3000);
-        }
-    });
-    fab.addEventListener('click', (e) => {
-        e.preventDefault();
-        stopBlinking();
-        fab.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        fab.style.transform = 'translateY(-50%) scale(0.8)';
-        fab.style.opacity = '0.7';
-        setTimeout(() => {
-            fab.style.transform = 'translateY(-50%) scale(1.2)';
-            fab.style.opacity = '0';
-        }, 200);
-        setTimeout(() => {
-            window.open('https://docs.google.com/document/d/18FMfV_tRhgDsV8HBtk4YendNYdI61VWaLgbZWfx3Als/edit?usp=sharing', '_blank');
-            fab.style.transform = 'translateY(-50%) scale(1)';
-            fab.style.opacity = '1';
-            fab.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            if (isAwake) startBlinking();
-        }, 800);
-    });
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
+                clearTimeout(sleepTimeout);
+                sleepTimeout = setTimeout(() => {
+                    if (Date.now() - lastMovementTime > SLEEP_DELAY) {
+                        goToSleep();
+                    }
+                }, SLEEP_DELAY);
+            });
+            function wakeUp() {
+                if (!isAwake) {
+                    isAwake = true;
+                    eyeContainer.classList.add('awake');
+                    startBlinking();
+                }
+            }
+            function goToSleep() {
+                if (isAwake) {
+                    isAwake = false;
+                    eyeContainer.classList.remove('awake');
+                    stopBlinking();
+                    eyeIris.setAttribute('transform', 'translate(0, 0)');
+                    eyePupil.setAttribute('transform', 'translate(0, 0)');
+                    eyeHighlight.setAttribute('transform', 'translate(1.5, -1.5)');
+                }
+            }
+            function trackEye(deltaX, deltaY, distance) {
+                if (!isAwake) return;
+                const angle = Math.atan2(deltaY, deltaX);
+                const intensity = Math.min(distance / WAKE_DISTANCE, 1);
+                const maxMovement = 3;
+                const irisX = Math.cos(angle) * maxMovement * intensity;
+                const irisY = Math.sin(angle) * maxMovement * intensity * 0.6;
+                const pupilX = Math.cos(angle) * (maxMovement + 0.5) * intensity;
+                const pupilY = Math.sin(angle) * (maxMovement + 0.5) * intensity * 0.6;
+                const highlightX = Math.cos(angle) * (maxMovement - 0.8) * intensity + 1.5;
+                const highlightY = Math.sin(angle) * (maxMovement - 0.8) * intensity * 0.6 - 1.5;
+                eyeIris.setAttribute('transform', `translate(${irisX}, ${irisY})`);
+                eyePupil.setAttribute('transform', `translate(${pupilX}, ${pupilY})`);
+                eyeHighlight.setAttribute('transform', `translate(${highlightX}, ${highlightY})`);
+            }
+            function startBlinking() {
+                if (blinkInterval) clearInterval(blinkInterval);
+                blinkInterval = setInterval(() => {
+                    if (isAwake && !eyeContainer.classList.contains('blinking')) {
+                        eyeContainer.classList.add('blinking');
+                        setTimeout(() => {
+                            eyeContainer.classList.remove('blinking');
+                        }, 400);
+                    }
+                }, 2500 + Math.random() * 2000);
+            }
+            function stopBlinking() {
+                if (blinkInterval) {
+                    clearInterval(blinkInterval);
+                    blinkInterval = null;
+                }
+            }
+            fab.addEventListener('mouseenter', () => {
+                if (!isAnimating) {
+                    isAnimating = true;
+                    fab.classList.remove('collapsed');
+                    setTimeout(() => {
+                        if (isAnimating) {
+                            fab.classList.add('collapsed');
+                            isAnimating = false;
+                        }
+                    }, 3000);
+                }
+            });
+            fab.addEventListener('click', (e) => {
+                e.preventDefault();
+                stopBlinking();
+                fab.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                fab.style.transform = 'translateY(-50%) scale(0.8)';
+                fab.style.opacity = '0.7';
+                setTimeout(() => {
+                    fab.style.transform = 'translateY(-50%) scale(1.2)';
+                    fab.style.opacity = '0';
+                }, 200);
+                setTimeout(() => {
+                    window.open('https://docs.google.com/document/d/18FMfV_tRhgDsV8HBtk4YendNYdI61VWaLgbZWfx3Als/edit?usp=sharing', '_blank');
+                    fab.style.transform = 'translateY(-50%) scale(1)';
+                    fab.style.opacity = '1';
+                    fab.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    if (isAwake) startBlinking();
+                }, 800);
+            });
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    goToSleep();
+                }
+            });
             goToSleep();
         }
-    });
-    goToSleep();
+    }
 
     const themeToggle = document.getElementById('theme-toggle');
     const themeLink = document.getElementById('theme-link');
     const themeIcon = document.getElementById('theme-icon');
 
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            themeLink.href = 'styles.css'; // dark mode CSS
-            themeIcon.classList.replace('fa-sun', 'fa-moon');
-            themeToggle.style.color = '#ddd'; // optional icon color for dark
-        } else {
-            themeLink.href = 'style.css'; // light mode CSS
-            themeIcon.classList.replace('fa-moon', 'fa-sun');
-            themeToggle.style.color = '#ffcc00'; // sun yellow for light mode
-        }
-        localStorage.setItem('theme', theme);
+    function applyTheme(theme) {
+        const selectedTheme = theme === 'dark' ? 'dark' : 'light';
+        const isDark = selectedTheme === 'dark';
+        themeLink.setAttribute('href', isDark ? 'styles.css' : 'style.css');
+        themeIcon.classList.toggle('fa-moon', isDark);
+        themeIcon.classList.toggle('fa-sun', !isDark);
+        themeToggle.style.color = isDark ? '#ddd' : '#ffcc00';
+        themeToggle.setAttribute('aria-pressed', String(isDark));
+        localStorage.setItem('theme', selectedTheme);
     }
 
-    // Load saved theme or default to light
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
+    const savedTheme = localStorage.getItem('theme');
+    applyTheme(savedTheme === 'dark' ? 'dark' : 'light');
 
     themeToggle.addEventListener('click', () => {
-        const currentTheme = themeLink.href.includes('style.css') ? 'light' : 'dark';
-        setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        const currentTheme = themeLink.getAttribute('href') === 'styles.css' ? 'dark' : 'light';
+        applyTheme(currentTheme === 'light' ? 'dark' : 'light');
     });
-    // Inside your script.js or relevant <script> tag
 
-    // document.addEventListener('DOMContentLoaded', () => {
     const toggleServicesBtn = document.getElementById('toggleServicesBtn');
-    const servicesContent = document.getElementById('services-content-wrapper'); // Target the new wrapper
+    const servicesContent = document.getElementById('services-content-wrapper');
+    const servicesLabel = toggleServicesBtn.querySelector('span');
+    const servicesIntro = document.getElementById('servicesIntro');
 
-    if (toggleServicesBtn && servicesContent) {
-        // Ensure content starts hidden (CSS already does this, but good practice)
-        servicesContent.classList.remove('visible');
-
-        toggleServicesBtn.addEventListener('click', () => {
-            servicesContent.classList.toggle('visible'); // Toggle the .visible class
-
-            // Optional: Change button text based on visibility
-            if (servicesContent.classList.contains('visible')) {
-                toggleServicesBtn.textContent = 'Hide Services'; // Or use an icon
-            } else {
-                toggleServicesBtn.textContent = 'View My Services';
-            }
-        });
+    function setServicesExpanded(expanded) {
+        servicesContent.classList.toggle('visible', expanded);
+        servicesContent.classList.toggle('is-hidden', !expanded);
+        servicesIntro.classList.toggle('hidden', expanded);
+        toggleServicesBtn.setAttribute('aria-expanded', String(expanded));
+        servicesLabel.textContent = expanded ? 'View Less' : 'View More';
     }
-    // });
+
+    setServicesExpanded(false);
+    toggleServicesBtn.addEventListener('click', () => {
+        const expanded = toggleServicesBtn.getAttribute('aria-expanded') === 'true';
+        setServicesExpanded(!expanded);
+    });
+
+    document.querySelectorAll('.nav-links a[href="#services"]').forEach(link => {
+        link.addEventListener('click', () => {
+            setServicesExpanded(true);
+            navLinks.classList.remove('active');
+        });
+    });
+
+    document.querySelectorAll('.nav-links a[href="#certSection"]').forEach(link => {
+        link.addEventListener('click', () => {
+            const certSection = document.getElementById('certSection');
+            if (certSection.classList.contains('is-hidden')) {
+                toggleSection('certSection', 'certIntro');
+            }
+            navLinks.classList.remove('active');
+        });
+    });
 
 });
