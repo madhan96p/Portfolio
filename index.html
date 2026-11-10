@@ -11,8 +11,29 @@
 
     <meta property="og:title" content="Pragadeesh Srinivasan | Data Analyst | Financial Technology | Automation & AI">
     <meta property="og:description" content="Business understanding. Data intelligence. Engineered solutions.">
-    <meta property="og:image" content="pro.webp">
+    <meta property="og:image" content="pro.png">
     <meta property="og:type" content="profile">
+
+
+<!-- Open Graph: WhatsApp, Facebook, LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pragadeeshfolio.netlify.app/">
+<meta property="og:site_name" content="Pragadeesh Srinivasan">
+<meta property="og:title" content="Pragadeesh Srinivasan | Data Analyst & Financial Technology">
+<meta property="og:description" content="Business Understanding. Data Intelligence. Engineered Solutions. Explore my projects in data analytics, financial technology, automation and AI.">
+<meta property="og:image" content="https://pragadeeshfolio.netlify.app/pro.png">
+<meta property="og:image:secure_url" content="https://pragadeeshfolio.netlify.app/pro.png">
+<meta property="og:image:type" content="image/webp">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pragadeesh Srinivasan – Data Analyst, Financial Technology and AI">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pragadeesh Srinivasan | Data Analyst">
+<meta name="twitter:description" content="Business Understanding. Data Intelligence. Engineered Solutions.">
+<meta name="twitter:image" content="https://pragadeeshfolio.netlify.app/pro.png">
+
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TCV9PNQF9W"></script>
     <script>
@@ -43,7 +64,7 @@
     "name": "Pragadeesh Srinivasan",
     "jobTitle": "Data Analyst | Financial Technology | Automation & AI",
     "url": "https://pragadeeshfolio.netlify.app",
-    "image": "https://pragadeeshfolio.netlify.app/pro.webp",
+    "image": "https://pragadeeshfolio.netlify.app/pro.png",
     "sameAs": [
         "https://www.linkedin.com/in/srinivasanpragadeesh/",
         "https://github.com/madhan96p"
@@ -216,7 +237,7 @@
             </div>
             <div class="about-content">
                 <div class="about-image" data-aos="fade-right">
-                    <img src="pro.webp" alt="Pragadeesh Srinivasan" class="profile-img" loading="lazy">
+                    <img src="pro.png" alt="Pragadeesh Srinivasan" class="profile-img" loading="lazy">
                     <div class="experience-box">
                         <div class="experience-item">
                             <h3>2026</h3>
@@ -948,28 +969,58 @@
                         <a href="mailto:pragadsa08@gmail.com" class="social-link" aria-label="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
-                <div class="contact-form" data-aos="fade-left">
-                    <form id="contactForm" aria-label="Contact form">
-                        <div class="form-group">
-                            <label for="name" class="sr-only">Your Name</label>
-                            <input type="text" name="name" id="name" placeholder="Your Name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" class="sr-only">Your Email</label>
-                            <input type="email" name="email" id="email" placeholder="Your Email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject" class="sr-only">Subject</label>
-                            <input type="text" name="subject" id="subject" placeholder="Subject">
-                        </div>
-                        <div class="form-group">
-                            <label for="message" class="sr-only">Your Message</label>
-                            <textarea name="message" id="message" rows="6" placeholder="Your Message" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Send Message <i class="fas fa-paper-plane"></i></button>
-                    </form>
-                    <div id="formStatus" aria-live="polite"></div>
-                </div>
+                
+<div class="contact-form" data-aos="fade-left">
+    <form
+        name="contact"
+        id="contactForm"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        aria-label="Contact form"
+    >
+        <input type="hidden" name="form-name" value="contact">
+
+        <!-- Spam protection: honeypot -->
+        <p hidden>
+            <label>
+                Don't fill this out:
+                <input name="bot-field" tabindex="-1" autocomplete="off">
+            </label>
+        </p>
+
+        <div class="form-group">
+            <label for="name" class="sr-only">Your Name</label>
+            <input type="text" name="name" id="name"
+                   placeholder="Your Name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email" class="sr-only">Your Email</label>
+            <input type="email" name="email" id="email"
+                   placeholder="Your Email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="subject" class="sr-only">Subject</label>
+            <input type="text" name="subject" id="subject"
+                   placeholder="Subject">
+        </div>
+
+        <div class="form-group">
+            <label for="message" class="sr-only">Your Message</label>
+            <textarea name="message" id="message" rows="6"
+                      placeholder="Your Message" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Send Message <i class="fas fa-paper-plane"></i>
+        </button>
+    </form>
+
+    <div id="formStatus" aria-live="polite"></div>
+</div>
+
             </div>
         </div>
     </section>
