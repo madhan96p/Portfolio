@@ -166,74 +166,109 @@ document.addEventListener('DOMContentLoaded', function () {
             AOS.refresh(); // Refresh AOS after filtering
         });
     });
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value
-            };
-            const submitButton = contactForm.querySelector("button[type='submit']");
-            submitButton.disabled = true;
-            submitButton.innerText = "Processing... Please wait (5s)";
-            let countdown = 5;
-            const interval = setInterval(() => {
-                countdown--;
-                submitButton.innerText = `Processing... Please wait (${countdown}s)`;
-            }, 1000);
-            const scriptURL = "https://script.google.com/macros/s/AKfycbzks30Pvqd9lI49PbTtGTFeFUA5RqYh0AHIzemnI2wlUfI6WlJ-nYNmWDq9daGOt92nww/exec";
-            fetch(scriptURL, {
+    
+const contactForm = document.getElementById('contactForm');
+
+if (contactForm) {
+    let isSubmitting = false;
+
+    const submitButton = contactForm.querySelector("button[type='submit']");
+    const formStatus = document.getElementById('formStatus');
+    const originalButtonHTML = submitButton.innerHTML;
+
+    contactForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        if (isSubmitting) return;
+
+        isSubmitting = true;
+        submitButton.disabled = true;
+        submitButton.innerText = "Sending...";
+
+        if (formStatus) {
+            formStatus.textContent = "";
+        }
+
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            subject: document.getElementById('subject').value.trim(),
+            message: document.getElementById('message').value.trim()
+        };
+
+        try {
+            const encodedData = new URLSearchParams(
+                new FormData(contactForm)
+            ).toString();
+
+            const response = await fetch("/", {
                 method: "POST",
-                body: JSON.stringify(formData),
-                headers: { "Content-Type": "application/json" },
-                mode: "no-cors"
-            })
-                .then(() => {
-                    clearInterval(interval);
-                    const successMessage = document.createElement("div");
-                    successMessage.classList.add("booking-success-message");
-                    successMessage.innerHTML = `
-        <i class="fas fa-check-circle success-icon"></i>
-        <p class="success-text">Your request has been submitted.</p>
-        <p class="success-subtext">Would you like to contact via WhatsApp?</p>
-        <div class="success-buttons">
-        <button id="confirmYes" class="action-button">Yes</button>
-        <button id="confirmNo" class="action-button">No</button>
-        </div>
-    `;
-                    contactForm.parentElement.appendChild(successMessage);
-                    submitButton.style.display = "none";
-                    document.getElementById("confirmYes").onclick = function () {
-                        sendWhatsAppMessage(formData); // Assuming this function exists
-                        contactForm.reset();
-                        successMessage.remove();
-                        submitButton.style.display = "block";
-                        submitButton.disabled = false;
-                        submitButton.innerText = "Send Message";
-                    };
-                    document.getElementById("confirmNo").onclick = function () {
-                        successMessage.innerHTML = `
-        <i class="fas fa-smile-beam success-icon"></i>
-        <p class="success-text">Thank you! He will contact you shortly.</p>
-        `;
-                        contactForm.reset();
-                        submitButton.style.display = "block";
-                        submitButton.disabled = false;
-                        submitButton.innerText = "Send Message";
-                    };
-                })
-                .catch((error) => {
-                    clearInterval(interval);
-                    alert("Error! Please try again.");
-                    submitButton.innerText = "Send Message";
-                    submitButton.disabled = false;
-                    console.error("Booking error:", error);
-                });
-        });
-    }
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: encodedData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Submission failed: ${response.status}`);
+            }
+
+            const successMessage = document.createElement("div");
+            successMessage.classList.add("booking-success-message");
+
+            successMessage.innerHTML = `
+                <i class="fas fa-check-circle success-icon"></i>
+                <p class="success-text">Your request has been submitted.</p>
+                <p class="success-subtext">Would you like to contact via WhatsApp?</p>
+                <div class="success-buttons">
+                    <button id="confirmYes" class="action-button">Yes</button>
+                    <button id="confirmNo" class="action-button">No</button>
+                </div>
+            `;
+
+            contactForm.parentElement.appendChild(successMessage);
+            submitButton.style.display = "none";
+
+            document.getElementById("confirmYes").onclick = function () {
+                sendWhatsAppMessage(formData);
+                contactForm.reset();
+                successMessage.remove();
+                submitButton.style.display = "block";
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonHTML;
+                isSubmitting = false;
+            };
+
+            document.getElementById("confirmNo").onclick = function () {
+                successMessage.innerHTML = `
+                    <i class="fas fa-smile-beam success-icon"></i>
+                    <p class="success-text">Thank you! He will contact you shortly.</p>
+                `;
+
+                contactForm.reset();
+                submitButton.style.display = "block";
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonHTML;
+                isSubmitting = false;
+            };
+
+        } catch (error) {
+            console.error("Contact form error:", error);
+
+            if (formStatus) {
+                formStatus.textContent =
+                    "Unable to submit your message. Please try again.";
+            } else {
+                alert("Submission failed. Please try again.");
+            }
+
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonHTML;
+            isSubmitting = false;
+        }
+    });
+}
+
     function sendWhatsAppMessage(data) {
         const phone = "+918903558066"; // Replace with your WhatsApp number
         const message = `Hi, I am ${data.name}. I just submitted a request on your website.`;
